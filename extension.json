@@ -1,0 +1,28 @@
+{
+    "@note001": "Note that extension registration ignores keys starting with @ at top or under config."
+    "name": "LongCite",
+    "namemsg": "longcite-extensionname",
+    "version": "0.0.1",
+    "author": [ "Eric Alan Christiansen" ],
+    "url": "https://motleybytes.com/w/Extension:LongCite",
+    "descriptionmsg": "longcite-desc",
+    "license-name": "MIT",
+    "type": :parserhook",
+    "config_prefix": "wg",
+    "config": {
+        "LongCiteSetting": {
+            "value": true,
+            "path": false,
+            "description": "Implement several longcite* tags for citation and reference support.",
+            "descriptionmsg: "longcite-config-longcitesetting",
+            "public": true
+        }
+    },
+    "requires": {
+        "MediaWiki": ">= 1.26.0",
+        "extensions": {
+            "Cite": "*"
+        }
+    },
+    "manfest_version": 2
+}
