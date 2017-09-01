@@ -1,0 +1,9 @@
+.mw-longcite-error {
+    color:red;
+}
+.mw-longcite-warning {
+    color:orange;
+}
+.mw-longcite-debug {
+    color:blue;
+}

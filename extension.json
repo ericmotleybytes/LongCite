@@ -7,22 +7,32 @@
     "url": "https://motleybytes.com/w/Extension:LongCite",
     "descriptionmsg": "longcite-desc",
     "license-name": "MIT",
-    "type": :parserhook",
+    "type": "other",
     "config_prefix": "wg",
     "config": {
-        "LongCiteSetting": {
+        "LongCiteSettingFoo": {
             "value": true,
             "path": false,
-            "description": "Implement several longcite* tags for citation and reference support.",
-            "descriptionmsg: "longcite-config-longcitesetting",
+            "description": "Whether or not setting foo is enabled.",
+            "descriptionmsg: "longcite-config-longcitesettingfoo",
             "public": true
         }
     },
+    "ResourceModules": {
+        "ext.longCite": {
+            "styles": [
+                "ext.longCite.css"
+            ],
+            "messages": [],
+            "dependencies": []
+        }
+    },
+    "ResourceFileModulePaths": {
+        "localBasePath": "modules",
+        "remoteExtPath": "BoilerPlate/modules"
+    },
     "requires": {
         "MediaWiki": ">= 1.26.0",
-        "extensions": {
-            "Cite": "*"
-        }
     },
     "manfest_version": 2
 }

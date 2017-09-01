@@ -1,0 +1,9 @@
+{
+    "@metadata": {
+        "authors": ["Eric Alan Christiansen"]
+    },
+    "longcite-desc"   : "{{desc|name=Longcite|url=https://www.mediawiki.org/wiki/Extension:Longcite}}",
+    "longcite-error"  : "Prefix for error messages.",
+    "longcite-warning": "Prefix for warning messages.",
+    "longcite-debug"  : "Prefix for debug messages."
+}
