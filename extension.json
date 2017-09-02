@@ -1,5 +1,5 @@
 {
-    "@note001": "Note that extension registration ignores keys starting with @ at top or under config."
+    "@note001": "Note: keys starting with @ generally ignored."
     "name": "LongCite",
     "namemsg": "longcite-extensionname",
     "version": "0.0.1",
@@ -8,16 +8,28 @@
     "descriptionmsg": "longcite-desc",
     "license-name": "MIT",
     "type": "other",
+    "AutoloadClasses": {
+        "LongCiteMaster"    : "includes/LongCiteMaster.php",
+        "LongCiteMessenger" : "includes/LongCiteMessenger.php"
+    }
     "config_prefix": "wg",
+	"ConfigRegistry": {
+        "longcite": "GlobalVarConfig::newInstance"
+	},
     "config": {
         "LongCiteSettingFoo": {
             "value": true,
             "path": false,
             "description": "Whether or not setting foo is enabled.",
-            "descriptionmsg: "longcite-config-longcitesettingfoo",
+            "descriptionmsg": "longcite-config-longcitesettingfoo",
             "public": true
         }
     },
+	"MessagesDirs": {
+		"LongCite": [
+			"i18n"
+		]
+	},
     "ResourceModules": {
         "ext.longCite": {
             "styles": [
@@ -29,10 +41,7 @@
     },
     "ResourceFileModulePaths": {
         "localBasePath": "modules",
-        "remoteExtPath": "BoilerPlate/modules"
-    },
-    "requires": {
-        "MediaWiki": ">= 1.26.0",
+        "remoteExtPath": "LongCite/modules"
     },
     "manfest_version": 2
 }
