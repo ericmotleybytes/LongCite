@@ -17,6 +17,12 @@ class LongCiteMaster {
     function __construct() {
         #$this->messenger = new LongCiteMessenger();
         $this->messenger = null; // defer instantiation
+        #
+        $this->messenger = new LongCiteMessenger();
+        $this->messenger->registerMessage(LongCiteMessenger::DebugType,
+            "Instantiated new LongCiteMaster!");
+        $this->messenger->dumpToFile(false);
+        $this->messenger->clearMessages();
     }
 
     public function register() {

@@ -17,6 +17,7 @@ class LongCiteMessenger {
    protected $messages     = array();  ///< Array of messages, each msg a hash array.
    protected $prefixMsgIds = array();  ///< Hash array of i18n ids, by msg type.
    protected $cssClasses   = array();  ///< Hash array of css classes, by msg type.
+   protected $dumpFile = __DIR__."/../dump.out"; ///< Message dump file.
 
     /// Class instance constructor.
     public function __construct() {
@@ -78,5 +79,25 @@ class LongCiteMessenger {
         return $result;
     }
 
+    /// Dump messages to the dump file.
+    /// @param $appendFlag - True to append to existing file, if any.
+    /// returns true on success, else false.
+    public function dumpToFile($appendFlag=true) {
+        if($appendFlag) {
+            $mode = "a";
+        } else {
+            $mode = "w";
+        }
+        $f = fopen($this->dumpFile,$mode);
+        if($f===false) { return false; }
+        $html = $this->renderMessages();
+        $bytes = fwrite($f,$html);
+        if($bytes===false) {
+            fclose($f);
+            return false;
+        }
+        $status = fclose($f);
+        return $status;
+    }
 }
 ?>
