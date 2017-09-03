@@ -17,7 +17,6 @@
         "LongCiteRenTag"    : "includes/LongCiteRenTag.php",
         "LongCiteHlpTag"    : "includes/LongCiteHlpTag.php"
     },
-    "config_prefix": "wg",
 	"ConfigRegistry": {
         "longcite": "GlobalVarConfig::newInstance"
 	},
