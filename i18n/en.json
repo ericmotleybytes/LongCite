@@ -2,6 +2,7 @@
     "@metadata": {
         "authors": ["Eric Alan Christiansen"]
     },
+    "longcite-extensionname" : "LongCite",
     "longcite-desc"   : "Reference citation management and control.",
     "longcite-error"  : "ERROR",
     "longcite-warning": "WARNING",

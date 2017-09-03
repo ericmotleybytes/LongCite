@@ -25,5 +25,25 @@ class ExtensionTest extends Testcase {
         $jsonArr = json_decode($jsonStr,true);
         $this->assertNotNull($jsonArr);
     }
+
+    // check that i18n/en.json is valid json.
+    public function testEnJson() {
+        $jsonFile = __DIR__."/../i18n/en.json";
+        $this->assertFileExists($jsonFile);
+        $jsonStr = file_get_contents($jsonFile);
+        $this->assertNotFalse($jsonStr);
+        $jsonArr = json_decode($jsonStr,true);
+        $this->assertNotNull($jsonArr);
+    }
+
+    // check that i18n/qqq.json is valid json.
+    public function testQqqJson() {
+        $jsonFile = __DIR__."/../i18n/qqq.json";
+        $this->assertFileExists($jsonFile);
+        $jsonStr = file_get_contents($jsonFile);
+        $this->assertNotFalse($jsonStr);
+        $jsonArr = json_decode($jsonStr,true);
+        $this->assertNotNull($jsonArr);
+    }
 }
 ?>
