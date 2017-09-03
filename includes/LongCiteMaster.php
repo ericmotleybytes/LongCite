@@ -98,7 +98,7 @@ class LongCiteMaster {
         // Extension globals.
         global $wgLongCiteMasterInstance;
         // Instantiate the global LongCiteMaster.
-        $wgLongCiteMasterInstance = new LongSiteMaster();
+        $wgLongCiteMasterInstance = new LongCiteMaster();
         // Register the LongCite extension.
         $wgLongCiteMasterInstance->register();
     }
