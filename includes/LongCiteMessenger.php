@@ -47,7 +47,7 @@ class LongCiteMessenger {
     /// @param $msgText - String with the text of the message.
     public function registerMessage($msgType,$msgText) {
         $msgType = strtoupper($msgType);
-        if(!array_key_exists($msgType,$this->$prefixMsgIds)) {
+        if(!array_key_exists($msgType,$this->prefixMsgIds)) {
             user_error("Invalid message type ($msgType)",E_USER_ERROR);
         } else {
             $msgId = $this->prefixMsgIds[$msgType];
