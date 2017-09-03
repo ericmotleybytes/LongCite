@@ -47,5 +47,5 @@
         "localBasePath": "modules",
         "remoteExtPath": "LongCite/modules"
     },
-    "manfest_version": 2
+    "manfest_version": [2]
 }
