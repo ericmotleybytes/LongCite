@@ -1,5 +1,5 @@
 {
-    "@note001": "Note: keys starting with @ generally ignored."
+    "@note001": "Note: keys starting with @ generally ignored.",
     "name": "LongCite",
     "namemsg": "longcite-extensionname",
     "version": "0.0.1",
