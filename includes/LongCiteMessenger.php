@@ -61,7 +61,7 @@ class LongCiteMessenger {
                 "css-class" => $this->cssClasses[$msgType],
                 "text"      => $msgText
             );
-            $this->messages[] = "$prefix: $msgText";
+            $this->messages[] = $msg;
         }
     }
 
