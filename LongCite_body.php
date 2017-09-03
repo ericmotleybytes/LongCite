@@ -5,5 +5,8 @@
 /// @file
 ### Note: This file uses Uses doxygen style annotation comments.
 ### Note: This file possibly includes some PHPUnit comment directives.
-LongCiteMaster::initialize();
+
+// This file is no longer used.
+//LongCiteMaster::initialize();
+
 ?>

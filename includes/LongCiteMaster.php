@@ -29,6 +29,10 @@ class LongCiteMaster {
         global $wgExtensionFunctions;
         global $wgExtensionCredits;
         global $wgHooks;
+        $m = $this->getMessenger();
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::register");
+        $m->dumpToFile();
+        $m->clearMessages();
         // register the extension
         #$wgExtensionFunctions[] = array(&$this,"setup");
         #$wgExtensionCredits['parserhook'][] = array( 
@@ -43,8 +47,11 @@ class LongCiteMaster {
     }
 
     public function setup() {
-        // Called after MediaWiki setup has finished.
         global $wgParser;
+        $m = $this->getMessenger();
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::setup");
+        $m->dumpToFile();
+        $m->clearMessages();
         // set hooks for parser functions
         $wgParser->setHook('longcitedef',array($this,"tagLongCiteDef"));
         $wgParser->setHook('longciteref',array($this,"tagLongCiteRef"));
@@ -125,6 +132,8 @@ class LongCiteMaster {
         $wgLongCiteMasterInstance = new LongCiteMaster();
         // Register the LongCite extension.
         $wgLongCiteMasterInstance->register();
+        // Set up the extension tags.
+        $wgLongCiteMasterInstance->setup();
     }
 }
 ?>
