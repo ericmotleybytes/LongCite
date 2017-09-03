@@ -63,7 +63,8 @@ class LongCiteMaster {
     public function onArticleDeleteComplete($article) {
         $pageId = $article->getTitle()->getPrefixedDBkey();
         $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::onArticleDeleteComplete for '$pageID'");
+        $m->registerMessage(LongCiteMessenger::DebugType,
+            "In Master::onArticleDeleteComplete for '$pageID'");
         $m->dumpToFile();
         $m->clearMessages();
         # TBD
@@ -71,9 +72,17 @@ class LongCiteMaster {
     }
 
     public function onArticleSave($article) {
+        $pageTitle = $article->getTitle();
         $pageId = $article->getTitle()->getPrefixedDBkey();
+        $art_r=print_r($article);
+        $pgt_r=print_r($pageTitle);
+        $pgi_r=print_r($pageId);
         $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::onArticleSave for '$pageID'");
+        $d = LongCiteMessenger::DebugType;
+        $m->registerMessage($d,"In Master::onArticleSave...");
+        $m->registerMessage($d,"...article=$art_r.");
+        $m->registerMessage($d,"...pgtitle=$pgt_r.");
+        $m->registerMessage($d,"...pgdbid =$pgi_r.");
         $m->dumpToFile();
         $m->clearMessages();
         # TBD
