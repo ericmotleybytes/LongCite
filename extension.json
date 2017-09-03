@@ -10,7 +10,12 @@
     "type": "other",
     "AutoloadClasses": {
         "LongCiteMaster"    : "includes/LongCiteMaster.php",
-        "LongCiteMessenger" : "includes/LongCiteMessenger.php"
+        "LongCiteMessenger" : "includes/LongCiteMessenger.php",
+        "LongCiteTag"       : "includes/LongCiteTag.php",
+        "LongCiteDefTag"    : "includes/LongCiteDefTag.php",
+        "LongCiteRefTag"    : "includes/LongCiteRefTag.php",
+        "LongCiteRenTag"    : "includes/LongCiteRenTag.php",
+        "LongCiteHlpTag"    : "includes/LongCiteHlpTag.php"
     }
     "config_prefix": "wg",
 	"ConfigRegistry": {

@@ -59,7 +59,24 @@ class LongCiteMaster {
     }
 
     public function tagLongCiteDef($input, $args, $parser, $frame) {
-        return "<p>TBD</p>\n";
+        $tagObj = new LongCiteDefTag($this);
+        $result = $tagObj->render($input,$args,$parser,$frame);
+        return $result;
+    }
+    public function tagLongCiteRef($input, $args, $parser, $frame) {
+        $tagObj = new LongCiteRefTag($this);
+        $result = $tagObj->render($input,$args,$parser,$frame);
+        return $result;
+    }
+    public function tagLongCiteRen($input, $args, $parser, $frame) {
+        $tagObj = new LongCiteHlpRen($this);
+        $result = $tagObj->render($input,$args,$parser,$frame);
+        return $result;
+    }
+    public function tagLongCiteHlp($input, $args, $parser, $frame) {
+        $tagObj = new LongCiteHlpTag($this);
+        $result = $tagObj->render($input,$args,$parser,$frame);
+        return $result;
     }
 
     /// Get the LongCiteMessenger:: instance to use.
