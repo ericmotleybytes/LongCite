@@ -72,7 +72,7 @@ class LongCiteMessenger {
         $dq = '"';  // a double-quote character.
         $result = "";
         foreach($this->messages as $message) {
-            $result .= "<p class=$dq" . $message["css-class"] . ">";
+            $result .= "<p class=$dq" . $message["css-class"] . $dq . ">";
             $result .= $message["prefix"] . ": " . $message["text"];
             $result .= "</p>\n";
         }

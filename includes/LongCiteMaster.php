@@ -30,7 +30,7 @@ class LongCiteMaster {
         global $wgExtensionCredits;
         global $wgHooks;
         // register the extension
-        $wgExtensionFunctions[] = array(&$this,"setup");
+        #$wgExtensionFunctions[] = array(&$this,"setup");
         #$wgExtensionCredits['parserhook'][] = array( 
         #    'name' => 'LongCite',
         #    'author' => 'Eric Alan Christiansen',
@@ -54,32 +54,56 @@ class LongCiteMaster {
 
     public function onArticleDeleteComplete($article) {
         $pageId = $article->getTitle()->getPrefixedDBkey();
+        $m = $this->getMessenger();
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::onArticleDeleteComplete for '$pageID'");
+        $m->dumpToFile();
+        $m->clearMessages();
         # TBD
         return true;
     }
 
     public function onArticleSave($article) {
         $pageId = $article->getTitle()->getPrefixedDBkey();
+        $m = $this->getMessenger();
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::onArticleSave for '$pageID'");
+        $m->dumpToFile();
+        $m->clearMessages();
         # TBD
         return true;
     }
 
     public function tagLongCiteDef($input, $args, $parser, $frame) {
+        $m = $this->getMessenger();
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteDef");
+        $m->dumpToFile();
+        $m->clearMessages();
         $tagObj = new LongCiteDefTag($this);
         $result = $tagObj->render($input,$args,$parser,$frame);
         return $result;
     }
     public function tagLongCiteRef($input, $args, $parser, $frame) {
+        $m = $this->getMessenger();
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteRef");
+        $m->dumpToFile();
+        $m->clearMessages();
         $tagObj = new LongCiteRefTag($this);
         $result = $tagObj->render($input,$args,$parser,$frame);
         return $result;
     }
     public function tagLongCiteRen($input, $args, $parser, $frame) {
-        $tagObj = new LongCiteHlpRen($this);
+        $m = $this->getMessenger();
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteRen");
+        $m->dumpToFile();
+        $m->clearMessages();
+        $tagObj = new LongCiteRenTag($this);
         $result = $tagObj->render($input,$args,$parser,$frame);
         return $result;
     }
     public function tagLongCiteHlp($input, $args, $parser, $frame) {
+        $m = $this->getMessenger();
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteHlp");
+        $m->dumpToFile();
+        $m->clearMessages();
         $tagObj = new LongCiteHlpTag($this);
         $result = $tagObj->render($input,$args,$parser,$frame);
         return $result;
