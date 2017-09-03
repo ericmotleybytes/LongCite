@@ -17,9 +17,10 @@
         "LongCiteRenTag"    : "includes/LongCiteRenTag.php",
         "LongCiteHlpTag"    : "includes/LongCiteHlpTag.php"
     },
-	"ConfigRegistry": {
+    "ExtensionFunctions" : ["LongCiteMaster::initialize"],
+    "ConfigRegistry": {
         "longcite": "GlobalVarConfig::newInstance"
-	},
+    },
     "config": {
         "LongCiteSettingFoo": {
             "value": true,
@@ -29,11 +30,11 @@
             "public": true
         }
     },
-	"MessagesDirs": {
-		"LongCite": [
-			"i18n"
-		]
-	},
+    "MessagesDirs": {
+        "LongCite": [
+            "i18n"
+        ]
+    },
     "ResourceModules": {
         "ext.longCite": {
             "styles": [
