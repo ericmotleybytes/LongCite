@@ -20,8 +20,9 @@ class LongCiteMaster {
         #
         $this->messenger = new LongCiteMessenger();
         $this->messenger->registerMessage(LongCiteMessenger::DebugType,
-            "Instantiated new LongCiteMaster!");
-        $this->messenger->dumpToFile(false);
+            "Instantiated new LongCiteMaster at " . time());
+        #$this->messenger->dumpToFile(false);
+        $this->messenger->dumpToFile(true);
         $this->messenger->clearMessages();
     }
 
