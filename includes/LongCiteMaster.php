@@ -21,8 +21,8 @@ class LongCiteMaster {
         $this->messenger = new LongCiteMessenger();
         $this->messenger->registerMessage(LongCiteMessenger::DebugType,
             "Instantiated new LongCiteMaster at " . time());
-        #$this->messenger->dumpToFile(false);
-        $this->messenger->dumpToFile(true);
+        $this->messenger->dumpToFile(false);
+        #$this->messenger->dumpToFile(true);
         $this->messenger->clearMessages();
         // Register the LongCite extension.
         $this->register();
