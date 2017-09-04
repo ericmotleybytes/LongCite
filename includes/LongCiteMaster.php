@@ -60,7 +60,7 @@ class LongCiteMaster {
         );
         // set database schema updates hook
         $wgHooks['LoadExtensionSchemaUpdates'][] = array(
-            &$this,""
+            &$this,"setupSchema"
         );
     }
 
