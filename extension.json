@@ -38,15 +38,15 @@
     "ResourceModules": {
         "ext.longCite": {
             "styles": [
-                "ext.longCite.css"
+                "modules/ext.longCite.css"
             ],
             "messages": [],
             "dependencies": []
         }
     },
     "ResourceFileModulePaths": {
-        "localBasePath": "modules",
-        "remoteExtPath": "LongCite/modules"
+        "localBasePath": "",
+        "remoteExtPath": "LongCite"
     },
     "manfest_version": [2]
 }
