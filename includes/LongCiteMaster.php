@@ -31,8 +31,6 @@ class LongCiteMaster {
     }
 
     public function register() {
-        global $wgExtensionFunctions;
-        global $wgExtensionCredits;
         global $wgHooks;
         $m = $this->getMessenger();
         $m->registerMessage(LongCiteMessenger::DebugType,"In Master::register");
@@ -78,9 +76,9 @@ class LongCiteMaster {
     public function onArticleSave($article) {
         $pageTitle = $article->getTitle();
         $pageId = $article->getTitle()->getPrefixedDBkey();
-        $art_r=print_r($article);
-        $pgt_r=print_r($pageTitle);
-        $pgi_r=print_r($pageId);
+        $art_r=print_r($article,true);
+        $pgt_r=print_r($pageTitle,true);
+        $pgi_r=print_r($pageId,true);
         $m = $this->getMessenger();
         $d = LongCiteMessenger::DebugType;
         $m->registerMessage($d,"In Master::onArticleSave...");
