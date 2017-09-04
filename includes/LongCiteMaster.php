@@ -46,7 +46,7 @@ class LongCiteMaster {
         #);
         // set setup parser hook
         $wgHooks['ParserFirstCallInit'][] = array(
-            &$this,"onSetupParser"
+            &$this,"setupParser"
         );
         // set top level runtime hooks
         $wgHooks['ArticleDeleteComplete'][] = array(
@@ -80,13 +80,13 @@ class LongCiteMaster {
             return "Error in setupSchema";
         }
         fwrite($sqlHdl,"CREATE TABLE IF NOT EXISTS " . $dbPrefix . "longcite_citation (\n");
-        fwrite($sqlHdl,"    longcite_guid char(32),\n");
-        fwrite($sqlHdl,"    longcite_id   varchar(255),\n");
-        fwrite($sqlHdl,"    longcite_page varchar(255),\n");
-        fwrite($sqlHdl,"    longcite_json varchar(20000),\n");
-        fwrite($sqlHdl,"    UNIQUE KEY " . $dbPrefix . "longcite_guid_pk  (longcite_guid),\n");
-        fwrite($sqlHdl,"    KEY        " . $dbPrefix . "longcite_id_idx   (longcite_id),\n");
-        fwrite($sqlHdl,"    KEY        " . $dbPrefix . "longcite_page_idx (longcite_page)\n");    
+        fwrite($sqlHdl," longcite_guid char(32),\n");
+        fwrite($sqlHdl," longcite_id   varchar(255),\n");
+        fwrite($sqlHdl," longcite_page varchar(255),\n");
+        fwrite($sqlHdl," longcite_json varchar(20000),\n");
+        fwrite($sqlHdl," UNIQUE KEY " . $dbPrefix . "longcite_guid_pk  (longcite_guid),\n");
+        fwrite($sqlHdl," KEY        " . $dbPrefix . "longcite_id_idx   (longcite_id),\n");
+        fwrite($sqlHdl," KEY        " . $dbPrefix . "longcite_page_idx (longcite_page)\n");
         fwrite($sqlHdl,");\n");
         fclose($sqlHdl);
         $updater->addExtensionTable("longcite_citation",$sqlFile);
