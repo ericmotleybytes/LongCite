@@ -22,7 +22,7 @@ class LongCiteTag {
         $this->args    = $args;
         $this->parser  = $parser;
         $this->frame   = $frame;
-        return "<p>TBD</p>\n";
+        return "";
     }
 
     public function getContent() {

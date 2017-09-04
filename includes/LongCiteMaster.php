@@ -27,7 +27,7 @@ class LongCiteMaster {
         // Register the LongCite extension.
         $this->register();
         // Set up the extension tags.
-        $this->setup();
+        $this->setupParser();
     }
 
     public function register() {
@@ -44,19 +44,34 @@ class LongCiteMaster {
         #    'description' => 'Adds tags for reference citation management.',
         #    'url' => 'http://www.mediawiki.org/wiki/Extension:LongCite'
         #);
-        // set top level hooks
-        $wgHooks['ArticleDeleteComplete'][]
-            = array(&$this,"onArticleDeleteComplete");
-        $wgHooks['ArticleSave'][]
-            = array(&$this,"onArticleSave");
-        $wgHooks['PageContentSaveComplete'][]
-            = array(&$this,"onPageContentSaveComplete");
+        // set setup parser hook
+        $wgHooks['ParserFirstCallInit'][] = array(
+            &$this,"onSetupParser"
+        );
+        // set top level runtime hooks
+        $wgHooks['ArticleDeleteComplete'][] = array(
+            &$this,"onArticleDeleteComplete"
+        );
+        $wgHooks['ArticleSave'][] = array(
+            &$this,"onArticleSave"
+        );
+        $wgHooks['PageContentSaveComplete'][] = array(
+            &$this,"onPageContentSaveComplete"
+        );
+        // set database schema updates hook
+        $wgHooks['LoadExtensionSchemaUpdates'][] = array(
+            &$this,""
+        );
     }
 
-    public function setup() {
+    public function setupSchema($updater) {
+        $sqlFile = __DIR__.'/../Tables.sql';
+        $updater->addExtensionTable("longcite_citation",$sqlFile);
+    }
+    public function setupParser() {
         global $wgParser;
         $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::setup");
+        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::setupParser");
         $m->dumpToFile();
         $m->clearMessages();
         // set hooks for parser functions
