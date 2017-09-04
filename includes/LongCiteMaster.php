@@ -25,9 +25,9 @@ class LongCiteMaster {
         $this->messenger->dumpToFile(true);
         $this->messenger->clearMessages();
         // Register the LongCite extension.
-        $wgLongCiteMasterInstance->register();
+        $this->register();
         // Set up the extension tags.
-        $wgLongCiteMasterInstance->setup();
+        $this->setup();
     }
 
     public function register() {
