@@ -1,0 +1,16 @@
+/*
+ * NOTE: This file is for documentation only!
+ * The LongCiteMaster::setupSchema function generates the
+ * GeneratedTables.sql file on the fly (with the appropriate
+ * database prefix from $wgDBprefix) and this generated file
+ * is what is used to actually used to update the database.
+ */
+CREATE TABLE IF NOT EXISTS {$wgDBprefix}longcite_citation (
+    longcite_guid char(32),
+    longcite_id   varchar(255),
+    longcite_page varchar(255),
+    longcite_json varchar(20000),
+    UNIQUE KEY {$wgDBprefix}longcite_guid_pk  (longcite_guid),
+    KEY        {$wgDBprefix}longcite_id_idx   (longcite_id),
+    KEY        {$wgDBprefix}longcite_page_idx (longcite_page)
+);
