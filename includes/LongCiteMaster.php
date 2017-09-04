@@ -66,7 +66,7 @@ class LongCiteMaster {
         $pageId = $article->getTitle()->getPrefixedDBkey();
         $m = $this->getMessenger();
         $m->registerMessage(LongCiteMessenger::DebugType,
-            "In Master::onArticleDeleteComplete for '$pageID'");
+            "In Master::onArticleDeleteComplete for '$pageId'");
         $m->dumpToFile();
         $m->clearMessages();
         # TBD
@@ -76,15 +76,15 @@ class LongCiteMaster {
     public function onArticleSave($article) {
         $pageTitle = $article->getTitle();
         $pageId = $article->getTitle()->getPrefixedDBkey();
-        $art_r=print_r($article,true);
-        $pgt_r=print_r($pageTitle,true);
-        $pgi_r=print_r($pageId,true);
+        #$art_r=print_r($article,true);
+        #$pgt_r=print_r($pageTitle,true);
+        #$pgi_r=print_r($pageId,true);
         $m = $this->getMessenger();
         $d = LongCiteMessenger::DebugType;
-        $m->registerMessage($d,"In Master::onArticleSave...");
-        $m->registerMessage($d,"...article=$art_r.");
-        $m->registerMessage($d,"...pgtitle=$pgt_r.");
-        $m->registerMessage($d,"...pgdbid =$pgi_r.");
+        $m->registerMessage($d,"In Master::onArticleSave for '$pageId'");
+        #$m->registerMessage($d,"...article=$art_r.");
+        #$m->registerMessage($d,"...pgtitle=$pgt_r.");
+        #$m->registerMessage($d,"...pgdbid =$pgi_r.");
         $m->dumpToFile();
         $m->clearMessages();
         # TBD
