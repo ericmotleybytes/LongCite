@@ -24,6 +24,10 @@ class LongCiteMaster {
         #$this->messenger->dumpToFile(false);
         $this->messenger->dumpToFile(true);
         $this->messenger->clearMessages();
+        // Register the LongCite extension.
+        $wgLongCiteMasterInstance->register();
+        // Set up the extension tags.
+        $wgLongCiteMasterInstance->setup();
     }
 
     public function register() {
@@ -138,12 +142,10 @@ class LongCiteMaster {
     public static function initialize() {
         // Extension globals.
         global $wgLongCiteMasterInstance;
-        // Instantiate the global LongCiteMaster.
-        $wgLongCiteMasterInstance = new LongCiteMaster();
-        // Register the LongCite extension.
-        $wgLongCiteMasterInstance->register();
-        // Set up the extension tags.
-        $wgLongCiteMasterInstance->setup();
+        // Instantiate the global LongCiteMaster if needed.
+        if(!isset($wgLongCiteMasterInstance)) {
+            $wgLongCiteMasterInstance = new LongCiteMaster();
+        }
     }
 }
 ?>
