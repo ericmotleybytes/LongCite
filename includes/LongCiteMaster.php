@@ -65,7 +65,30 @@ class LongCiteMaster {
     }
 
     public function setupSchema($updater) {
-        $sqlFile = __DIR__.'/../Tables.sql';
+        global $wgDBprefix;
+        $sqlFile = __DIR__.'/../GeneratedTables.sql';
+        // Create the create table sql command on the fly so that
+        // we can prepend the correct database prefix.
+        if(isset($wgDBprefix)) {
+            $dbPrefix = $wgDBprefix;
+        } else {
+            $dbPrefix = "";
+        }
+        $sqlHdl = fopen($sqlFile,"w");
+        if($sqlHdl===false) {
+            trigger_error("Could not create $sqlFile.",E_USER_WARNING);
+            return "Error in setupSchema";
+        }
+        fwrite($sqlHdl,"CREATE TABLE IF NOT EXISTS " . $dbPrefix . "longcite_citation (\n");
+        fwrite($sqlHdl,"    longcite_guid char(32),\n");
+        fwrite($sqlHdl,"    longcite_id   varchar(255),\n");
+        fwrite($sqlHdl,"    longcite_page varchar(255),\n");
+        fwrite($sqlHdl,"    longcite_json varchar(20000),\n");
+        fwrite($sqlHdl,"    UNIQUE KEY " . $dpPrefix . "longcite_guid_pk  (longcite_guid),\n");
+        fwrite($sqlHdl,"    KEY        " . $dpPrefix . "longcite_id_idx   (longcite_id),\n");
+        fwrite($sqlHdl,"    KEY        " . $dpPrefix . "longcite_page_idx (longcite_page)\n");    
+        fwrite($sqlHdl,");\n");
+        fclose($sqlHdl);
         $updater->addExtensionTable("longcite_citation",$sqlFile);
     }
     public function setupParser() {
