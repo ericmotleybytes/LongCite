@@ -17,8 +17,8 @@ class LongCiteHlpTag extends LongCiteTag {
         $result = parent::render($content, $args, $parser, $frame);  // init html result
         $messenger = $this->master->getMessenger();
         $dbg = LongCiteMessenger::DebugType;
-        $messenger->registerMessage($dbg,"In LongCiteHlp!");
-        $result .= $messenger->renderMessages();
+        $messenger->registerMessage($dbg,"In LongCiteHlp::render");
+        $result .= $messenger->renderMessagesHtml();
         return $result;
     }
 }

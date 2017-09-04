@@ -54,7 +54,7 @@ class LongCiteMessenger {
             $prefix = wfMessage($msgId)->plain();
             #$msgText = strip_tags($msgText,"<b>");
             #$msgText = filter_var($msgText,FILTER_SANITIZE_STRING);
-            $msgText = htmlentities($msgText,ENT_QUOTES);
+            #$msgText = htmlentities($msgText,ENT_QUOTES);
             $msg = array(
                 "type"      => $msgType,
                 "prefix"    => $prefix,
@@ -65,16 +65,34 @@ class LongCiteMessenger {
         }
     }
 
-    /// Render all buffered messages to HTML.
+    /// Render all buffered messages for html.
     /// Does NOT automatically clear the buffer, use clearMessages().
     /// @returns A string with html for all buffered messages.
-    public function renderMessages() {
+    public function renderMessagesHtml() {
         $dq = '"';  // a double-quote character.
         $result = "";
         foreach($this->messages as $message) {
-            $result .= "<p class=$dq" . $message["css-class"] . $dq . ">";
-            $result .= $message["prefix"] . ": " . $message["text"];
+            $cssClss = $message["css-class"];
+            $prefix  = $message["prefix"];
+            $text    = $message["text"];
+            $text    = htmlentities($text,ENT_QUOTES);
+            $result .= "<p class=$dq$cssClass$dq>";
+            $result .= "$prefix: $text";
             $result .= "</p>\n";
+        }
+        return $result;
+    }
+
+    /// Render all buffered messages for text.
+    /// Does NOT automatically clear the buffer, use clearMessages().
+    /// @returns A string with html for all buffered messages.
+    public function renderMessagesText() {
+        $dq = '"';  // a double-quote character.
+        $result = "";
+        foreach($this->messages as $message) {
+            $prefix  = $message["prefix"];
+            $text    = $message["text"];
+            $result .= "$prefix: $text\n";
         }
         return $result;
     }
@@ -90,8 +108,8 @@ class LongCiteMessenger {
         }
         $f = fopen($this->dumpFile,$mode);
         if($f===false) { return false; }
-        $html = $this->renderMessages();
-        $bytes = fwrite($f,$html);
+        $text = $this->renderMessagesText();
+        $bytes = fwrite($f,$text);
         if($bytes===false) {
             fclose($f);
             return false;

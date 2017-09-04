@@ -21,8 +21,8 @@ class LongCiteMaster {
         $this->messenger = new LongCiteMessenger();
         $this->messenger->registerMessage(LongCiteMessenger::DebugType,
             "Instantiated new LongCiteMaster at " . time());
-        $this->messenger->dumpToFile(false);
-        #$this->messenger->dumpToFile(true);
+        #$this->messenger->dumpToFile(false);
+        $this->messenger->dumpToFile(true);
         $this->messenger->clearMessages();
         // Register the LongCite extension.
         $this->register();
@@ -45,8 +45,12 @@ class LongCiteMaster {
         #    'url' => 'http://www.mediawiki.org/wiki/Extension:LongCite'
         #);
         // set top level hooks
-        $wgHooks['ArticleDeleteComplete'][] = array(&$this,"onArticleDeleteComplete");
-        $wgHooks['ArticleSave'][]           = array(&$this,"onArticleSave");
+        $wgHooks['ArticleDeleteComplete'][]
+            = array(&$this,"onArticleDeleteComplete");
+        $wgHooks['ArticleSave'][]
+            = array(&$this,"onArticleSave");
+        $wgHooks['PageContentSaveComplete'][]
+            = array(&$this,"onPageContentSaveComplete");
     }
 
     public function setup() {
@@ -85,6 +89,18 @@ class LongCiteMaster {
         #$m->registerMessage($d,"...article=$art_r.");
         #$m->registerMessage($d,"...pgtitle=$pgt_r.");
         #$m->registerMessage($d,"...pgdbid =$pgi_r.");
+        $m->dumpToFile();
+        $m->clearMessages();
+        # TBD
+        return true;
+    }
+
+    public function onPageContentSaveComplete($article) {
+        $pageTitle = $article->getTitle();
+        $pageId = $article->getTitle()->getPrefixedDBkey();
+        $m = $this->getMessenger();
+        $d = LongCiteMessenger::DebugType;
+        $m->registerMessage($d,"In Master::onPageContentSaveComplete for '$pageId'");
         $m->dumpToFile();
         $m->clearMessages();
         # TBD
