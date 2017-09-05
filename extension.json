@@ -15,7 +15,9 @@
         "LongCiteDefTag"    : "includes/LongCiteDefTag.php",
         "LongCiteRefTag"    : "includes/LongCiteRefTag.php",
         "LongCiteRenTag"    : "includes/LongCiteRenTag.php",
-        "LongCiteHlpTag"    : "includes/LongCiteHlpTag.php"
+        "LongCiteHlpTag"    : "includes/LongCiteHlpTag.php",
+        "LongCiteOptTag"    : "includes/LongCiteOptTag.php",
+        "LongCiteParam"     : "includes/LongCiteParam.php"
     },
     "ExtensionFunctions" : ["LongCiteMaster::initialize"],
     "ConfigRegistry": {

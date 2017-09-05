@@ -6,7 +6,7 @@
 ### Note: This file uses Uses doxygen style annotation comments.
 ### Note: This file possibly includes some PHPUnit comment directives.
 
-/// Parent Class for other LongCite tag classes.
+/// Class for the <longciteren> tag.
 class LongCiteRenTag extends LongCiteTag {
 
     public function __construct($master) {

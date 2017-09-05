@@ -12,16 +12,23 @@ class LongCiteTag {
     protected $content = null;  ///< Stuff between open and close tags.
     protected $args    = null;  ///< Settings within opening tag.
     protected $frame   = null;  ///< MediaWiki template/recursive parsing structure.
+    protected $paramTypes = array(); ///< Hash array of valid param names to types.
 
     public function __construct($master) {
         $this->master = $master;
     }
 
-    public function render($content, $args, $parser, $frame) {
-        $this->content = $content;
+    public function render($input, $args, $parser, $frame) {
+        $this->content = $input;
         $this->args    = $args;
         $this->parser  = $parser;
         $this->frame   = $frame;
+        # Add css module if not already added.
+        if($this->cssLoaded===false) {
+            $outputPage = $parser->getOutput;
+            $outputPage->addModules("ext.longCite");  # css
+            $this->cssLoaded = true;
+        }
         return "";
     }
 

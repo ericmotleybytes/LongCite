@@ -1,0 +1,12 @@
+{
+    "@metadata": {
+        "authors": ["Eric Alan Christiansen"]
+    },
+    "longcite-extensionname" : "LongCite",
+    "longcite-desc"      : "Referenz Zitat Management und Kontrolle.",
+    "longcite-error"     : "FEHLER",
+    "longcite-warning"   : "WARNUNG",
+    "longcite-note"      : "HINWEIS",
+    "longcite-debug"     : "DEBUG",
+    "longcite-timestamp" : "[ZEITSTEMPEL=$1]"
+}

@@ -1,18 +1,17 @@
 <?php
-/// Source code file for ExtensionTest unit testing class.
-/// @copyright Copyright (c) 2017, Eric Alan Christiansen.
+/// Source code file for LongCiteTest unit testing class.
 /// MIT License. See <https://opensource.org/licenses/MIT>.
 /// @file
 ### Note: This file uses Uses doxygen style annotation comments.
 ### Note: This file possibly includes some PHPUnit comment directives.
 use PHPUnit\Framework\Testcase;
 
-/// Tests simple math.
-class ExtensionTest extends Testcase {
+/// Some LongCite phpunit tests.
+class LongCiteTest extends Testcase {
 
     /// Test various checker functions.
     public function testMath() {
-        // check the checker
+        // check simple math.
         $this->assertEquals(4,2+2);
     }
 
@@ -45,5 +44,6 @@ class ExtensionTest extends Testcase {
         $jsonArr = json_decode($jsonStr,true);
         $this->assertNotNull($jsonArr);
     }
+
 }
 ?>
