@@ -13,10 +13,13 @@ class LongCiteWikiMessageStub {
     protected $params = array();  ///< Message parameters.
     protected $lang   = null;     ///< Current messaging language.
 
-    public function __construct($msgKey, $params=array()) {
+    public function __construct($msgKey, $params=array(), $language=null) {
         $this->msgKey  = $msgKey;
         $this->params($params);
-        $this->lang = $GLOBALS["wgLang"];  // use a string code for stub
+        $this->lang = $GLOBALS["wgLang"];
+        if(!is_null($language)) {
+            $this->lang = $language;
+        }
     }
 
     public function exists() {
@@ -41,13 +44,50 @@ class LongCiteWikiMessageStub {
 
     public function inContentLanguage() {
         global $wgLanguageCode;
-        $this->lang = $wgLanguageCode;
+        global $wgContLang;
+        if(isset($wgContLang)) {
+            $this->lang = $wgContLang;
+        } elseif(isset($wgLanguageCode)) {
+            $this->lang = LongCiteWikiLanguageStub::stubNew($wgLanguageCode);
+        } else {
+            $this->lang = LongCiteWikiLanguageStub::stubNew("en");
+        }
         return $this;
     }
 
     public function inLanguage($lang) {
-        $this->lang = $lang;
+        if(is_object($lang)) {
+            $this->lang = $lang;
+        } elseif(is_string($lang)) {
+            $this->lang = LongCiteWikiLanguageStub::stubNew($lang);
+        } else {
+            trigger_error("Bad language.",E_USER_WARNING);
+        }
         return $this;
+    }
+
+    public function isBlank() {
+        $trans = $this->stubLookupTranslation();
+        if($trans===false) {
+            return true;
+        } elseif($trans=="") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function isDisabled() {
+        $trans = $this->stubLookupTranslation();
+        if($trans===false) {
+            return true;
+        } elseif($trans=="") {
+            return true;
+        } elseif($trans=="-") {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function params(...$params) {
@@ -89,7 +129,8 @@ class LongCiteWikiMessageStub {
 
     public function stubLookupTranslation() {
         # this is inefficient, but we don't care for unit testing.
-        $jsonFile = __DIR__ . "/../i18n/" . $this->lang . ".json";
+        $langCode = $this->lang->getCode();
+        $jsonFile = __DIR__ . "/../i18n/" . $langCode . ".json";
         if(!file_exists($jsonFile)) { return false; }  // no translation file
         $jsonStr = file_get_contents($jsonFile);
         $jsonArr = json_decode($jsonStr,true);

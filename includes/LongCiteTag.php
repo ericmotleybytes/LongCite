@@ -12,11 +12,51 @@ class LongCiteTag {
     protected $input    = null;  ///< Stuff between open and close tags.
     protected $args     = null;  ///< Settings within opening tag.
     protected $frame    = null;  ///< MediaWiki template/recursive parsing structure.
-    protected $paramMap = array(); ///< Hash array of valid param names to types.
+    protected $inputLangCode  = "en";
+    protected $outputLangCode = "en";
 
     public function __construct($master) {
         $this->master = $master;
         $this->paramMap = array();
+        $this->inputLangCode  = $master->getInputLangCode();
+        $this->outputLangCode = $master->getOutputLangCode();
+    }
+
+    public function getArgs() {
+        return $this->args;
+    }
+
+    public function getFrame() {
+        return $this->frame;
+    }
+
+    public function getInput() {
+        return $this->input;
+    }
+
+    public function getInputLangCode() {
+        return $this->inputLangCode;
+    }
+
+    public function getMaster() {
+        return $this->master;
+    }
+
+    public function getOutputLangCode() {
+        return $this->outputLangCode;
+    }
+
+    public function getParser() {
+        return $this->parser;
+    }
+
+    public function getTagName() {
+        return get_class($this);
+    }
+
+    public function newParam($paramNameKey) {
+        $param = LongCiteParam::newParam($paramNameKey,$this);
+        return $param;
     }
 
     public function render($input, $args, $parser, $frame) {
@@ -30,32 +70,33 @@ class LongCiteTag {
         return "";
     }
 
-    public function getMaster() {
-        return $this->master;
+    public function setInputLangCode($code) {
+        $supportedCodes = $this->master->getSupportedLangCodes();
+        if(!in_array($code,$supportedCodes)) {
+            $outCode = $this->getOutputLangCode();
+            $messenger = $this->master->getMessenger();
+            $msg = wfMessage("longcite-err-badlang",$code)->
+                $msg->inLanguage($outCode)->plain();
+            $messenger->registerMessage(LongCiteMessenger::WarningType,$msg);
+            return $this->getInputLangCode();
+        }
+        $this->inputLangCode = $code;
+        return $code;
     }
 
-    public function getInput() {
-        return $this->input;
+    public function setOutputLangCode($code) {
+        $supportedCodes = $this->master->getSupportedLangCodes();
+        if(!in_array($code,$supportedCodes)) {
+            $outCode = $this->getOutputLangCode();
+            $messenger = $this->master->getMessenger();
+            $msg = wfMessage("longcite-err-badlang",$code)->
+                $msg->inLanguage($outCode)->plain();
+            $messenger->registerMessage(LongCiteMessenger::WarningType,$msg);
+            return $this->getOutputLangCode();
+        }
+        $this->outputLangCode = $code;
+        return $code;
     }
 
-    public function getArgs() {
-        return $this->args;
-    }
-
-    public function getParser() {
-        return $this->parser;
-    }
-
-    public function getFrame() {
-        return $this->frame;
-    }
-
-    public function getTagName() {
-        return get_class($this);
-    }
-
-    public function getParamMap() {
-        return $this->paramMap;
-    }
 }
 ?>

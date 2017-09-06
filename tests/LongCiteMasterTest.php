@@ -20,6 +20,17 @@ class LongCiteMasterTest extends Testcase {
         $master = LongCiteMaster::getActiveMaster();
         // stub wiki init should have created a LongCiteMaster object.
         $this->assertInstanceOf(LongCiteMaster::class,$master);
+        // check language
+        $langCodes = $master->getSupportedLangCodes();
+        $this->assertTrue(in_array("en",$langCodes));
+        $this->assertTrue(in_array("de",$langCodes));
+        $this->assertFalse(in_array("zz",$langCodes));
+        $this->assertEquals("en",$master->getOutputLangCode());
+        $this->assertEquals("en",$master->getInputLangCode());
+        $outCode = $master->setOutputLangCode("de");
+        $this->assertEquals("de",$outCode);
+        $this->assertEquals("de",$master->getOutputLangCode());
+        $outCode = $master->setOutputLangCode("en");
         // css should not initially be loaded
         $this->assertFalse($master->isCssLoaded());
         $master->setCssLoaded(true);

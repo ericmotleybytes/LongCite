@@ -13,50 +13,63 @@ class LongCiteParam {
     const ParamModeShort   = "short";
 
     protected static $paramClassMap = array(
-        "author" => "PersonName",
-        "key"    => "AlphaIdentifier"
+        "longcite-pn-alwayslang" => "LangCode",
+        "longcite-pn-author"     => "PersonName",
+        "longcite-pn-key"        => "AlphaId"
     );
 
-    protected static $paramDescMap = array(
-        "author" => "The name of whoever wrote it.",
-        "key"    => "The alphanumeric citation reference identifier."
-    );
-
-    public static function getParamClass($paramName) {
-        if(!array_key_exists($paramName,self::$paramClassMap)) { return false; }
-        $result = self::ParamClassPrefix . self::$paramClassMap[$paramName];
+    public static function getParamClass($paramNameKey) {
+        if(!array_key_exists($paramNameKey,self::$paramClassMap)) { return false; }
+        $result = self::ParamClassPrefix . self::$paramClassMap[$paramNameKey];
         return $result;
     }
 
-    public static function getParamType($paramName) {
-        if(!array_key_exists($paramName,self::$paramClassMap)) { return false; }
-        $result = self::$paramClassMap[$paramName];
+    public static function getParamType($paramNameKey) {
+        if(!array_key_exists($paramNameKey,self::$paramClassMap)) { return false; }
+        $result = self::$paramClassMap[$paramNameKey];
         return $result;
     }
 
-    public static function getParamDescription($paramName) {
-        if(!array_key_exists($paramName,self::$paramDescMap)) { return false; }
-        $result = self::$paramDescMap[$paramName];
+    public static function getParamDescKey($paramNameKey) {
+        $result = str_replace("-pn-","-pd-",$paramNameKey);
         return $result;
     }
 
-    public static function newParam($paramName) {
-        if(!array_key_exists($paramName,self::$paramClassMap)) {
+    public static function getParamDescription($paramNameKey) {
+        $descMsgKey = self::getParamDescKey($paramNameKey);
+        $result = wfMessage($descMsgKey)->plain();
+        return $result;
+    }
+
+    public static function newParam($paramNameKey,$tag) {
+        if(!array_key_exists($paramNameKey,self::$paramClassMap)) {
             return false;
         }
-        $paramClass = self::ParamClassPrefix . self::$paramClassMap[$paramName];
-        $paramObj = new $paramClass($paramName);
-        return $paramObj;
+        $paramClass = self::ParamClassPrefix . self::$paramClassMap[$paramNameKey];
+        try {
+            $result = new $paramClass($paramNameKey,$tag);
+        } catch (Exception $e) {
+            $result = false();
+        }
+        return $result;
     }
 
-    protected $paramName  = "";        ///< Name of the parameter in mark up.
+    protected $paramNameKey = "";      ///< i18n msg key (except for "lang").
+    protected $tag        = null;      ///< LongCiteTag (or child) object.
     protected $isMulti    = false;     ///< Are multivalues allowed.
     protected $inputDelim = ";";       ///< Multi value delimiter (if needed).
     protected $outputDelimMsgKeys = array(); ///< Hash mode to msg key.
-    protected $valuesRaw  = array();   ///< Raw value(s) as set.
+    protected $rawValues  = array();   ///< Raw value(s) as set.
 
-    public function __construct($paramName) {
-        $this->paramName = $paramName;
+    public function __construct($paramNameKey, $tag) {
+        if(!array_key_exists($paramNameKey,self::$paramClassMap)) {
+            throw new LongCiteException("Unrecognized param msg key ($paramNameKey).");
+        }
+        if(!is_a($tag,"LongCiteTag")) {
+            throw new LongCiteException("Tag is not a LongCiteTag.");
+        }
+        $this->tag = $tag;
+        $this->paramNameKey = $paramNameKey;
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;
         $this->setOutputDelimMsgKey($longMode,"longcite-and-delim");
@@ -65,18 +78,19 @@ class LongCiteParam {
 
     // Add values to the parameter.
     // @param $values - Scalar string, but if multi may have multiple delimited values.
-    public function addValues($values) {
+    public function addRawValues($values) {
         $values = trim($values);
         if($this->isMulti()) {
             $delim = $this->getInputDelim();
             $valueList = explode($delim,$values);
             foreach($valueList as $value) {
-                $this->valuesRaw[] = $value;
+                $this->rawValues[] = $value;
             }
         } else {
             # not a multi param, overwrite any old value.
-            $this->valuesRaw = array($values);
+            $this->rawValues = array($values);
         }
+        return true;
     }
 
     public function getInputDelim() {
@@ -84,8 +98,8 @@ class LongCiteParam {
         return $this->inputDelim;
     }
 
-    public function getName() {
-        return $this->paramName;
+    public function getNameKey() {
+        return $this->paramNameKey;
     }
 
     public function getOutputDelim($mode=LongCiteParam::ParamModeLong) {
@@ -102,6 +116,14 @@ class LongCiteParam {
         }
         $msgKey = $this->outputDelimMsgKeys[$mode];
         return $msgKey;
+    }
+
+    public function getRawValues() {
+        return $this->rawValues;
+    }
+
+    public function getTag() {
+        return $this->tag;
     }
 
     public function getType() {

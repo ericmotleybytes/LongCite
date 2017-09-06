@@ -2,14 +2,21 @@
     "@metadata": {
         "authors": ["Eric Alan Christiansen"]
     },
-    "longcite-extensionname" : "LongCite",
-    "longcite-desc"          : "Reference citation management and control.",
-    "longcite-error"         : "ERROR",
-    "longcite-warning"       : "WARNING",
-    "longcite-note"          : "NOTE",
-    "longcite-debug"         : "DEBUG",
-    "longcite-and-delim"     : " and ",
-    "longcite-semi-delim"    : ";",
-    "longcite-bar-delim"     : "|",
-    "longcite-timestamp"     : "[TIMESTAMP=$1]"
+    "longcite-extensionname"  : "LongCite",
+    "longcite-desc"           : "Reference citation management and control.",
+    "longcite-error"          : "ERROR",
+    "longcite-warning"        : "WARNING",
+    "longcite-note"           : "NOTE",
+    "longcite-debug"          : "DEBUG",
+    "longcite-and-delim"      : " and ",
+    "longcite-semi-delim"     : ";",
+    "longcite-bar-delim"      : "|",
+    "longcite-pn-alwayslang"  : "lang",
+    "longcite-pd-alwayslang"  : "Selects the language for other parameter names.",
+    "longcite-pn-key"         : "key",
+    "longcite-pd-key"         : "Specifies the citation reference key.",
+    "longcite-pn-author"      : "author",
+    "longcite-pd-author"      : "Specifies who wrote it.",
+    "longcite-err-badlang"    : "Unsupported language code ($1).",
+    "longcite-timestamp"      : "[TIMESTAMP=$1]"
 }

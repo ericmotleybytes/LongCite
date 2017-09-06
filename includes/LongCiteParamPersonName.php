@@ -8,8 +8,8 @@
 /// Parent Class for other LongCite tag classes.
 class LongCiteParamPersonName extends LongCiteParam {
 
-    public function __construct($paramName) {
-        parent::__construct($paramname);
+    public function __construct($paramNameKey,$tag) {
+        parent::__construct($paramNameKey,$tag);
         $this->isMulti = true;
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;

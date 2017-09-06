@@ -2,14 +2,21 @@
     "@metadata": {
         "authors": ["Eric Alan Christiansen"]
     },
-    "longcite-extensionname" : "LongCite",
-    "longcite-desc"          : "Referenz Zitat Management und Kontrolle.",
-    "longcite-error"         : "FEHLER",
-    "longcite-warning"       : "WARNUNG",
-    "longcite-note"          : "HINWEIS",
-    "longcite-debug"         : "DEBUG",
-    "longcite-and-delim"     : " und ",
-    "longcite-semi-delim"    : ";",
-    "longcite-bar-delim"     : "|",
-    "longcite-timestamp"     : "[ZEITSTEMPEL=$1]"
+    "longcite-extensionname"  : "LongCite",
+    "longcite-desc"           : "Referenz Zitat Management und Kontrolle.",
+    "longcite-error"          : "FEHLER",
+    "longcite-warning"        : "WARNUNG",
+    "longcite-note"           : "HINWEIS",
+    "longcite-debug"          : "DEBUG",
+    "longcite-and-delim"      : " und ",
+    "longcite-semi-delim"     : ";",
+    "longcite-bar-delim"      : "|",
+    "longcite-pn-alwayslang"  : "lang",
+    "longcite-pd-alwayslang"  : "Wählt die Sprache für andere Parameternamen aus.",
+    "longcite-pn-key"         : "schlüssel",
+    "longcite-pd-key"         : "Gibt den Ziffernreferenzschlüssel an.",
+    "longcite-pn-author"      : "autor",
+    "longcite-pd-author"      : "Gibt an, wer es geschrieben hat.",
+    "longcite-err-badlang"    : "Nicht unterstützter Sprachcode ($1).",
+    "longcite-timestamp"      : "[ZEITSTEMPEL=$1]"
 }

@@ -13,6 +13,7 @@ require_once __DIR__ . "/LongCiteWikiOutputPageStub.php";
 require_once __DIR__ . "/LongCiteWikiParserOutputStub.php";
 require_once __DIR__ . "/LongCiteWikiPPFrameStub.php";
 require_once __DIR__ . "/LongCiteWikiMessageStub.php";
+require_once __DIR__ . "/LongCiteWikiLanguageStub.php";
 require_once __DIR__ . "/../includes/LongCiteMaster.php";
 require_once __DIR__ . "/../includes/LongCiteMessenger.php";
 
@@ -55,7 +56,7 @@ class LongCiteWikiStub {
         $GLOBALS["wgDBprefix"]      = "mwtq_";
         $GLOBALS["wgShellLocale"]   = "en_US.utf8";
         $GLOBALS["wgLanguageCode"]  = "en";
-        $GLOBALS["wgContLang"]      = $GLOBALS["wgLanguageCode"];
+        $GLOBALS["wgContLang"]      = LongCiteWikiLanguageStub::stubNew("en");
         $GLOBALS["wgExternalLinkTarget"] = '_blank';
     }
 
@@ -97,7 +98,7 @@ class LongCiteWikiStub {
 
     /// Initialize some typically user preference stuff.
     public static function initUserPrefs() {
-        $GLOBALS["wgLang"] = "en";
+        $GLOBALS["wgLang"] = LongCiteWikiLanguageStub::stubNew("en");
     }
 
     /// Initialize a global stub parser object.

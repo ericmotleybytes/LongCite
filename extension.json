@@ -20,6 +20,7 @@
         "LongCiteParam"           : "includes/LongCiteParam.php",
         "LongCiteParamAlphaId"    : "includes/LongCiteParamAlphaId.php",
         "LongCiteParamPersonName" : "includes/LongCiteParamPersonName.php",
+        "LongCiteException"       : "includes/LongCiteException.php",
         "LongCiteUtil"            : "includes/LongCiteUtil.php"
     },
     "ExtensionFunctions" : ["LongCiteMaster::initialize"],

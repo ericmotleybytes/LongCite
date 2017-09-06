@@ -24,14 +24,14 @@ class LongCiteWikiMessageStubTest extends Testcase {
         $this->assertInstanceOf(LongCiteWikiMessageStub::class,$msgObj);
         $this->assertEquals($msgKey,$msgObj->getKey());
         $this->assertTrue($msgObj->exists());
-        $this->assertEquals("en",$msgObj->getLanguage());  # really an obj not a code
+        $this->assertEquals("en",$msgObj->getLanguage()->getCode());
         $this->assertEquals("NOTE",$msgObj->parse());
         $this->assertEquals("NOTE",$msgObj->plain());
         $this->assertEquals("NOTE",$msgObj->text());
         $this->assertEquals("NOTE",$msgObj->toString());
         $this->assertEquals("NOTE",$msgObj->stubLookupTranslation());
         $msgObj->inLanguage("de");
-        $this->assertEquals("de",$msgObj->getLanguage());  # really an obj not a code
+        $this->assertEquals("de",$msgObj->getLanguage()->getCode());
         $this->assertEquals("HINWEIS",$msgObj->parse());
         $this->assertEquals("HINWEIS",$msgObj->plain());
         $this->assertEquals("HINWEIS",$msgObj->text());

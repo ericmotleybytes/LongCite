@@ -8,6 +8,7 @@
 /// Master control class for the LongCite MediaWiki extension.
 /// Defines utility routines and data structures.
 class LongCiteMaster {
+    const DefaultInputLanguageCode = "en";  ///< Parsing input default always en.
 
     protected static $activeMaster = null;  ///< Main active master object instance.
 
@@ -36,17 +37,27 @@ class LongCiteMaster {
     protected $sqlTableFile =
         __DIR__.'/../GeneratedTables.sql'; ///< Generated file for update.php.
     protected $cssModule = "ext.longCite"; ///< LongCite CSS module name.
+    protected $supportedLangCodes = array("en","de");  ///< supported output codes.
+    protected $outputLangCode = "en";    ///< Can be changed to another supported code.
 
     /// Class instance constructor.
     function __construct() {
+        global $wgLang;
         $cssLoaded = false;
-        #$this->messenger = null; // defer instantiation
         $this->messenger = new LongCiteMessenger(); // instantiate now
-        $this->messenger->registerMessage(LongCiteMessenger::DebugType,
-            "Instantiated new LongCiteMaster at " . time());
+        #$this->messenger = null; // defer instantiation
+        #$this->messenger->registerMessage(LongCiteMessenger::DebugType,
+        #    "Instantiated new LongCiteMaster at " . time());
         #$this->messenger->dumpToFile(false);
-        $this->messenger->dumpToFile(true);
-        $this->messenger->clearMessages();
+        #$this->messenger->dumpToFile(true);
+        #$this->messenger->clearMessages();
+        // Determine the default output language.
+        if(isset($wgLang)) {
+            $candCode = $wgLang->getCode();
+            if(in_array($candCode,$this->supportedLangCodes)) {
+                $this->outputLangCode = $candCode;
+            }
+        }
         // Register the LongCite extension.
         $this->register();
         #// Set up the extension tags.
@@ -63,6 +74,30 @@ class LongCiteMaster {
         } else {
             $this->cssLoaded = false;
         }
+    }
+
+    public function getSupportedLangCodes() {
+        return $this->supportedLangCodes;
+    }
+
+    /// Get the default tag render output language.
+    public function getOutputLangCode() {
+        return $this->outputLangCode;
+    }
+
+    /// Get the default tag parsing input language. This default cannot
+    /// be globally changed, but it can be changed within a tag using the
+    /// 'lang={code}' syntax (e.g., 'lang="de"').
+    public function getInputLangCode() {
+        return self::DefaultInputLanguageCode;
+    }
+
+    /// Set the default tag render output language.
+    public function setOutputLangCode($code) {
+        if(in_array($code,$this->supportedLangCodes)) {
+            $this->outputLangCode = $code;
+        }
+        return $this->outputLangCode;
     }
 
     /// Load CSS resource module if and only if not already loaded needed.

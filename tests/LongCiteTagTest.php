@@ -23,6 +23,15 @@ class LongCiteTagTest extends Testcase {
         $this->assertInstanceOf(LongCiteTag::class,$tag);
         $master = $tag->getMaster();
         $this->assertInstanceOf(LongCiteMaster::class,$master);
+        // test language control
+        $tag->setInputLangCode("de");
+        $this->assertEquals("de",$tag->getInputLangCode());
+        $tag->setOutputLangCode("de");
+        $this->assertEquals("de",$tag->getOutputLangCode());
+        $tag->setInputLangCode("en");
+        $this->assertEquals("en",$tag->getInputLangCode());
+        $tag->setOutputLangCode("en");
+        $this->assertEquals("en",$tag->getOutputLangCode());
         // test render
         $frameArgs = array();
         $tagArgs   = array();
@@ -38,7 +47,6 @@ class LongCiteTagTest extends Testcase {
         $this->assertEquals($parser,$tag->getParser());
         $this->assertEquals($frame,$tag->getFrame());
         $this->assertEquals("LongCiteTag",$tag->getTagName());
-        $this->assertEquals(array(),$tag->getParamMap());
     }
 
 }
