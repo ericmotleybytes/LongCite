@@ -9,15 +9,18 @@
     "license-name": "MIT",
     "type": "other",
     "AutoloadClasses": {
-        "LongCiteMaster"    : "includes/LongCiteMaster.php",
-        "LongCiteMessenger" : "includes/LongCiteMessenger.php",
-        "LongCiteTag"       : "includes/LongCiteTag.php",
-        "LongCiteDefTag"    : "includes/LongCiteDefTag.php",
-        "LongCiteRefTag"    : "includes/LongCiteRefTag.php",
-        "LongCiteRenTag"    : "includes/LongCiteRenTag.php",
-        "LongCiteHlpTag"    : "includes/LongCiteHlpTag.php",
-        "LongCiteOptTag"    : "includes/LongCiteOptTag.php",
-        "LongCiteParam"     : "includes/LongCiteParam.php"
+        "LongCiteMaster"          : "includes/LongCiteMaster.php",
+        "LongCiteMessenger"       : "includes/LongCiteMessenger.php",
+        "LongCiteTag"             : "includes/LongCiteTag.php",
+        "LongCiteDefTag"          : "includes/LongCiteDefTag.php",
+        "LongCiteRefTag"          : "includes/LongCiteRefTag.php",
+        "LongCiteRenTag"          : "includes/LongCiteRenTag.php",
+        "LongCiteHlpTag"          : "includes/LongCiteHlpTag.php",
+        "LongCiteOptTag"          : "includes/LongCiteOptTag.php",
+        "LongCiteParam"           : "includes/LongCiteParam.php",
+        "LongCiteParamAlphaId"    : "includes/LongCiteParamAlphaId.php",
+        "LongCiteParamPersonName" : "includes/LongCiteParamPersonName.php",
+        "LongCiteUtil"            : "includes/LongCiteUtil.php"
     },
     "ExtensionFunctions" : ["LongCiteMaster::initialize"],
     "ConfigRegistry": {

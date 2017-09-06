@@ -12,10 +12,12 @@ use PHPUnit\Framework\Testcase;
 /// Some LongCite phpunit tests.
 class LongCiteWikiMessageStubTest extends Testcase {
 
-    /// Test various checker functions.
-    public function testInstantiation() {
-        // initialize stub wiki
+    /// Test various functions.
+    public function testFunctions() {
+        // initialize
+        LongCiteMaster::clearActiveMaster();
         LongCiteWikiStub::initialize();
+        $master = LongCiteMaster::getActiveMaster();
         // Get an existing key message object
         $msgKey = "longcite-note";
         $msgObj = new LongCiteWikiMessageStub($msgKey);

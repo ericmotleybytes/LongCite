@@ -3,10 +3,13 @@
         "authors": ["Eric Alan Christiansen"]
     },
     "longcite-extensionname" : "LongCite",
-    "longcite-desc"      : "Referenz Zitat Management und Kontrolle.",
-    "longcite-error"     : "FEHLER",
-    "longcite-warning"   : "WARNUNG",
-    "longcite-note"      : "HINWEIS",
-    "longcite-debug"     : "DEBUG",
-    "longcite-timestamp" : "[ZEITSTEMPEL=$1]"
+    "longcite-desc"          : "Referenz Zitat Management und Kontrolle.",
+    "longcite-error"         : "FEHLER",
+    "longcite-warning"       : "WARNUNG",
+    "longcite-note"          : "HINWEIS",
+    "longcite-debug"         : "DEBUG",
+    "longcite-and-delim"     : " und ",
+    "longcite-semi-delim"    : ";",
+    "longcite-bar-delim"     : "|",
+    "longcite-timestamp"     : "[ZEITSTEMPEL=$1]"
 }

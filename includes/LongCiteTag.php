@@ -8,32 +8,34 @@
 
 /// Parent Class for other LongCite tag classes.
 class LongCiteTag {
-    protected $master  = null;  ///< LongCiteMaster instance.
-    protected $content = null;  ///< Stuff between open and close tags.
-    protected $args    = null;  ///< Settings within opening tag.
-    protected $frame   = null;  ///< MediaWiki template/recursive parsing structure.
-    protected $paramTypes = array(); ///< Hash array of valid param names to types.
+    protected $master   = null;  ///< LongCiteMaster instance.
+    protected $input    = null;  ///< Stuff between open and close tags.
+    protected $args     = null;  ///< Settings within opening tag.
+    protected $frame    = null;  ///< MediaWiki template/recursive parsing structure.
+    protected $paramMap = array(); ///< Hash array of valid param names to types.
 
     public function __construct($master) {
         $this->master = $master;
+        $this->paramMap = array();
     }
 
     public function render($input, $args, $parser, $frame) {
-        $this->content = $input;
+        $this->input   = $input;
         $this->args    = $args;
         $this->parser  = $parser;
         $this->frame   = $frame;
         # Add css module if not already added.
-        if($this->cssLoaded===false) {
-            $outputPage = $parser->getOutput;
-            $outputPage->addModules("ext.longCite");  # css
-            $this->cssLoaded = true;
-        }
+        $parserOutput = $parser->getOutput();
+        $this->master->loadCssModule($parserOutput);
         return "";
     }
 
-    public function getContent() {
-        return $this->content;
+    public function getMaster() {
+        return $this->master;
+    }
+
+    public function getInput() {
+        return $this->input;
     }
 
     public function getArgs() {
@@ -48,5 +50,12 @@ class LongCiteTag {
         return $this->frame;
     }
 
+    public function getTagName() {
+        return get_class($this);
+    }
+
+    public function getParamMap() {
+        return $this->paramMap;
+    }
 }
 ?>

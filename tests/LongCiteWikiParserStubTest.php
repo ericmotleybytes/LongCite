@@ -14,11 +14,16 @@ class LongCiteWikiParserStubTest extends Testcase {
 
     /// Test various functions.
     public function testFunctions() {
-        // initialize stub wiki
+        // initialize
+        LongCiteMaster::clearActiveMaster();
         LongCiteWikiStub::initialize();
+        $master = LongCiteMaster::getActiveMaster();
         // get a stub parser object.
         $parser = new LongCiteWikiParserStub();
         $this->assertInstanceOf(LongCiteWikiParserStub::class,$parser);
+        // ask for its ParserOutput object.
+        $parserOutput = $parser->getOutput();
+        $this->assertInstanceOf(LongCiteWikiParserOutputStub::class,$parserOutput);
         // set a test parser hook
         $callable = array($this,"sampleHookRoutine");
         $parser->setHook('sample',$callable);

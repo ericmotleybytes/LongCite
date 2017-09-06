@@ -15,16 +15,14 @@
 /// rendered later via <longciteren>).
 class LongCiteDefTag extends LongCiteTag {
 
-    static protected $paramTypesDef = array(
-        "id"     => "StringIdentifier/A",
-        "author" => "PersonName/A"
+    protected $validDefParamNames = array(
+        "id", "author"
     );
 
     /// Class constructor.
     /// @param $master - The LongCiteMaster instance doing the instantiation.
     public function __construct($master) {
         parent::__construct($master);
-        $this->paramTypes = LongSiteTag::$paramTypesDef;
     }
 
     /// Process the <longcitedef> tag.

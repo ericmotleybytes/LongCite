@@ -101,6 +101,7 @@ class LongCiteMessenger {
     /// @param $appendFlag - True to append to existing file, if any.
     /// returns true on success, else false.
     public function dumpToFile($appendFlag=true) {
+        if(true) { return true; }  /// disable for now
         if($appendFlag) {
             $mode = "a";
         } else {

@@ -11,8 +11,9 @@
 class LongCiteWikiUpdaterStub {
 
     protected $extensionUpdates = array();  ///< Extension sql info.
+
     public function __construct() {
-        $this->extTables = array();
+        $this->extensionUpdates = array();
     }
 
     public function addExtensionTable($tableName,$sqlFile) {

@@ -3,11 +3,14 @@
         "authors": ["Eric Alan Christiansen"]
     },
     "longcite-extensionname" : "Name of the extension.",
-    "longcite-desc"      :
+    "longcite-desc"          :
         "{{desc|name=Longcite|url=https://www.mediawiki.org/wiki/Extension:Longcite}}",
-    "longcite-error"     : "Prefix for error messages.",
-    "longcite-warning"   : "Prefix for warning messages.",
-    "longcite-note"      : "Prefix for note messages.",
-    "longcite-debug"     : "Prefix for debug messages.",
-    "longcite-timestamp" : "A timestamp (1 parameter)."
+    "longcite-error"         : "Prefix for error messages.",
+    "longcite-warning"       : "Prefix for warning messages.",
+    "longcite-note"          : "Prefix for note messages.",
+    "longcite-debug"         : "Prefix for debug messages.",
+    "longcite-and-delim"     : "Output delimiter, e.g., {Bob and Ted}.",
+    "longcite-semi-delim"    : "Output delimiter, e.g., {Bob;Ted}.",
+    "longcite-bar-delim"     : "Output delimiter, e.g., {Bob|Ted}.",
+    "longcite-timestamp"     : "A timestamp (1 parameter)."
 }

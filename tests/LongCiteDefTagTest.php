@@ -1,5 +1,5 @@
 <?php
-/// Source code file for LongCiteWikiStubTest unit testing class.
+/// Source code file for LongCiteDefTagTest unit testing class.
 /// MIT License. See <https://opensource.org/licenses/MIT>.
 /// @file
 ### Note: This file uses Uses doxygen style annotation comments.
@@ -10,16 +10,18 @@ require_once __DIR__ . "/LongCiteWikiStub.php";
 use PHPUnit\Framework\Testcase;
 
 /// Some LongCite phpunit tests.
-class LongCiteWikiStubTest extends Testcase {
+class LongCiteDefTagTest extends Testcase {
 
-    /// Test various checker functions.
-    public function testInitialization() {
+    /// Test functions.
+    public function testFunctions() {
         // initialize
         LongCiteMaster::clearActiveMaster();
         LongCiteWikiStub::initialize();
         $master = LongCiteMaster::getActiveMaster();
-        // check some globals
-        $this->assertEquals("en",$GLOBALS["wgLanguageCode"]);
+        // instantiate tag
+        $tag = new LongCiteDefTag($master);
+        $this->assertInstanceOf(LongCiteDefTag::class,$tag);
+        $this->assertEquals("LongCiteDefTag",$tag->getTagName());
     }
 
 }

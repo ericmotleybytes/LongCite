@@ -5,15 +5,37 @@
 ### Note: This file uses Uses doxygen style annotation comments.
 ### Note: This file possibly includes some PHPUnit comment directives.
 
-
 /// Master control class for the LongCite MediaWiki extension.
 /// Defines utility routines and data structures.
 class LongCiteMaster {
+
+    protected static $activeMaster = null;  ///< Main active master object instance.
+
+    public static function clearActiveMaster() {
+        self::$activeMaster = null;
+    }
+
+    public static function getActiveMaster() {
+        return self::$activeMaster;
+    }
+
+    public static function initialize() {
+        if(is_null(self::getActiveMaster())) {
+            self::newActiveMaster();
+        }
+    }
+
+    public static function newActiveMaster() {
+        $master = new LongCiteMaster();
+        self::$activeMaster = $master;
+        return $master;
+    }
 
     protected $messenger = null;  ///< Set to instance of LongCiteMessenger:: class.
     protected $cssLoaded = false; ///< Set true when CSS resource loaded to output page.
     protected $sqlTableFile =
         __DIR__.'/../GeneratedTables.sql'; ///< Generated file for update.php.
+    protected $cssModule = "ext.longCite"; ///< LongCite CSS module name.
 
     /// Class instance constructor.
     function __construct() {
@@ -29,6 +51,27 @@ class LongCiteMaster {
         $this->register();
         #// Set up the extension tags.
         #$this->setupParser($GLOBALS['wgParser']);
+    }
+
+    public function isCssLoaded() {
+        return $this->cssLoaded;
+    }
+
+    public function setCssLoaded($flag) {
+        if($flag) {
+            $this->cssLoaded = true;
+        } else {
+            $this->cssLoaded = false;
+        }
+    }
+
+    /// Load CSS resource module if and only if not already loaded needed.
+    /// @param $outputObj - An instance of either OutputPage or ParserOutput.
+    public function loadCssModule($outputObj) {
+        if(!$this->isCssLoaded()) {
+            $outputObj->addModules($this->cssModule);
+            $this->setCssLoaded(true);
+        }
     }
 
     public function register() {
@@ -306,13 +349,5 @@ class LongCiteMaster {
         return $this->messenger;
     }
 
-    public static function initialize() {
-        // Extension globals.
-        global $wgLongCiteMasterInstance;
-        // Instantiate the global LongCiteMaster if needed.
-        if(!isset($wgLongCiteMasterInstance)) {
-            $wgLongCiteMasterInstance = new LongCiteMaster();
-        }
-    }
 }
 ?>

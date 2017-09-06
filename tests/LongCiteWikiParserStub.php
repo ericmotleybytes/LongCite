@@ -11,10 +11,17 @@
 class LongCiteWikiParserStub {
 
     protected $parserHooks = array();  ///< Saved parser hook callables.
+    protected $parserOutput = null;    ///< Set to a ParserOutput object.
 
     /// Class constructor.
     public function __construct() {
         $this->parserHooks = array();
+        $this->parserOutput = new LongCiteWikiParserOutputStub();
+    }
+
+    /// Get the associated ParserOutput object.
+    public function getOutput() {
+        return $this->parserOutput;
     }
 
     /// Set a particular parser callable hook.

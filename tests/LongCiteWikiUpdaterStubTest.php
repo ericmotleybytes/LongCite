@@ -14,8 +14,10 @@ class LongCiteWikiUpdaterStubTest extends Testcase {
 
     /// Test various functions.
     public function testFunctions() {
-        // initialize stub wiki
+        // initialize
+        LongCiteMaster::clearActiveMaster();
         LongCiteWikiStub::initialize();
+        $master = LongCiteMaster::getActiveMaster();
         // get a stub updater object.
         $updater = new LongCiteWikiUpdaterStub();
         $this->assertInstanceOf(LongCiteWikiUpdaterStub::class,$updater);

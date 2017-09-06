@@ -14,12 +14,21 @@ class LongCiteMasterTest extends Testcase {
 
     /// Test various functions.
     public function testFunctions() {
-        // initialize stub wiki
+        // initialize
+        LongCiteMaster::clearActiveMaster();
         LongCiteWikiStub::initialize();
+        $master = LongCiteMaster::getActiveMaster();
         // stub wiki init should have created a LongCiteMaster object.
-        $this->assertTrue(array_key_exists("wgLongCiteMasterInstance",$GLOBALS));
-        $master = $GLOBALS["wgLongCiteMasterInstance"];
         $this->assertInstanceOf(LongCiteMaster::class,$master);
+        // css should not initially be loaded
+        $this->assertFalse($master->isCssLoaded());
+        $master->setCssLoaded(true);
+        $this->assertTrue($master->isCssLoaded());
+        $master->setCssLoaded(false);
+        $this->assertFalse($master->isCssLoaded());
+        $parserOutput = new LongCiteWikiParserOutputStub();
+        $master->loadCssModule($parserOutput);
+        $this->assertTrue($master->isCssLoaded());
     }
 
 }

@@ -9,7 +9,12 @@
 
 require_once __DIR__ . "/LongCiteWikiUpdaterStub.php";
 require_once __DIR__ . "/LongCiteWikiParserStub.php";
+require_once __DIR__ . "/LongCiteWikiOutputPageStub.php";
+require_once __DIR__ . "/LongCiteWikiParserOutputStub.php";
+require_once __DIR__ . "/LongCiteWikiPPFrameStub.php";
 require_once __DIR__ . "/LongCiteWikiMessageStub.php";
+require_once __DIR__ . "/../includes/LongCiteMaster.php";
+require_once __DIR__ . "/../includes/LongCiteMessenger.php";
 
 /// Mimick the wfMessage global function.
 /// @param - The MediaWiki message identifier (a string).

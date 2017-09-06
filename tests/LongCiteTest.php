@@ -9,40 +9,26 @@ use PHPUnit\Framework\Testcase;
 /// Some LongCite phpunit tests.
 class LongCiteTest extends Testcase {
 
-    /// Test various checker functions.
+    /// Test something simple functions, mostly to check phpunit itself.
     public function testMath() {
         // check simple math.
         $this->assertEquals(4,2+2);
     }
 
-    // check that extension.json is valid json.
-    public function testExtensionJson() {
-        $jsonFile = __DIR__."/../extension.json";
-        $this->assertFileExists($jsonFile);
-        $jsonStr = file_get_contents($jsonFile);
-        $this->assertNotFalse($jsonStr);
-        $jsonArr = json_decode($jsonStr,true);
-        $this->assertNotNull($jsonArr);
-    }
-
-    // check that i18n/en.json is valid json.
-    public function testEnJson() {
-        $jsonFile = __DIR__."/../i18n/en.json";
-        $this->assertFileExists($jsonFile);
-        $jsonStr = file_get_contents($jsonFile);
-        $this->assertNotFalse($jsonStr);
-        $jsonArr = json_decode($jsonStr,true);
-        $this->assertNotNull($jsonArr);
-    }
-
-    // check that i18n/qqq.json is valid json.
-    public function testQqqJson() {
-        $jsonFile = __DIR__."/../i18n/qqq.json";
-        $this->assertFileExists($jsonFile);
-        $jsonStr = file_get_contents($jsonFile);
-        $this->assertNotFalse($jsonStr);
-        $jsonArr = json_decode($jsonStr,true);
-        $this->assertNotNull($jsonArr);
+    // check that json files are each valid json.
+    public function testJsonFiles() {
+        $jsonFiles = array();
+        $jsonFiles[] = __DIR__."/../extension.json";
+        $jsonFiles[] = __DIR__."/../i18n/en.json";
+        $jsonFiles[] = __DIR__."/../i18n/de.json";
+        $jsonFiles[] = __DIR__."/../i18n/qqq.json";
+        foreach($jsonFiles as $jsonFile) {
+            $this->assertFileExists($jsonFile);
+            $jsonStr = file_get_contents($jsonFile);
+            $this->assertNotFalse($jsonStr);
+            $jsonArr = json_decode($jsonStr,true);
+            $this->assertNotNull($jsonArr);
+        }
     }
 
 }
