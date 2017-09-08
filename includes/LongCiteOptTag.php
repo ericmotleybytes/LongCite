@@ -9,17 +9,23 @@
 /// Class for the <longciteopt> tag.
 class LongCiteOptTag extends LongCiteTag {
 
-    public function __construct($master) {
-        parent::__construct($master);
+    /// Class constructor.
+    /// @param $master - The LongCiteMaster instance doing the instantiation.
+    /// @param $input - Content between <longciteopt> and </longciteopt>.
+    /// @param $args - Hash array of settings within opening <longciteopt> tag.
+    /// @param $parser - The parser object.
+    /// @param $frame - Recursive parsing frame.
+    public function __construct($master, $input, $args, $parser, $frame=false) {
+        parent::__construct($master, $input, $args, $parser, $frame);
     }
 
-    public function render($content, $args, $parser, $frame) {
-        $result = parent::render($content, $args, $parser, $frame);  // init html result
-        $messenger = $this->master->getMessenger();
-        $dbg = LongCiteMessenger::DebugType;
-        $messenger->registerMessage($dbg,"In LongCiteOpt::render");
-        $result .= $messenger->renderMessagesHtml();
+    /// Process the <longciteopt> tag.
+    /// @return A string with rendered HTML.
+    public function render() {
+        $result = parent::render();  // init html result
+        $this->getMaster()->renderTrace();
         return $result;
     }
+
 }
 ?>

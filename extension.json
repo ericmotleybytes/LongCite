@@ -9,6 +9,7 @@
     "license-name": "MIT",
     "type": "other",
     "AutoloadClasses": {
+        "LongCite"                : "includes/LongCite.php",
         "LongCiteMaster"          : "includes/LongCiteMaster.php",
         "LongCiteMessenger"       : "includes/LongCiteMessenger.php",
         "LongCiteTag"             : "includes/LongCiteTag.php",
@@ -20,6 +21,7 @@
         "LongCiteParam"           : "includes/LongCiteParam.php",
         "LongCiteParamAlphaId"    : "includes/LongCiteParamAlphaId.php",
         "LongCiteParamPersonName" : "includes/LongCiteParamPersonName.php",
+        "LongCiteParamLangCode"   : "includes/LongCiteParamLangCode.php",
         "LongCiteException"       : "includes/LongCiteException.php",
         "LongCiteUtil"            : "includes/LongCiteUtil.php"
     },

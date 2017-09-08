@@ -19,12 +19,15 @@ class LongCiteWikiPPFrameStubTest extends Testcase {
         LongCiteWikiStub::initialize();
         $master = LongCiteMaster::getActiveMaster();
         // get a stub ppframe object.
-        $args  = array("Hello" => "World");
+        $args  = array("Hello" => "World", 0 => "Zero" );
         $frame = new LongCiteWikiPPFrameStub($args);
         $this->assertInstanceOf(LongCiteWikiPPFrameStub::class,$frame);
         // get
         $args2 = $frame->getArguments();
         $this->assertEquals($args,$args2);
+        $this->assertEquals(array("Hello"=>"World"),$frame->getNamedArguments());
+        $this->assertEquals(array("Zero"),$frame->getNumberedArguments());
+        $this->assertFalse($frame->isEmpty());
     }
 
 }

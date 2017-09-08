@@ -14,8 +14,8 @@ class LongCiteParamLangCode extends LongCiteParam {
     }
 
     public function addRawValues($values) {
-        $values = strtolower($values);
         $result = parent::addRawValues($values);
+        $values = strtolower($values);
         return $result;
     }
 

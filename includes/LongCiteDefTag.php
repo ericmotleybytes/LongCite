@@ -21,22 +21,19 @@ class LongCiteDefTag extends LongCiteTag {
 
     /// Class constructor.
     /// @param $master - The LongCiteMaster instance doing the instantiation.
-    public function __construct($master) {
-        parent::__construct($master);
-    }
-
-    /// Process the <longcitedef> tag.
     /// @param $input - Content between <longcitedef> and </longcitedef>.
     /// @param $args - Hash array of settings within opening <longcitedef> tag.
     /// @param $parser - The parser object.
     /// @param $frame - Recursive parsing frame.
+    public function __construct($master, $input, $args, $parser, $frame=false) {
+        parent::__construct($master, $input, $args, $parser, $frame);
+    }
+
+    /// Process the <longcitedef> tag.
     /// @return A string with rendered HTML.
-    public function render($content, $args, $parser, $frame) {
-        $result = parent::render($content, $args, $parser, $frame);  // init html result
-        $messenger = $this->master->getMessenger();
-        $dbg = LongCiteMessenger::DebugType;
-        $messenger->registerMessage($dbg,"In LongCiteHlp::render");
-        $result .= $messenger->renderMessagesHtml();
+    public function render() {
+        $result = parent::render();  // init html result
+        $this->getMaster()->renderTrace();
         return $result;
     }
 

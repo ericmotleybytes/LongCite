@@ -15,11 +15,18 @@ class LongCiteTag {
     protected $inputLangCode  = "en";
     protected $outputLangCode = "en";
 
-    public function __construct($master) {
+    public function __construct($master, $input, $args, $parser, $frame=false) {
         $this->master = $master;
+        $this->input   = $input;
+        $this->args    = $args;
+        $this->parser  = $parser;
+        $this->frame   = $frame;
         $this->paramMap = array();
         $this->inputLangCode  = $master->getInputLangCode();
         $this->outputLangCode = $master->getOutputLangCode();
+        # Add css module if not already added.
+        $parserOutput = $this->parser->getOutput();
+        $this->master->loadCssModule($parserOutput);
     }
 
     public function getArgs() {
@@ -42,6 +49,10 @@ class LongCiteTag {
         return $this->master;
     }
 
+    public function getMessenger() {
+        return $this->getMaster()->getMessenger();
+    }
+
     public function getOutputLangCode() {
         return $this->outputLangCode;
     }
@@ -59,14 +70,8 @@ class LongCiteTag {
         return $param;
     }
 
-    public function render($input, $args, $parser, $frame) {
-        $this->input   = $input;
-        $this->args    = $args;
-        $this->parser  = $parser;
-        $this->frame   = $frame;
-        # Add css module if not already added.
-        $parserOutput = $parser->getOutput();
-        $this->master->loadCssModule($parserOutput);
+    public function render() {
+        $this->getMaster()->renderTrace();
         return "";
     }
 

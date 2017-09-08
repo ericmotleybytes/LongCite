@@ -39,6 +39,7 @@ class LongCiteMaster {
     protected $cssModule = "ext.longCite"; ///< LongCite CSS module name.
     protected $supportedLangCodes = array("en","de");  ///< supported output codes.
     protected $outputLangCode = "en";    ///< Can be changed to another supported code.
+    protected $parser = null;            ///< Gets parser object as setup hook.
 
     /// Class instance constructor.
     function __construct() {
@@ -64,102 +65,9 @@ class LongCiteMaster {
         #$this->setupParser($GLOBALS['wgParser']);
     }
 
-    public function isCssLoaded() {
-        return $this->cssLoaded;
-    }
-
-    public function setCssLoaded($flag) {
-        if($flag) {
-            $this->cssLoaded = true;
-        } else {
-            $this->cssLoaded = false;
-        }
-    }
-
-    public function getSupportedLangCodes() {
-        return $this->supportedLangCodes;
-    }
-
-    /// Get the default tag render output language.
-    public function getOutputLangCode() {
-        return $this->outputLangCode;
-    }
-
     /// Get the default tag parsing input language. This default cannot
     /// be globally changed, but it can be changed within a tag using the
     /// 'lang={code}' syntax (e.g., 'lang="de"').
-    public function getInputLangCode() {
-        return self::DefaultInputLanguageCode;
-    }
-
-    /// Set the default tag render output language.
-    public function setOutputLangCode($code) {
-        if(in_array($code,$this->supportedLangCodes)) {
-            $this->outputLangCode = $code;
-        }
-        return $this->outputLangCode;
-    }
-
-    /// Load CSS resource module if and only if not already loaded needed.
-    /// @param $outputObj - An instance of either OutputPage or ParserOutput.
-    public function loadCssModule($outputObj) {
-        if(!$this->isCssLoaded()) {
-            $outputObj->addModules($this->cssModule);
-            $this->setCssLoaded(true);
-        }
-    }
-
-    public function register() {
-        global $wgHooks;
-        $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::register");
-        $m->dumpToFile();
-        $m->clearMessages();
-        // register the extension
-        #$wgExtensionFunctions[] = array(&$this,"setup");
-        #$wgExtensionCredits['parserhook'][] = array( 
-        #    'name' => 'LongCite',
-        #    'author' => 'Eric Alan Christiansen',
-        #    'description' => 'Adds tags for reference citation management.',
-        #    'url' => 'http://www.mediawiki.org/wiki/Extension:LongCite'
-        #);
-        // set setup parser hook
-        $wgHooks['ParserFirstCallInit'][] = array(
-            &$this,"setupParser"
-        );
-        // set top level runtime hooks
-        $wgHooks['ArticleDeleteComplete'][] = array(
-            &$this,"onArticleDeleteComplete"
-        );
-        $wgHooks['PageContentSaveComplete'][] = array(
-            &$this,"onPageContentSaveComplete"
-        );
-        #$wgHooks['OutputPageParserOutput'][] = array(
-        #    &$this,"onOutputPageParserOutput"
-        #);
-        // set database schema updates hook
-        $wgHooks['LoadExtensionSchemaUpdates'][] = array(
-            &$this,"setupSchema"
-        );
-    }
-
-    /// Get the name of the generated sql table file for update.php.
-    /// @return The name of the generated sql file.
-    public function getSqlTableFile() {
-        return $this->sqlTableFile;
-    }
-
-    /// Called when maintenance/update.php is run to allow extensions
-    /// to update the database schema.
-    /// See $wgHooks['LoadExtensionSchemaUpdates'].
-    /// See https://www.mediawiki.org/wiki/Manual:Hooks/LoadExtensionSchemaUpdates.
-    /// @param $updater - The DatabaseUpdater object.
-    public function setupSchema($updater) {
-        $sqlFile = $this->getSqlTableFile();
-        $sql = $this->generateSqlTableFile($sqlFile);
-        $updater->addExtensionTable("longcite_citation",$sqlFile);
-    }
-
     public function generateSqlTableFile($sqlFile) {
         global $wgDBprefix;
         // Create the create table sql command on the fly so that
@@ -188,29 +96,51 @@ class LongCiteMaster {
         return $result;
     }
 
-    /// Called when the parser initializes for the first time.
-    /// See $wgHooks['ParserFirstCallInit'].
-    /// See https://www.mediawiki.org/wiki/Manual:Hooks/ParserFirstCallInit.
-    /// See https://www.mediawiki.org/wiki/Manual:Parser.php.
-    /// @param $parser - Parser object being initialized.
-    public function setupParser(&$parser) {
-        #if(is_null($parser)) {
-        #    $parser = $GLOBALS['wgParser'];
-        #}
-        $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::setupParser");
-        $m->dumpToFile();
-        $m->clearMessages();
-        // set hooks for parser functions
-        #$wgParser->setHook('longcitedef',array($this,"tagLongCiteDef"));
-        #$wgParser->setHook('longciteref',array($this,"tagLongCiteRef"));
-        #$wgParser->setHook('longciteren',array($this,"tagLongCiteRen"));
-        #$wgParser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
-        $parser->setHook('longcitedef',array($this,"tagLongCiteDef"));
-        $parser->setHook('longciteref',array($this,"tagLongCiteRef"));
-        $parser->setHook('longciteren',array($this,"tagLongCiteRen"));
-        $parser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
-        $parser->setHook('longciteopt',array($this,"tagLongCiteOpt"));
+    public function getInputLangCode() {
+        return self::DefaultInputLanguageCode;
+    }
+
+    /// Get the LongCiteMessenger:: instance to use.
+    /// @returns A LongCiteMessenger:: instance.
+    public function getMessenger() {
+        if(is_null($this->messenger)) {
+            $this->messenger = new LongCiteMessenger();
+        }
+        return $this->messenger;
+    }
+
+    /// Get the default tag render output language.
+    public function getOutputLangCode() {
+        return $this->outputLangCode;
+    }
+
+    /// Get parser object.
+    /// @return A parser object.
+    public function getParser() {
+        return $this->parser;
+    }
+
+    /// Get the name of the generated sql table file for update.php.
+    /// @return The name of the generated sql file.
+    public function getSqlTableFile() {
+        return $this->sqlTableFile;
+    }
+
+    public function getSupportedLangCodes() {
+        return $this->supportedLangCodes;
+    }
+
+    public function isCssLoaded() {
+        return $this->cssLoaded;
+    }
+
+    /// Load CSS resource module if and only if not already loaded needed.
+    /// @param $outputObj - An instance of either OutputPage or ParserOutput.
+    public function loadCssModule($outputObj) {
+        if(!$this->isCssLoaded()) {
+            $outputObj->addModules($this->cssModule);
+            $this->setCssLoaded(true);
+        }
     }
 
     /// Called when an article delete completes.
@@ -295,6 +225,184 @@ class LongCiteMaster {
         ##}
     }
 
+    public function setCssLoaded($flag) {
+        if($flag) {
+            $this->cssLoaded = true;
+        } else {
+            $this->cssLoaded = false;
+        }
+    }
+
+    public function register() {
+        global $wgHooks;
+        #$m = $this->getMessenger();
+        #$m->registerMessage(LongCiteMessenger::DebugType,"In Master::register");
+        #$m->dumpToFile();
+        #$m->clearMessages();
+        // register the extension
+        #$wgExtensionFunctions[] = array(&$this,"setup");
+        #$wgExtensionCredits['parserhook'][] = array( 
+        #    'name' => 'LongCite',
+        #    'author' => 'Eric Alan Christiansen',
+        #    'description' => 'Adds tags for reference citation management.',
+        #    'url' => 'http://www.mediawiki.org/wiki/Extension:LongCite'
+        #);
+        // set setup parser hook
+        $wgHooks['ParserFirstCallInit'][] = array(
+            &$this,"setupParser"
+        );
+        // set top level runtime hooks
+        $wgHooks['ArticleDeleteComplete'][] = array(
+            &$this,"onArticleDeleteComplete"
+        );
+        $wgHooks['PageContentSaveComplete'][] = array(
+            &$this,"onPageContentSaveComplete"
+        );
+        #$wgHooks['OutputPageParserOutput'][] = array(
+        #    &$this,"onOutputPageParserOutput"
+        #);
+        // set database schema updates hook
+        $wgHooks['LoadExtensionSchemaUpdates'][] = array(
+            &$this,"setupSchema"
+        );
+    }
+
+    public function renderDebug($message) {
+        $this->getMessenger()->registerMessage(
+            LongCiteMessenger::DebugType,$message
+        );
+    }
+    public function renderError($message) {
+        $this->getMessenger()->registerMessage(
+            LongCiteMessenger::ErrorType,$message
+        );
+    }
+    public function renderNote($message) {
+        $this->getMessenger()->registerMessage(
+            LongCiteMessenger::NoteType,$message
+        );
+    }
+    public function renderTrace($message="") {
+        $backTrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+        $info = $backTrace[1];
+        $function = $info["function"];
+        $class    = $info["class"];
+        $file     = $info["file"];
+        $line     = $info["line"];
+        $file     = basename($file,".php");
+        $message = trim("($class::$function:$line) $message");
+        $this->getMessenger()->registerMessage(
+            LongCiteMessenger::TraceType,$message
+        );
+    }
+    public function renderWarning($message) {
+        $this->getMessenger()->registerMessage(
+            LongCiteMessenger::WarningType,$message
+        );
+    }
+
+    public function renderDebugState($newState=null) {
+        $messenger = $this->getMessenger();
+        $msgType = LongCiteMessenger::DebugType;
+        if(!is_null($newState)) {
+            $messenger->setEnable($msgType,$newState);
+        }
+        return $messenger->getEnable($msgType);
+    }
+
+    public function renderErrorState($newState=null) {
+        $messenger = $this->getMessenger();
+        $msgType = LongCiteMessenger::ErrorType;
+        if(!is_null($newState)) {
+            $messenger->setEnable($msgType,$newState);
+        }
+        return $messenger->getEnable($msgType);
+    }
+
+    public function renderNoteState($newState=null) {
+        $messenger = $this->getMessenger();
+        $msgType = LongCiteMessenger::NoteType;
+        if(!is_null($newState)) {
+            $messenger->setEnable($msgType,$newState);
+        }
+        return $messenger->getEnable($msgType);
+    }
+
+    public function renderTraceState($newState=null) {
+        $messenger = $this->getMessenger();
+        $msgType = LongCiteMessenger::TraceType;
+        if(!is_null($newState)) {
+            $messenger->setEnable($msgType,$newState);
+        }
+        return $messenger->getEnable($msgType);
+    }
+
+    public function renderWarningState($newState=null) {
+        $messenger = $this->getMessenger();
+        $msgType = LongCiteMessenger::WarningType;
+        if(!is_null($newState)) {
+            $messenger->setEnable($msgType,$newState);
+        }
+        return $messenger->getEnable($msgType);
+    }
+
+    /// Set the default tag render output language.
+    public function setOutputLangCode($code) {
+        if(in_array($code,$this->supportedLangCodes)) {
+            $this->outputLangCode = $code;
+        }
+        return $this->outputLangCode;
+    }
+
+    /// Called when the parser initializes for the first time.
+    /// See $wgHooks['ParserFirstCallInit'].
+    /// See https://www.mediawiki.org/wiki/Manual:Hooks/ParserFirstCallInit.
+    /// See https://www.mediawiki.org/wiki/Manual:Parser.php.
+    /// @param $parser - Parser object being initialized.
+    public function setupParser(&$parser) {
+        $this->parser = $parser;
+        #if(is_null($parser)) {
+        #    $parser = $GLOBALS['wgParser'];
+        #}
+        #$m = $this->getMessenger();
+        #$m->registerMessage(LongCiteMessenger::DebugType,"In Master::setupParser");
+        #$m->dumpToFile();
+        #$m->clearMessages();
+        // set hooks for parser functions
+        #$wgParser->setHook('longcitedef',array($this,"tagLongCiteDef"));
+        #$wgParser->setHook('longciteref',array($this,"tagLongCiteRef"));
+        #$wgParser->setHook('longciteren',array($this,"tagLongCiteRen"));
+        #$wgParser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
+        $parser->setHook('longcite'   ,array($this,"tagLongCite"));
+        $parser->setHook('longcitedef',array($this,"tagLongCiteDef"));
+        $parser->setHook('longciteref',array($this,"tagLongCiteRef"));
+        $parser->setHook('longciteren',array($this,"tagLongCiteRen"));
+        $parser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
+        $parser->setHook('longciteopt',array($this,"tagLongCiteOpt"));
+    }
+
+    /// Called when maintenance/update.php is run to allow extensions
+    /// to update the database schema.
+    /// See $wgHooks['LoadExtensionSchemaUpdates'].
+    /// See https://www.mediawiki.org/wiki/Manual:Hooks/LoadExtensionSchemaUpdates.
+    /// @param $updater - The DatabaseUpdater object.
+    public function setupSchema($updater) {
+        $sqlFile = $this->getSqlTableFile();
+        $sql = $this->generateSqlTableFile($sqlFile);
+        $updater->addExtensionTable("longcite_citation",$sqlFile);
+    }
+
+    /// Called when parser finds <longcite>. Mostly for testing and debugging.
+    /// @param $input - Content between <longcitedef> and </longcitedef>.
+    /// @param $args - Hash array of settings within opening <longcitedef> tag.
+    /// @param $parser - The parser object.
+    /// @param $frame - Recursive parsing frame.
+    /// @return A string with rendered HTML.
+    public function tagLongCite($input, $args, $parser, $frame) {
+        $tagObj = new LongCiteTag($this, $input, $args, $parser, $frame);
+        $result = $tagObj->render();
+        return $result;
+    }
     /// Called when parser finds <longcitedef>.
     /// @param $input - Content between <longcitedef> and </longcitedef>.
     /// @param $args - Hash array of settings within opening <longcitedef> tag.
@@ -302,12 +410,8 @@ class LongCiteMaster {
     /// @param $frame - Recursive parsing frame.
     /// @return A string with rendered HTML.
     public function tagLongCiteDef($input, $args, $parser, $frame) {
-        $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteDef");
-        $m->dumpToFile();
-        $m->clearMessages();
-        $tagObj = new LongCiteDefTag($this);
-        $result = $tagObj->render($input,$args,$parser,$frame);
+        $tagObj = new LongCiteDefTag($this, $input, $args, $parser, $frame);
+        $result = $tagObj->render();
         return $result;
     }
 
@@ -317,32 +421,6 @@ class LongCiteMaster {
     /// @param $parser - The parser object.
     /// @param $frame - Recursive parsing frame.
     /// @return A string with rendered HTML.
-    public function tagLongCiteRef($input, $args, $parser, $frame) {
-        $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteRef");
-        $m->dumpToFile();
-        $m->clearMessages();
-        $tagObj = new LongCiteRefTag($this);
-        $result = $tagObj->render($input,$args,$parser,$frame);
-        return $result;
-    }
-
-    /// Called when parser finds <longciteren>.
-    /// @param $input - Content between <longciteren> and </longciteren>.
-    /// @param $args - Hash array of settings within opening <longciteren> tag.
-    /// @param $parser - The parser object.
-    /// @param $frame - Recursive parsing frame.
-    /// @return A string with rendered HTML.
-    public function tagLongCiteRen($input, $args, $parser, $frame) {
-        $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteRen");
-        $m->dumpToFile();
-        $m->clearMessages();
-        $tagObj = new LongCiteRenTag($this);
-        $result = $tagObj->render($input,$args,$parser,$frame);
-        return $result;
-    }
-
     /// Called when parser finds <longcitehlp>.
     /// @param $input - Content between <longcitehlp> and </longcitehlp>.
     /// @param $args - Hash array of settings within opening <longcitehlp> tag.
@@ -350,12 +428,8 @@ class LongCiteMaster {
     /// @param $frame - Recursive parsing frame.
     /// @return A string with rendered HTML.
     public function tagLongCiteHlp($input, $args, $parser, $frame) {
-        $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteHlp");
-        $m->dumpToFile();
-        $m->clearMessages();
-        $tagObj = new LongCiteHlpTag($this);
-        $result = $tagObj->render($input,$args,$parser,$frame);
+        $tagObj = new LongCiteHlpTag($this, $input, $args, $parser, $frame);
+        $result = $tagObj->render();
         return $result;
     }
 
@@ -366,22 +440,27 @@ class LongCiteMaster {
     /// @param $frame - Recursive parsing frame.
     /// @return A string with rendered HTML.
     public function tagLongCiteOpt($input, $args, $parser, $frame) {
-        $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,"In Master::tagLongCiteOpt");
-        $m->dumpToFile();
-        $m->clearMessages();
-        $tagObj = new LongCiteOptTag($this);
-        $result = $tagObj->render($input,$args,$parser,$frame);
+        $tagObj = new LongCiteOptTag($this, $input, $args, $parser, $frame);
+        $result = $tagObj->render();
         return $result;
     }
 
-    /// Get the LongCiteMessenger:: instance to use.
-    /// @returns A LongCiteMessenger:: instance.
-    public function getMessenger() {
-        if(is_null($this->messenger)) {
-            $this->messenger = new LongCiteMessenger();
-        }
-        return $this->messenger;
+    public function tagLongCiteRef($input, $args, $parser, $frame) {
+        $tagObj = new LongCiteRefTag($this, $input, $args, $parser, $frame);
+        $result = $tagObj->render();
+        return $result;
+    }
+
+    /// Called when parser finds <longciteren>.
+    /// @param $input - Content between <longciteren> and </longciteren>.
+    /// @param $args - Hash array of settings within opening <longciteren> tag.
+    /// @param $parser - The parser object.
+    /// @param $frame - Recursive parsing frame.
+    /// @return A string with rendered HTML.
+    public function tagLongCiteRen($input, $args, $parser, $frame) {
+        $tagObj = new LongCiteRenTag($this, $input, $args, $parser, $frame);
+        $result = $tagObj->render();
+        return $result;
     }
 
 }

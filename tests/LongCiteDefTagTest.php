@@ -18,8 +18,9 @@ class LongCiteDefTagTest extends Testcase {
         LongCiteMaster::clearActiveMaster();
         LongCiteWikiStub::initialize();
         $master = LongCiteMaster::getActiveMaster();
+        $parser = $master->getParser();
         // instantiate tag
-        $tag = new LongCiteDefTag($master);
+        $tag = new LongCiteDefTag($master,"",array(),$parser,false);
         $this->assertInstanceOf(LongCiteDefTag::class,$tag);
         $this->assertEquals("LongCiteDefTag",$tag->getTagName());
     }

@@ -21,6 +21,15 @@ class LongCiteWikiParserStubTest extends Testcase {
         // get a stub parser object.
         $parser = new LongCiteWikiParserStub();
         $this->assertInstanceOf(LongCiteWikiParserStub::class,$parser);
+        // check parse substitutions
+        $subs = array("Hello"=>"World",1=>"One");
+        $frame = new LongCiteWikiPPFrameStub($subs);
+        $raw = 'I like the {{{Hello}}} of {{{1}}}.';
+        $exp = "I like the World of One.";
+        $act1 = $parser->recursiveTagParse($raw);
+        $act2 = $parser->recursiveTagParse($raw,$frame);
+        $this->assertEquals($raw,$act1);
+        $this->assertEquals($exp,$act2);
         // ask for its ParserOutput object.
         $parserOutput = $parser->getOutput();
         $this->assertInstanceOf(LongCiteWikiParserOutputStub::class,$parserOutput);
@@ -31,14 +40,14 @@ class LongCiteWikiParserStubTest extends Testcase {
         is_callable($callable,false,$callableName);
         // invoke the test parser hook
         $something = "bork";
-        $results = $parser->stubHookCaller("sample",array($something));
+        $results = $parser->stubCallHook("sample","",array(),$parser,false);
         $this->assertNotFalse($results);
         $this->assertTrue(array_key_exists($callableName,$results));
         $this->assertEquals($something,$results[$callableName]);
     }
 
-    public function sampleHookRoutine($something) {
-        return $something;
+    public function sampleHookRoutine($input,$args,$parser,$frame) {
+        return "bork";
     }
 }
 ?>

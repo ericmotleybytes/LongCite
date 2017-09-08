@@ -19,7 +19,7 @@ class LongCiteWikiMessageStubTest extends Testcase {
         LongCiteWikiStub::initialize();
         $master = LongCiteMaster::getActiveMaster();
         // Get an existing key message object
-        $msgKey = "longcite-note";
+        $msgKey = "longcite-msgtyp-note";
         $msgObj = new LongCiteWikiMessageStub($msgKey);
         $this->assertInstanceOf(LongCiteWikiMessageStub::class,$msgObj);
         $this->assertEquals($msgKey,$msgObj->getKey());

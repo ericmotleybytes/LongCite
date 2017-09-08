@@ -9,17 +9,15 @@
 /// Class for the <longcitehlp> tag..
 class LongCiteHlpTag extends LongCiteTag {
 
-    public function __construct($master) {
-        parent::__construct($master);
+    public function __construct($master, $input, $args, $parser, $frame=false) {
+        parent::__construct($master, $input, $args, $parser, $frame);
     }
 
-    public function render($content, $args, $parser, $frame) {
-        $result = parent::render($content, $args, $parser, $frame);  // init html result
-        $messenger = $this->master->getMessenger();
-        $dbg = LongCiteMessenger::DebugType;
-        $messenger->registerMessage($dbg,"In LongCiteHlp::render");
-        $result .= $messenger->renderMessagesHtml();
+    public function render() {
+        $result = parent::render();  // init html result
+        $this->getMaster()->renderTrace();
         return $result;
     }
+
 }
 ?>

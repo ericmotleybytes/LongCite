@@ -10,28 +10,41 @@
 /// Defines utility routines and data structures.
 class LongCiteMessenger {
 
-   const ErrorType   = "ERROR";     ///< Constant id for error messages.
-   const WarningType = "WARNING";   ///< Constant id for warning messages.
-   const NoteType    = "NOTE";      ///< Constant id for note messages.
-   const DebugType   = "DEBUG";     ///< Constant id for debug messages.
-   protected $messages     = array();  ///< Array of messages, each msg a hash array.
-   protected $prefixMsgIds = array();  ///< Hash array of i18n ids, by msg type.
-   protected $cssClasses   = array();  ///< Hash array of css classes, by msg type.
-   protected $dumpFile = __DIR__."/../dump.out"; ///< Message dump file.
+    const ErrorType   = "ERROR";     ///< Constant id for error messages.
+    const WarningType = "WARNING";   ///< Constant id for warning messages.
+    const NoteType    = "NOTE";      ///< Constant id for note messages.
+    const DebugType   = "DEBUG";     ///< Constant id for debug messages.
+    const TraceType   = "TRACE";     ///< Constant id for trace messages.
+    protected $messages     = array();  ///< Array of messages, each msg a hash array.
+    protected $prefixMsgIds = array();  ///< Hash array of i18n ids, by msg type.
+    protected $cssClasses   = array();  ///< Hash array of css classes, by msg type.
+    protected $enables      = array();  ///< Hash array of true/false by msg type.
+    protected $dumpFile = __DIR__."/../dump.out"; ///< Message dump file.
 
     /// Class instance constructor.
     public function __construct() {
         $this->prefixMsgIds = array(
-            self::ErrorType   => "longcite-error",
-            self::WarningType => "longcite-warning",
-            self::NoteType    => "longcite-note",
-            self::DebugType   => "longcite-debug"
+            self::ErrorType   => "longcite-msgtyp-error",
+            self::WarningType => "longcite-msgtyp-warning",
+            self::NoteType    => "longcite-msgtyp-note",
+            self::DebugType   => "longcite-msgtyp-debug",
+            self::TraceType   => "longcite-msgtyp-trace"
         );
         $this->cssClasses = array(
-            self::ErrorType   => "mw-longcite-error",
-            self::WarningType => "mw-longcite-warning",
-            self::NoteType    => "mw-longcite-note",
-            self::DebugType   => "mw-longcite-debug"
+            self::ErrorType   => "mw-longcite-msgtyp-error",
+            self::WarningType => "mw-longcite-msgtyp-warning",
+            self::NoteType    => "mw-longcite-msgtyp-note",
+            self::DebugType   => "mw-longcite-msgtyp-debug",
+            self::TraceType   => "mw-longcite-msgtyp-trace"
+        );
+        $debugOption = LongCite::getOption(LongCite::DebugOption);
+        $traceOption = LongCite::getOption(LongCite::TraceOption);
+        $this->enables = array(
+            self::ErrorType   => true,
+            self::WarningType => true,
+            self::NoteType    => true,
+            self::DebugType   => $debugOption,
+            self::TraceType   => $traceOption
         );
         $this->clearMessages();
     }
@@ -49,20 +62,22 @@ class LongCiteMessenger {
         $msgType = strtoupper($msgType);
         if(!array_key_exists($msgType,$this->prefixMsgIds)) {
             user_error("Invalid message type ($msgType)",E_USER_ERROR);
-        } else {
-            $msgId = $this->prefixMsgIds[$msgType];
-            $prefix = wfMessage($msgId)->plain();
-            #$msgText = strip_tags($msgText,"<b>");
-            #$msgText = filter_var($msgText,FILTER_SANITIZE_STRING);
-            #$msgText = htmlentities($msgText,ENT_QUOTES);
-            $msg = array(
-                "type"      => $msgType,
-                "prefix"    => $prefix,
-                "css-class" => $this->cssClasses[$msgType],
-                "text"      => $msgText
-            );
-            $this->messages[] = $msg;
+            return;
         }
+        if(!$this->enables[$msgType]) { return false; }
+        $msgId = $this->prefixMsgIds[$msgType];
+        $prefix = wfMessage($msgId)->plain();
+        #$msgText = strip_tags($msgText,"<b>");
+        #$msgText = filter_var($msgText,FILTER_SANITIZE_STRING);
+        #$msgText = htmlentities($msgText,ENT_QUOTES);
+        $msg = array(
+            "type"      => $msgType,
+            "prefix"    => $prefix,
+            "css-class" => $this->cssClasses[$msgType],
+            "text"      => $msgText
+        );
+        $this->messages[] = $msg;
+        return true;
     }
 
     /// Render all buffered messages for html.
@@ -97,6 +112,33 @@ class LongCiteMessenger {
         return $result;
     }
 
+    /// Return a count of buffered messages.
+    public function getMessageCount() {
+        return count($this->messages);
+    }
+
+    public function setEnable($msgType,$flag) {
+        $msgType = strtoupper($msgType);
+        if(!array_key_exists($msgType,$this->prefixMsgIds)) {
+            user_error("Invalid message type ($msgType)",E_USER_ERROR);
+            return;
+        }
+        if($flag) {
+            $this->enables[$msgType] = true;
+        } else {
+            $this->enables[$msgType] = false;
+        }
+    }
+
+    public function getEnable($msgType) {
+        $msgType = strtoupper($msgType);
+        if(!array_key_exists($msgType,$this->prefixMsgIds)) {
+            user_error("Invalid message type ($msgType)",E_USER_ERROR);
+            return null;
+        }
+        return $this->enables[$msgType];
+    }
+
     /// Dump messages to the dump file.
     /// @param $appendFlag - True to append to existing file, if any.
     /// returns true on success, else false.
@@ -118,5 +160,6 @@ class LongCiteMessenger {
         $status = fclose($f);
         return $status;
     }
+
 }
 ?>

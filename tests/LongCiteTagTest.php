@@ -18,11 +18,20 @@ class LongCiteTagTest extends Testcase {
         LongCiteMaster::clearActiveMaster();
         LongCiteWikiStub::initialize();
         $master = LongCiteMaster::getActiveMaster();
+        $parser = $master->getParser();
+        $messenger = $master->getMessenger();
+        $input = "";
+        $args  = array();
+        $frame = false;
+        $frameArgs = array();
+        $frame  = new LongCiteWikiPPFrameStub($frameArgs);
         // instantiate tag
-        $tag = new LongCiteTag($master);
+        $tag = new LongCiteTag($master,$input,$args,$parser,$frame);
         $this->assertInstanceOf(LongCiteTag::class,$tag);
-        $master = $tag->getMaster();
-        $this->assertInstanceOf(LongCiteMaster::class,$master);
+        $this->assertEquals($master,$tag->getMaster());
+        $this->assertEquals($parser,$tag->getParser());
+        $this->assertEquals($frame ,$tag->getFrame());
+        $this->assertEquals($messenger,$tag->getMessenger());
         // test language control
         $tag->setInputLangCode("de");
         $this->assertEquals("de",$tag->getInputLangCode());
@@ -33,17 +42,12 @@ class LongCiteTagTest extends Testcase {
         $tag->setOutputLangCode("en");
         $this->assertEquals("en",$tag->getOutputLangCode());
         // test render
-        $frameArgs = array();
-        $tagArgs   = array();
-        $tagInput  = "";
-        $parser = new LongCiteWikiParserStub();
-        $frame  = new LongCiteWikiPPFrameStub($frameArgs);
-        $this->assertFalse($master->isCssLoaded());
-        $html = $tag->render($tagInput,$tagArgs,$parser,$frame);
+        $this->assertTrue($master->isCssLoaded());
+        $html = $tag->render();
         $this->assertTrue($master->isCssLoaded());
         $this->assertEquals("",$html);
-        $this->assertEquals($tagInput,$tag->getInput());
-        $this->assertEquals($tagArgs,$tag->getArgs());
+        $this->assertEquals($input,$tag->getInput());
+        $this->assertEquals($args,$tag->getArgs());
         $this->assertEquals($parser,$tag->getParser());
         $this->assertEquals($frame,$tag->getFrame());
         $this->assertEquals("LongCiteTag",$tag->getTagName());

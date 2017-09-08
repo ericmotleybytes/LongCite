@@ -12,12 +12,19 @@ use PHPUnit\Framework\Testcase;
 /// Some LongCite phpunit tests.
 class LongCiteWikiStubTest extends Testcase {
 
-    /// Test various checker functions.
-    public function testInitialization() {
+    /// Test various functions.
+    public function testFunctions() {
         // initialize
         LongCiteMaster::clearActiveMaster();
         LongCiteWikiStub::initialize();
         $master = LongCiteMaster::getActiveMaster();
+        // check global wfMessage function.
+        $exp = "NOTE";
+        $act = wfMessage("longcite-msgtyp-note")->inLanguage("en")->plain();
+        $this->assertEquals($exp,$act);
+        // check global wfGetLangObj function.
+        $langObj = wfGetLangObj("en");
+        $this->assertInstanceOf(LongCiteWikiLanguageStub::class,$langObj);
         // check some globals
         $this->assertEquals("en",$GLOBALS["wgLanguageCode"]);
     }

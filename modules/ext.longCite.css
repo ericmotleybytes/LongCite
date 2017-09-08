@@ -1,12 +1,15 @@
-.mw-longcite-error {
+.mw-longcite-msgtyp-error {
     color:red;
 }
-.mw-longcite-warning {
+.mw-longcite-msgtyp-warning {
     color:orange;
 }
-.mw-longcite-note {
+.mw-longcite-msgtyp-note {
     color:blue;
 }
-.mw-longcite-debug {
+.mw-longcite-msgtyp-debug {
     color:blue;
+}
+.mw-longcite-msgtyp-trace {
+    color:teal;
 }

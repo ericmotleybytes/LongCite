@@ -1,5 +1,5 @@
 <?php
-/// Source code file for LongCiteParamAlphaIdTest unit testing class.
+/// Source code file for LongCiteParamLangCodeTest unit testing class.
 /// MIT License. See <https://opensource.org/licenses/MIT>.
 /// @file
 ### Note: This file uses Uses doxygen style annotation comments.
@@ -10,7 +10,7 @@ require_once __DIR__ . "/LongCiteWikiStub.php";
 use PHPUnit\Framework\Testcase;
 
 /// Some LongCite phpunit tests.
-class LongCiteParamAlphaIdTest extends Testcase {
+class LongCiteParamLangCodeTest extends Testcase {
 
     /// Test functions.
     public function testFunctions() {
@@ -20,41 +20,37 @@ class LongCiteParamAlphaIdTest extends Testcase {
         $master = LongCiteMaster::getActiveMaster();
         $parser = $master->getParser();
         $frame  = new LongCiteWikiPPFrameStub(array());
-        // instantiate tag and param
+        // instantiate param
         $tag = new LongCiteTag($master,"",array(),$parser,$frame);
-        $tag->setOutputLangCode("en");
-        $pnameKey = "longcite-pn-key";
-        $param = new LongCiteParamAlphaId($pnameKey,$tag);
-        $this->assertInstanceOf(LongCiteParamAlphaId::class,$param);
+        $pnameKey = "longcite-pn-alwayslang";
+        $param = new LongCiteParamLangCode($pnameKey,$tag);
+        $this->assertInstanceOf(LongCiteParamLangCode::class,$param);
         $param = LongCiteParam::newParam($pnameKey,$tag);
-        $this->assertInstanceOf(LongCiteParamAlphaId::class,$param);
+        $this->assertInstanceOf(LongCiteParamLangCode::class,$param);
         $param = $tag->newParam($pnameKey);
-        $this->assertInstanceOf(LongCiteParamAlphaId::class,$param);
+        $this->assertInstanceOf(LongCiteParamLangCode::class,$param);
+        $tag2 = $param->getTag();
+        $this->assertInstanceOf(LongCiteTag::class,$tag2);
         # info
-        $tag = $param->getTag();
-        $this->assertInstanceOf(LongCiteTag::class,$tag);
-        $parser2 = $param->getParser();
-        $this->assertEquals($parser,$parser2);
-        $frame2 = $param->getFrame();
-        $this->assertEquals($frame,$frame2);
         $this->assertFalse($param->isMulti());
         $nameMsgKey = $param->getNameKey();
         $this->assertEquals($pnameKey,$nameMsgKey);
         $name = $param->getName();
-        $this->assertEquals("key",$name);
+        $this->assertEquals("lang",$name);
         $type = $param->getType();
-        $this->assertEquals("AlphaId",$type);
-        $master = $param->getMaster();
-        $this->assertInstanceOf(LongCiteMaster::class,$master);
-        $this->assertEquals("en",$param->getInputLangCode());
-        $this->assertEquals("en",$param->getOutputLangCode());
+        $this->assertEquals("LangCode",$type);
         # values
-        $v1 = "Einstein (1920)";
-        $v2 = "Smith (1902)";
+        $v1 = "en";
+        $v2 = "de";
+        $v3 = "EN";
         $param->addRawValues($v1);
         $this->assertEquals(array($v1),$param->getRawValues());
         $param->addRawValues($v2);
         $this->assertEquals(array($v1,$v2),$param->getRawValues());
+        $param->addRawValues($v3);
+        $exp1 = array($v1,$v2,$v3);
+        $exp2 = array($v1,$v2,strtolower($v3));
+        $this->assertEquals($exp1,$param->getRawValues());
     }
 
 }

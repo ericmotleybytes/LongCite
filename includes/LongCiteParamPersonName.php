@@ -13,8 +13,9 @@ class LongCiteParamPersonName extends LongCiteParam {
         $this->isMulti = true;
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;
-        $this->setOutputDelimMsgKey($longMode,"longcite-and-delim");
-        $this->setOutputDelimMsgKey($shortMode,"longcite-semi-delim");
+        $this->setInputDelimMsgKey("longcite-delim-semi");
+        $this->setOutputDelimMsgKey($longMode,"longcite-delim-and");
+        $this->setOutputDelimMsgKey($shortMode,"longcite-delim-semi");
     }
 
 }

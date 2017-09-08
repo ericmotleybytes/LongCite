@@ -9,8 +9,14 @@
 /// Class for the <longciteren> tag.
 class LongCiteRenTag extends LongCiteTag {
 
-    public function __construct($master) {
-        parent::__construct($master);
+    public function __construct($master, $input, $args, $parser, $frame=false) {
+        parent::__construct($master, $input, $args, $parser, $frame);
+    }
+
+    public function render() {
+        $result = parent::render();  // init html result
+        $this->getMaster()->renderTrace();
+        return $result;
     }
 
 }

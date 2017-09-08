@@ -25,28 +25,31 @@ function wfMessage($msgId, ...$params) {
     return $msgObj;
 }
 
+function wfGetLangObj($langcode=false) {
+    if(is_object($langcode)) {
+        $codeStr = $langcode->getCode();
+        $obj = LongCiteWikiLanguageStub::stubNew($codeStr);
+    } elseif($langcode===false) {
+        $codeStr = $GLOBALS["wgLang"]->getCode();
+        $obj = LongCiteWikiLanguageStub::stubNew($codeStr);
+    } else {
+        $obj = LongCiteWikiLanguageStub::stubNew($langcode);
+    }
+    return $obj;
+}
+
 /// A stub class mimicking MediaWiki in order to facilitate low level unit testing.
 class LongCiteWikiStub {
 
     /// Initialize the fake stub MediaWiki.
     public static function initialize() {
-        self::initHooks();
         self::initLocalSettings();
-        self::initExtensionJson();
         self::initUserPrefs();
-        self::initParser();
-        self::initExtensionFunctions();
-    }
-
-    /// Initialize the fake stub MediaWiki hooks.
-    public static function initHooks() {
-        $GLOBALS["wgHooks"] = array(
-            "ParserFirstCallInit"        => array(),
-            "ArticleDeleteComplete"      => array(),
-            "PageContentSaveComplete"    => array(),
-            "OutputPageParserOutput"     => array(),
-            "LoadExtensionSchemaUpdates" => array()
-        );
+        self::initExtensionJson();
+        self::initParserFirstCall();
+        ##self::initHooks();
+        ##self::initParser();
+        ##self::initExtensionFunctions();
     }
 
     /// Initialize a few things that would be from LocalSettings.php.
@@ -59,7 +62,10 @@ class LongCiteWikiStub {
         $GLOBALS["wgContLang"]      = LongCiteWikiLanguageStub::stubNew("en");
         $GLOBALS["wgExternalLinkTarget"] = '_blank';
     }
-
+    /// Initialize some typically user preference stuff.
+    public static function initUserPrefs() {
+        $GLOBALS["wgLang"] = LongCiteWikiLanguageStub::stubNew("en");
+    }
     /// Initialize some stuff from extension.json.
     public static function initExtensionJson() {
         global $wgAutoloadClasses;
@@ -94,25 +100,53 @@ class LongCiteWikiStub {
                 $wgExtensionFunctions[] = $extfunc;
             }
         }
-    }
-
-    /// Initialize some typically user preference stuff.
-    public static function initUserPrefs() {
-        $GLOBALS["wgLang"] = LongCiteWikiLanguageStub::stubNew("en");
-    }
-
-    /// Initialize a global stub parser object.
-    public static function initParser() {
-        global $wgParser;
-        $wgParser = new LongCiteWikiParserStub();
-    }
-
-    public static function initExtensionFunctions() {
-        global $wgExtensionFunctions;
-        foreach($wgExtensionFunctions as $callable) {
-            $result = call_user_func($callable);
+        // Invoke the extension functions
+        foreach($wgExtensionFunctions as $extfunc) {
+            $callable = explode("::",$extfunc);
+            if(count($callable)==1) { $callable = $extfunc; }
+            call_user_func($callable);
         }
     }
+
+    /// Simulate parser first call hook.
+    public static function initParserFirstCall() {
+        global $wgHooks;
+        $key = 'ParserFirstCallInit';
+        if(array_key_exists($key,$wgHooks)) {
+            $parser = new LongCiteWikiParserStub();
+            $parref = &$parser;
+            $callables = $wgHooks[$key];
+            foreach($callables as $callable) {
+                call_user_func($callable,$parref);
+            }
+        }
+    }
+
+    
+    ##/// Initialize the fake stub MediaWiki hooks.
+    ##public static function initHooks() {
+    ##    $GLOBALS["wgHooks"] = array(
+    ##        "ParserFirstCallInit"        => array(),
+    ##        "ArticleDeleteComplete"      => array(),
+    ##        "PageContentSaveComplete"    => array(),
+    ##        "OutputPageParserOutput"     => array(),
+    ##        "LoadExtensionSchemaUpdates" => array()
+    ##    );
+    ##}
+
+    ##/// Initialize a global stub parser object.
+    ##public static function initParser() {
+    ##    global $wgParser;
+    ##    $wgParser = new LongCiteWikiParserStub();
+    ##}
+
+    ##public static function initExtensionFunctions() {
+    ##    global $wgExtensionFunctions;
+    ##    foreach($wgExtensionFunctions as $callable) {
+    ##        $result = call_user_func($callable);
+    ##    }
+    ##}
+
     /// A stub routine to mimick calling saved parser callables.
     /// @param $hookName - The MediaWiki parser hook name.
     /// @param $params - Parameters for callables.

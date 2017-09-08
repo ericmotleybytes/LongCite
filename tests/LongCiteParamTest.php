@@ -28,11 +28,11 @@ class LongCiteParamTest extends Testcase {
     #    $short = LongCiteParam::ParamModeShort;
     #    $this->assertEquals("short",$short);
     #    ##$longOutDelimMsg = $param->getOutputDelimMsgKey();
-    #    ##$this->assertEquals("longcite-and-delim",$longOutDelimMsg);
+    #    ##$this->assertEquals("longcite-delim-and",$longOutDelimMsg);
     #    ##$longOutDelimMsg = $param->getOutputDelimMsgKey($long);
-    #    ##$this->assertEquals("longcite-and-delim",$longOutDelimMsg);
+    #    ##$this->assertEquals("longcite-delim-and",$longOutDelimMsg);
     #    ##$shortOutDelimMsg = $param->getOutputDelimMsgKey($short);
-    #    ##$this->assertEquals("longcite-semi-delim",$shortOutDelimMsg);
+    #    ##$this->assertEquals("longcite-delim-semi",$shortOutDelimMsg);
     #    ##$longDelim = $param->getOutputDelim();
     #    ##$this->assertEquals(" and ",$longDelim);
     #    ##$longDelim = $param->getOutputDelim($long);
