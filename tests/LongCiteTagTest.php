@@ -19,7 +19,6 @@ class LongCiteTagTest extends Testcase {
         LongCiteWikiStub::initialize();
         $master = LongCiteMaster::getActiveMaster();
         $parser = $master->getParser();
-        $messenger = $master->getMessenger();
         $input = "";
         $args  = array();
         $frame = false;
@@ -27,11 +26,11 @@ class LongCiteTagTest extends Testcase {
         $frame  = new LongCiteWikiPPFrameStub($frameArgs);
         // instantiate tag
         $tag = new LongCiteTag($master,$input,$args,$parser,$frame);
+        $messenger = $tag->getMessenger();
         $this->assertInstanceOf(LongCiteTag::class,$tag);
         $this->assertEquals($master,$tag->getMaster());
         $this->assertEquals($parser,$tag->getParser());
         $this->assertEquals($frame ,$tag->getFrame());
-        $this->assertEquals($messenger,$tag->getMessenger());
         // test language control
         $tag->setInputLangCode("de");
         $this->assertEquals("de",$tag->getInputLangCode());
@@ -51,6 +50,36 @@ class LongCiteTagTest extends Testcase {
         $this->assertEquals($parser,$tag->getParser());
         $this->assertEquals($frame,$tag->getFrame());
         $this->assertEquals("LongCiteTag",$tag->getTagName());
+        // test preprocessInput
+        $contchar = "\\";
+        $inputLines  = "# Test lines...\n";
+        $inputLines .= "one=1\n";
+        $inputLines .= "     \n";
+        $inputLines .= "two = $contchar\n";
+        $inputLines .= "2\n";
+        $inputLines .= "dummy\n";
+        $inputLines .= "  three =  3\n";
+        $expLines = array(
+            "one=1",
+            "two = 2",
+            "dummy",
+            "three =  3"
+        );
+        $actLines = $tag->preprocessInput($inputLines);
+        $this->assertEquals($expLines,$actLines);
+        $messenger->clearMessages();
+        $actArr = $tag->preprocessSemiParsedLines($actLines);
+        $expArr = array(
+            array("one","1"),
+            array("two","2"),
+            array("three","3")
+        );
+        $this->assertEquals($expArr,$actArr);
+        $this->assertEquals(1,$messenger->getMessageCount());
+        $act = trim($messenger->renderMessagesText());
+        $exp = "WARNING: Cannot parse (dummy).";
+        $this->assertEquals($exp,$act);
+        $messenger->clearMessages();
     }
 
 }

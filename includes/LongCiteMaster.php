@@ -46,12 +46,6 @@ class LongCiteMaster {
         global $wgLang;
         $cssLoaded = false;
         $this->messenger = new LongCiteMessenger(); // instantiate now
-        #$this->messenger = null; // defer instantiation
-        #$this->messenger->registerMessage(LongCiteMessenger::DebugType,
-        #    "Instantiated new LongCiteMaster at " . time());
-        #$this->messenger->dumpToFile(false);
-        #$this->messenger->dumpToFile(true);
-        #$this->messenger->clearMessages();
         // Determine the default output language.
         if(isset($wgLang)) {
             $candCode = $wgLang->getCode();
@@ -267,85 +261,6 @@ class LongCiteMaster {
         );
     }
 
-    public function renderDebug($message) {
-        $this->getMessenger()->registerMessage(
-            LongCiteMessenger::DebugType,$message
-        );
-    }
-    public function renderError($message) {
-        $this->getMessenger()->registerMessage(
-            LongCiteMessenger::ErrorType,$message
-        );
-    }
-    public function renderNote($message) {
-        $this->getMessenger()->registerMessage(
-            LongCiteMessenger::NoteType,$message
-        );
-    }
-    public function renderTrace($message="") {
-        $backTrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
-        $info = $backTrace[1];
-        $function = $info["function"];
-        $class    = $info["class"];
-        $file     = $info["file"];
-        $line     = $info["line"];
-        $file     = basename($file,".php");
-        $message = trim("($class::$function:$line) $message");
-        $this->getMessenger()->registerMessage(
-            LongCiteMessenger::TraceType,$message
-        );
-    }
-    public function renderWarning($message) {
-        $this->getMessenger()->registerMessage(
-            LongCiteMessenger::WarningType,$message
-        );
-    }
-
-    public function renderDebugState($newState=null) {
-        $messenger = $this->getMessenger();
-        $msgType = LongCiteMessenger::DebugType;
-        if(!is_null($newState)) {
-            $messenger->setEnable($msgType,$newState);
-        }
-        return $messenger->getEnable($msgType);
-    }
-
-    public function renderErrorState($newState=null) {
-        $messenger = $this->getMessenger();
-        $msgType = LongCiteMessenger::ErrorType;
-        if(!is_null($newState)) {
-            $messenger->setEnable($msgType,$newState);
-        }
-        return $messenger->getEnable($msgType);
-    }
-
-    public function renderNoteState($newState=null) {
-        $messenger = $this->getMessenger();
-        $msgType = LongCiteMessenger::NoteType;
-        if(!is_null($newState)) {
-            $messenger->setEnable($msgType,$newState);
-        }
-        return $messenger->getEnable($msgType);
-    }
-
-    public function renderTraceState($newState=null) {
-        $messenger = $this->getMessenger();
-        $msgType = LongCiteMessenger::TraceType;
-        if(!is_null($newState)) {
-            $messenger->setEnable($msgType,$newState);
-        }
-        return $messenger->getEnable($msgType);
-    }
-
-    public function renderWarningState($newState=null) {
-        $messenger = $this->getMessenger();
-        $msgType = LongCiteMessenger::WarningType;
-        if(!is_null($newState)) {
-            $messenger->setEnable($msgType,$newState);
-        }
-        return $messenger->getEnable($msgType);
-    }
-
     /// Set the default tag render output language.
     public function setOutputLangCode($code) {
         if(in_array($code,$this->supportedLangCodes)) {
@@ -463,5 +378,27 @@ class LongCiteMaster {
         return $result;
     }
 
+    /// Call wfMessage the way we usually like.
+    /// @param $msg_key - The i18n message key.
+    /// @param $params - String parameters for wfMessage.
+    public function wikiMessage($msgKey, ...$params) {
+        $langCode = $this->getOutputLangCode();
+        $msgObj = wfMessage($msgKey);
+        $theParams = array();
+        foreach($params as $param) {
+            if(is_array($param)) {
+                foreach($param as $par) {
+                    $theParams[] = $par;
+                }
+            } else {
+                $theParams[] = $param;
+            }
+        }
+        if(count($theParams)>0) {
+            $msgObj->params($theParams);
+        }
+        $msgObj = $msgObj->inLanguage($langCode);
+        return $msgObj;
+    }
 }
 ?>

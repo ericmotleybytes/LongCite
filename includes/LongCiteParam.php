@@ -15,7 +15,8 @@ class LongCiteParam {
     protected static $paramClassMap = array(
         "longcite-pn-alwayslang" => "LangCode",
         "longcite-pn-author"     => "PersonName",
-        "longcite-pn-key"        => "AlphaId"
+        "longcite-pn-key"        => "AlphaId",
+        "longcite-pn-note"       => "Note"
     );
 
     public static function getParamClass($paramNameKey) {
@@ -35,9 +36,13 @@ class LongCiteParam {
         return $result;
     }
 
-    public static function getParamDescription($paramNameKey) {
+    public static function getParamDescription($paramNameKey,$langCode=null) {
+        if(is_null($langCode)) {
+            $master = LongCiteMaster::getActiveMaster();
+            $langCode = $master->getOutputLangCode();
+        }
         $descMsgKey = self::getParamDescKey($paramNameKey);
-        $result = wfMessage($descMsgKey)->plain();
+        $result = wfMessage($descMsgKey)->inLanguage($langCode)->plain();
         return $result;
     }
 
@@ -59,8 +64,7 @@ class LongCiteParam {
     protected $isMulti    = false;     ///< Are multivalues allowed.
     protected $inputDelimMsgKey = "";  ///< Input delimiter msgKey (if needed).
     protected $outputDelimMsgKeys = array(); ///< Hash mode to msg key.
-    protected $rawValues  = array();   ///< Raw value(s) as set.
-    protected $parsedValues = array(); ///< Parsed values as delimited.
+    protected $values     = array();   ///< Semi parsed values.
 
     public function __construct($paramNameKey, $tag) {
         if(!array_key_exists($paramNameKey,self::$paramClassMap)) {
@@ -79,27 +83,21 @@ class LongCiteParam {
     }
 
     // Add values to the parameter.
-    // @param $values - Scalar string, but if multi may have multiple delimited values.
-    public function addRawValues($values) {
-        $values = trim($values);
-        // update raw values
-        $this->rawValues[] = $values;
-        #if($this->isMulti()) {
-        #    $delim = $this->getInputDelim();
-        #    $valueList = explode($delim,$values);
-        #    foreach($valueList as $value) {
-        #        $this->rawValues[] = $value;
-        #    }
-        #} else {
-        #    # not a multi param, overwrite any old value.
-        #    $this->rawValues = array($values);
-        #}
-        // update parsed values
-        if($this->isMulti()) {
-            
+    // @param $valuesStr - Scalar string, but if multi may have multiple delimited values.
+    public function addValues($valuesStr) {
+        $tag = $this->getTag();
+        $parser = $tag->getParser();
+        $frame  = $tag->getFrame();
+        $valuesStr = trim($valuesStr);
+        $valuesStr = $parser->recursiveTagParse($valuesStr,$frame);
+        if($this->isMulti) {
+            $inDelim = $this->getInputDelim();
+            $explodedValues = explode($inDelim,$valuesStr);
+            foreach(explodedValues as $val) {
+                $this->values[] = $val;
+            }
         } else {
-            $parsedValue = "";
-            $this->parsedValues = array();
+            $this->values = array($valuesStr);
         }
         return true;
     }
@@ -118,7 +116,8 @@ class LongCiteParam {
         if($this->isMulti===false) { return false; }
         $msgKey = $this->getInputDelimMsgKey();
         if($msgKey===false) { return false; }
-        $delim = wfMessage($msgKey)->plain();
+        $inLangCode = $this->getInputLangCode();
+        $delim = wfMessage($msgKey)->inLanguage($inLangCode)->plain();
         return $delim;
     }
 
@@ -130,6 +129,11 @@ class LongCiteParam {
     public function getMaster() {
         $master = $this->getTag()->getMaster();
         return $master;
+    }
+
+    public function getMessenger() {
+        $mess = $this->getTag()->getMessenger();
+        return $mess;
     }
 
     public function getNameKey() {
@@ -145,9 +149,10 @@ class LongCiteParam {
 
     public function getOutputDelim($mode=LongCiteParam::ParamModeLong) {
         if($this->isMulti===false) { return false; }
+        $outLangCode = $this->tag->getOutputLangCode();
         $msgKey = $this->getOutputDelimMsgKey($mode);
         if($msgKey===false) { return false; }
-        $delim = wfMessage($msgKey)->plain();
+        $delim = wfMessage($msgKey)->inLanguage($outLangCode)->plain();
         return $delim;
     }
 
@@ -170,10 +175,6 @@ class LongCiteParam {
         return $parser;
     }
 
-    public function getRawValues() {
-        return $this->rawValues;
-    }
-
     public function getTag() {
         return $this->tag;
     }
@@ -181,6 +182,10 @@ class LongCiteParam {
     public function getType() {
         $result = substr(get_class($this),strlen(self::ParamClassPrefix));
         return $result;
+    }
+
+    public function getValues() {
+        return $this->values;
     }
 
     public function isMulti() {
@@ -200,6 +205,26 @@ class LongCiteParam {
     /// @msgKey = The i18n message key.
     public function setOutputDelimMsgKey($mode,$msgKey) {
         $this->outputDelimMsgKeys[$mode] = $msgKey;
+    }
+
+    public function wikiMessage($msgKey, ...$params) {
+        $langCode = $this->getOutputLangCode();
+        $msgObj = wfMessage($msgKey);
+        $theParams = array();
+        foreach($params as $param) {
+            if(is_array($param)) {
+                foreach($param as $par) {
+                    $theParams[] = $par;
+                }
+            } else {
+                $theParams[] = $param;
+            }
+        }
+        if(count($theParams)>0) {
+            $msgObj->params($theParams);
+        }
+        $msgObj = $msgObj->inLanguage($langCode);
+        return $msgObj;
     }
 
 }

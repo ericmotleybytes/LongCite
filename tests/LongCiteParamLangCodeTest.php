@@ -43,14 +43,14 @@ class LongCiteParamLangCodeTest extends Testcase {
         $v1 = "en";
         $v2 = "de";
         $v3 = "EN";
-        $param->addRawValues($v1);
-        $this->assertEquals(array($v1),$param->getRawValues());
-        $param->addRawValues($v2);
-        $this->assertEquals(array($v1,$v2),$param->getRawValues());
-        $param->addRawValues($v3);
-        $exp1 = array($v1,$v2,$v3);
-        $exp2 = array($v1,$v2,strtolower($v3));
-        $this->assertEquals($exp1,$param->getRawValues());
+        $param->addValues($v1);
+        $this->assertEquals(array($v1),$param->getValues());
+        $param->addValues($v2);
+        $this->assertEquals(array($v2),$param->getValues());
+        $param->addValues($v3);
+        $exp1 = array($v3);
+        $exp2 = array(strtolower($v3));
+        $this->assertEquals($exp1,$param->getValues());
     }
 
 }

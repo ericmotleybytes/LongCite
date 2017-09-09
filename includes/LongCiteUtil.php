@@ -9,36 +9,6 @@
 /// Class with utility routines.
 class LongCiteUtil {
 
-    /// Generate a openssl random unique GUID/UUID as a 32 character uppercase hex string.
-    /// @return A 32 character string with uppercase hex characters or false on error.
-    public static function generateOpensslGuid() : string {
-        if (!function_exists('openssl_random_pseudo_bytes')) {
-            $msg = "openssl_random_pseudo_bytes not available.";
-            trigger_error($msg,E_USER_WARNING);
-            return false;
-        }
-        // OSX/Linux generation method
-        $data = openssl_random_pseudo_bytes(16);
-        if ($data===false) {
-            $msg = "openssl_random_pseudo_bytes error detected.";
-            trigger_error($msg,E_USER_WARNING);
-            return false;
-        }
-        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);    // set version to 0100
-        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);    // set bits 6-7 to 10
-        $result = strtoupper(vsprintf('%s%s%s%s%s%s%s%s', str_split(bin2hex($data), 4)));
-        return $result;
-    }
-
-    /// Generate a generic random unique GUID/UUID as a 32 character uppercase hex string.
-    /// @return A 32 character string with uppercase hex characters or false on error.
-    public static function generateGenericGuid() : string {
-        // generic fallback method
-        mt_srand((double)microtime() * 10000);
-        $result = strtoupper(md5(uniqid(rand(), true)));
-        return $result;
-    }
-
     function a_or_an($text,$upcase=true) {
         $result = "";
         $lctext = strtolower($text);
@@ -81,6 +51,36 @@ class LongCiteUtil {
             return $a;
         }
         return $a;
+    }
+
+    /// Generate a generic random unique GUID/UUID as a 32 character uppercase hex string.
+    /// @return A 32 character string with uppercase hex characters or false on error.
+    public static function generateGenericGuid() : string {
+        // generic fallback method
+        mt_srand((double)microtime() * 10000);
+        $result = strtoupper(md5(uniqid(rand(), true)));
+        return $result;
+    }
+
+    /// Generate a openssl random unique GUID/UUID as a 32 character uppercase hex string.
+    /// @return A 32 character string with uppercase hex characters or false on error.
+    public static function generateOpensslGuid() : string {
+        if (!function_exists('openssl_random_pseudo_bytes')) {
+            $msg = "openssl_random_pseudo_bytes not available.";
+            trigger_error($msg,E_USER_WARNING);
+            return false;
+        }
+        // OSX/Linux generation method
+        $data = openssl_random_pseudo_bytes(16);
+        if ($data===false) {
+            $msg = "openssl_random_pseudo_bytes error detected.";
+            trigger_error($msg,E_USER_WARNING);
+            return false;
+        }
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);    // set version to 0100
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);    // set bits 6-7 to 10
+        $result = strtoupper(vsprintf('%s%s%s%s%s%s%s%s', str_split(bin2hex($data), 4)));
+        return $result;
     }
 
 }

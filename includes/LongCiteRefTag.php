@@ -15,7 +15,7 @@ class LongCiteRefTag extends LongCiteTag {
 
     public function render() {
         $result = parent::render();  // init html result
-        $this->getMaster()->renderTrace();
+        $this->getMessenger()->registerMessageTrace();
         return $result;
     }
 

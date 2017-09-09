@@ -23,7 +23,7 @@ class LongCiteOptTag extends LongCiteTag {
     /// @return A string with rendered HTML.
     public function render() {
         $result = parent::render();  // init html result
-        $this->getMaster()->renderTrace();
+        $this->getMessenger()->registerMessageTrace();
         return $result;
     }
 
