@@ -23,6 +23,7 @@ class LongCiteTag {
     protected $paramObjs   = array();  ///< Hash of paramNameMsgKey to param object.
     protected $messenger = null;       ///< LongCiteMessenger object.
     protected $paramMsgKeys = array();  ///< Hash cat->arr of msg keys.
+    protected $renderedOutput = "";     ///< Copy of rendered output html.
 
     public function __construct($master, $input, $args, $parser, $frame=false) {
         $this->master = $master;
@@ -74,7 +75,7 @@ class LongCiteTag {
         $supportedLangCodes = $master->getSupportedLangCodes();
         // get list of msg keys for lang code param name, but there
         // should only be one entry on the list.
-        $langMsgKeys = $this->getParamKeys(self::ParamCategoryLanguage);
+        $langMsgKeys = $this->getParamMsgKeys(self::ParamCategoryLanguage);
         if(count($langMsgKeys)>1) {
             trigger_error("Too many language message keys.",E_USER_WARNING);
             return false;
@@ -174,6 +175,7 @@ class LongCiteTag {
         }
         $param = LongCiteParam::newParam($paramNameKey,$this);
         $this->paramObjs[$paramNameKey] = $param;
+        return $param;
     }
 
     public function getParser() {
@@ -260,8 +262,22 @@ class LongCiteTag {
     }
 
     public function render() {
-        $this->getMessenger()->registerMessageTrace();
-        return "";
+        $this->renderPreperation();
+        return $this->setRenderedOutput("");
+    }
+
+    public function renderedOutputAdd($html) {
+        $this->renderedOutput .= $html;
+        return $this->renderedOutput;
+    }
+
+    public function renderedOutputGet() {
+        return $this->renderedOutput;
+    }
+
+    public function renderedOutputSet($html) {
+        $this->renderedOutput = $html;
+        return $this->renderedOutput;
     }
 
     public function renderPreperation() {
@@ -336,6 +352,10 @@ class LongCiteTag {
         $this->messenger->setLangCode($code);
         $this->outputLangCode = $code;
         return $code;
+    }
+
+    public function setRenderedOutput($html) {
+        $this->renderedOutput = $html;
     }
 
     public function wikiMessage($msgKey, ...$params) {

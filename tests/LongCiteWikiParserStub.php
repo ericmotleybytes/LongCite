@@ -58,21 +58,44 @@ class LongCiteWikiParserStub {
         $this->parserHooks[$hookName][] = $callable;
     }
 
+    public function stubGetHooks() {
+        $result = "";
+        foreach($this->parserHooks as $hookName => $callables) {
+            $callableCnt = 0;
+            foreach($callables as $callable) {
+                $callableCnt++;
+                $line = "ParserHook=$hookName";
+                $line .= " Callable_$callableCnt=";
+                if(is_array($callable)) {
+                    $classPart = $callable[0];
+                    $funcPart = $callable[1];
+                    if(is_object($classPart)) {
+                        $line .= "(" . get_class($classPart) . ")::";
+                    } else {
+                        $line .= $classPart . "::";
+                    }
+                    $line .= $funcPart;
+                } else {
+                    $line .= $callable;
+                }
+                $line .= ".\n";
+                $result .= $line;
+            }
+        }
+        return $result;
+    }
+
     /// A stub routine to mimick calling saved parser callables.
     /// @param $hookName - The MediaWiki parser hook name.
     /// @param $params - Parameters for callables.
     /// @return false on error, else hash array of callable results.
-    public function stubCallHook($hookName,$input="",$args=array(),
-        $parser=null,$frame=false) {
+    public function stubCallHook($hookName,$input="",$args=array(),$frame=false) {
         # See https://www.mediawiki.org/wiki/Manual:Parser.php.
         if(!array_key_exists($hookName,$this->parserHooks)) {
             trigger_error("Parser hook $hookName not found.",E_USER_WARNING);
             return false;
         }
-        if(is_null($parser)) {
-            $master = LongCiteMaster::getActiveMaster();
-            $parser = $master->getParser();
-        }
+        $parser = $this;
         $params = array($input,$args,$parser,$frame);
         $results = array();
         $callables = $this->parserHooks[$hookName];

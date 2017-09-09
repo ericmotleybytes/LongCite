@@ -40,6 +40,7 @@ class LongCiteMaster {
     protected $supportedLangCodes = array("en","de");  ///< supported output codes.
     protected $outputLangCode = "en";    ///< Can be changed to another supported code.
     protected $parser = null;            ///< Gets parser object as setup hook.
+    protected $tagObjects = array();         ///< Gets tag objects the parser finds.
 
     /// Class instance constructor.
     function __construct() {
@@ -53,10 +54,16 @@ class LongCiteMaster {
                 $this->outputLangCode = $candCode;
             }
         }
+        // reinit list of tag objects.
+        $this->tagObjects = array();
         // Register the LongCite extension.
         $this->register();
         #// Set up the extension tags.
         #$this->setupParser($GLOBALS['wgParser']);
+    }
+
+    public function addTagObject($tag) {
+        $this->tagObjects[] = $tag;
     }
 
     /// Get the default tag parsing input language. This default cannot
@@ -123,6 +130,11 @@ class LongCiteMaster {
     public function getSupportedLangCodes() {
         return $this->supportedLangCodes;
     }
+
+    public function getTagObjects() {
+        return $this->tagObjects;
+    }
+
 
     public function isCssLoaded() {
         return $this->cssLoaded;
@@ -242,6 +254,7 @@ class LongCiteMaster {
         #    'url' => 'http://www.mediawiki.org/wiki/Extension:LongCite'
         #);
         // set setup parser hook
+        $wgHooks = array();  // reinit
         $wgHooks['ParserFirstCallInit'][] = array(
             &$this,"setupParser"
         );
@@ -315,6 +328,7 @@ class LongCiteMaster {
     /// @return A string with rendered HTML.
     public function tagLongCite($input, $args, $parser, $frame) {
         $tagObj = new LongCiteTag($this, $input, $args, $parser, $frame);
+        $this->addTagObject($tagObj);
         $result = $tagObj->render();
         return $result;
     }
@@ -326,6 +340,7 @@ class LongCiteMaster {
     /// @return A string with rendered HTML.
     public function tagLongCiteDef($input, $args, $parser, $frame) {
         $tagObj = new LongCiteDefTag($this, $input, $args, $parser, $frame);
+        $this->addTagObject($tagObj);
         $result = $tagObj->render();
         return $result;
     }
@@ -344,6 +359,7 @@ class LongCiteMaster {
     /// @return A string with rendered HTML.
     public function tagLongCiteHlp($input, $args, $parser, $frame) {
         $tagObj = new LongCiteHlpTag($this, $input, $args, $parser, $frame);
+        $this->addTagObject($tagObj);
         $result = $tagObj->render();
         return $result;
     }
@@ -356,12 +372,14 @@ class LongCiteMaster {
     /// @return A string with rendered HTML.
     public function tagLongCiteOpt($input, $args, $parser, $frame) {
         $tagObj = new LongCiteOptTag($this, $input, $args, $parser, $frame);
+        $this->addTagObject($tagObj);
         $result = $tagObj->render();
         return $result;
     }
 
     public function tagLongCiteRef($input, $args, $parser, $frame) {
         $tagObj = new LongCiteRefTag($this, $input, $args, $parser, $frame);
+        $this->addTagObject($tagObj);
         $result = $tagObj->render();
         return $result;
     }
@@ -374,6 +392,7 @@ class LongCiteMaster {
     /// @return A string with rendered HTML.
     public function tagLongCiteRen($input, $args, $parser, $frame) {
         $tagObj = new LongCiteRenTag($this, $input, $args, $parser, $frame);
+        $this->addTagObject($tagObj);
         $result = $tagObj->render();
         return $result;
     }

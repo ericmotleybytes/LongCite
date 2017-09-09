@@ -82,5 +82,30 @@ class LongCiteTagTest extends Testcase {
         $messenger->clearMessages();
     }
 
+    public function testRender() {
+        // initialize
+        LongCiteMaster::clearActiveMaster();
+        LongCiteWikiStub::initialize();
+        $master = LongCiteMaster::getActiveMaster();
+        $parser = $master->getParser();
+        $input = "";
+        $args  = array();
+        $frame = false;
+        $frameArgs = array();
+        $frame  = new LongCiteWikiPPFrameStub($frameArgs);
+        // check out defined parser hooks
+        $stuff = $parser->stubGetHooks();
+        $this->assertGreaterThan(0,strlen($stuff));
+        #$f = fopen("/dev/tty","a");
+        #fwrite($f,"\n".$stuff);
+        #fclose($f);
+        // Simulate finding <longcite ...> by invoking parser callback.
+        $tags = $master->getTagObjects();
+        $this->assertEquals(0,count($tags));
+        $callbackParams = array($input,$args,$parser,$frame);
+        $parser->stubCallHook("longcite",$input,$args,$frame);
+        $tags = $master->getTagObjects();
+        $this->assertEquals(1,count($tags));
+    }
 }
 ?>

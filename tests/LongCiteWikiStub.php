@@ -83,7 +83,8 @@ class LongCiteWikiStub {
         }
         // Initialize $wgAutoloadClasses and
         // require_once anything in AutoloadClasses.
-        if(!isset($wgAutoloadClasses)) { $wgAutoloadClasses = array(); }
+        #if(!isset($wgAutoloadClasses)) { $wgAutoloadClasses = array(); }
+        $wgAutoloadClasses = array();
         if(array_key_exists("AutoloadClasses",$extJsonArr)) {
             $autoloads = $extJsonArr["AutoloadClasses"];
             foreach($autoloads as $className => $classFile) {
@@ -93,7 +94,8 @@ class LongCiteWikiStub {
             }
         }
         // Initialize $wgExtensionFunctions.
-        if(!isset($wgExtensionFunctions)) { $wgExtensionFunctions = array(); }
+        #if(!isset($wgExtensionFunctions)) { $wgExtensionFunctions = array(); }
+        $wgExtensionFunctions = array();
         if(array_key_exists("ExtensionFunctions",$extJsonArr)) {
             $extfuncs = $extJsonArr["ExtensionFunctions"];
             foreach($extfuncs as $extfunc) {

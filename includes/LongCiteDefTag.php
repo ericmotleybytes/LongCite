@@ -34,9 +34,8 @@ class LongCiteDefTag extends LongCiteTag {
     /// Process the <longcitedef> tag.
     /// @return A string with rendered HTML.
     public function render() {
-        $result = parent::render();  // init html result
-        $this->getMessenger()->registerMessageTrace();
-        return $result;
+        $this->setRenderedOutput(parent::render());
+        return $this->renderedOutputAdd("");
     }
 
 }
