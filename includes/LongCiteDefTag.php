@@ -28,6 +28,8 @@ class LongCiteDefTag extends LongCiteTag {
     public function __construct($master, $input, $args, $parser, $frame=false) {
         parent::__construct($master, $input, $args, $parser, $frame);
         $this->addParamMsgKeys("author");
+        $this->addParamMsgKeys("render","renlang","renctrl","rencore","rendesc","renverb");
+        $this->addParamMsgKeys("renlong","renskip","renonly");
     }
 
     /// Process the <longcitedef> tag.
