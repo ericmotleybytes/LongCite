@@ -166,11 +166,6 @@ class LongCiteMaster {
         &$article, &$user, $reason, $id, $content=null, $logEntry
     ) {
         $pageId = $article->getTitle()->getPrefixedDBkey();
-        $m = $this->getMessenger();
-        $m->registerMessage(LongCiteMessenger::DebugType,
-            "In Master::onArticleDeleteComplete for '$pageId'");
-        $m->dumpToFile();
-        $m->clearMessages();
         # TBD
         return true;
     }
@@ -203,11 +198,6 @@ class LongCiteMaster {
     ) {
         $pageTitle = $article->getTitle();
         $pageId = $article->getTitle()->getPrefixedDBkey();
-        $m = $this->getMessenger();
-        $d = LongCiteMessenger::DebugType;
-        $m->registerMessage($d,"In Master::onPageContentSaveComplete for '$pageId'");
-        $m->dumpToFile();
-        $m->clearMessages();
         # TBD
         return true;
     }
@@ -241,10 +231,6 @@ class LongCiteMaster {
 
     public function register() {
         global $wgHooks;
-        #$m = $this->getMessenger();
-        #$m->registerMessage(LongCiteMessenger::DebugType,"In Master::register");
-        #$m->dumpToFile();
-        #$m->clearMessages();
         // register the extension
         #$wgExtensionFunctions[] = array(&$this,"setup");
         #$wgExtensionCredits['parserhook'][] = array( 
@@ -292,10 +278,6 @@ class LongCiteMaster {
         #if(is_null($parser)) {
         #    $parser = $GLOBALS['wgParser'];
         #}
-        #$m = $this->getMessenger();
-        #$m->registerMessage(LongCiteMessenger::DebugType,"In Master::setupParser");
-        #$m->dumpToFile();
-        #$m->clearMessages();
         // set hooks for parser functions
         #$wgParser->setHook('longcitedef',array($this,"tagLongCiteDef"));
         #$wgParser->setHook('longciteref',array($this,"tagLongCiteRef"));

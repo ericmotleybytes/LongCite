@@ -23,7 +23,7 @@ class LongCiteParamPersonNameTest extends Testcase {
         // instantiate param
         $tag = new LongCiteTag($master,"",array(),$parser,$frame);
         $pnameKey = "longcite-pn-author";
-        $param = new LongCiteParamPersonName($pnameKey,$tag);
+        $param = new LongCiteParamPersonName($pnameKey,true,$tag);
         $this->assertInstanceOf(LongCiteParamPersonName::class,$param);
         $param = LongCiteParam::newParam($pnameKey,$tag);
         $this->assertInstanceOf(LongCiteParamPersonName::class,$param);

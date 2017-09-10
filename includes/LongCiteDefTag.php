@@ -27,15 +27,16 @@ class LongCiteDefTag extends LongCiteTag {
     /// @param $frame - Recursive parsing frame.
     public function __construct($master, $input, $args, $parser, $frame=false) {
         parent::__construct($master, $input, $args, $parser, $frame);
-        $this->addParamMsgKeys(LongCiteTag::ParamCategoryDescription,
-            array("longcite-pn-author"));
+        $this->addParamMsgKeys("author");
     }
 
     /// Process the <longcitedef> tag.
     /// @return A string with rendered HTML.
     public function render() {
-        $this->setRenderedOutput(parent::render());
-        return $this->renderedOutputAdd("");
+        parent::renderPreperation();
+        $this->setRenderedOutput("");
+        $this->renderedOutputAdd($this->getMessenger()->renderMessagesHtml(true),true);
+        return $this->renderedOutputGet();
     }
 
 }

@@ -24,7 +24,7 @@ class LongCiteParamAlphaIdTest extends Testcase {
         $tag = new LongCiteTag($master,"",array(),$parser,$frame);
         $tag->setOutputLangCode("en");
         $pnameKey = "longcite-pn-key";
-        $param = new LongCiteParamAlphaId($pnameKey,$tag);
+        $param = new LongCiteParamAlphaId($pnameKey,false,$tag);
         $this->assertInstanceOf(LongCiteParamAlphaId::class,$param);
         $param = LongCiteParam::newParam($pnameKey,$tag);
         $this->assertInstanceOf(LongCiteParamAlphaId::class,$param);

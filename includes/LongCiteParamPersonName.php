@@ -8,9 +8,8 @@
 /// Parent Class for other LongCite tag classes.
 class LongCiteParamPersonName extends LongCiteParam {
 
-    public function __construct($paramNameKey,$tag) {
-        parent::__construct($paramNameKey,$tag);
-        $this->isMulti = true;
+    public function __construct($paramNameKey,$isMulti,$tag) {
+        parent::__construct($paramNameKey,$isMulti,$tag);
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;
         $this->setInputDelimMsgKey("longcite-delim-semi");

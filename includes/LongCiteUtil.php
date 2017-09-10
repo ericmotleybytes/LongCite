@@ -83,5 +83,108 @@ class LongCiteUtil {
         return $result;
     }
 
+    /// Percent Hex encode a string.
+    public static function percentHexEncode($text) {
+        if(strlen($text)==0) { return ""; }
+        $newText = preg_replace('/(..)/','%$1',bin2hex($text));
+        return $newText;
+    }
+    
+    /// Percent Hex decode a string.
+    public static function percentHexDecode($text) {
+        if(strlen($text)==0) { return ""; }
+        $newText = preg_replace_callback(
+            '/(\%[0-9a-fA-F]{2})/',
+            function($matches){ return hex2bin(substr($matches[0],1,2));},
+            $text);
+        return $newText;
+    }
+    
+    /// Convert all '\<c>' sequences to '%xx' urlencoding. Is utf-8 multibyte aware.
+    public static function backslashes2percenthex($text) {
+        $textLen = mb_strlen($text);
+        if($textLen==0) { return ""; }
+        $newText = "";
+        $backslash = "\\";
+        $offset=0;
+        while(true) {
+            $backslashPos = mb_strpos($text,$backslash);
+            if($backslashPos===false) {
+                $newText .= $text;
+                break;
+            }
+            $beforePart = mb_substr($text,0,$backslashPos);
+            $newText .= $beforePart;
+            $nextChar = mb_substr($text,$backslashPos+1,1);
+            $newText .= self::percentHexEncode($nextChar);
+            $text = mb_substr($text,$backslashPos+2);
+            if($text=="") { break; }
+        }
+        return $newText;
+    }
+
+    /// Remove outer dblquotes or outer singlequotes.
+    public static function dequote($text) {
+        $textLen = mb_strlen($text);
+        if($textLen<=2) { return $text; }
+        $qq = '"';  // double quote character
+        $q  = "'";  // single quote character
+        $begChar = mb_substr($text,0,1);
+        $endChar = mb_substr($text,-1);
+        $newText = $text;
+        if($begChar==$qq) {
+            if($endChar==$qq) {
+                $newText = mb_substr($text,1,-1);
+            }
+        } elseif($begChar==$q) {            
+            if($endChar==$q) {
+                $newText = mb_substr($text,1,-1);
+            }
+        }
+        return $newText;
+    }
+
+    public static function parse($text,$delim=null) {
+        #LongCiteUtil::writeToTty("\nParse:\nbeg: text='$text'.\n");
+        $result = array();
+        #// trim whole
+        #$text = trim($text);
+        #if($text=="") { return array($text); }
+        // backslash to percent hex whole
+        $text = self::backslashes2percenthex($text);
+        #LongCiteUtil::writeToTty("hex: text='$text'.\n");
+        #// dequote whole
+        #$text = self::dequote($text);
+        // delim whole
+        if(is_null($delim)) {
+            $parts = array($text);
+        } else {
+            $parts = explode($delim,$text);
+        }
+        // process parts
+        #$partCnt=0;
+        foreach($parts as $part) {
+            #$partCnt++;
+            #LongCiteUtil::writeToTty("part$partCnt: part='$part'.\n");
+            // trim part
+            $part = trim($part);
+            #LongCiteUtil::writeToTty("part$partCnt trimmed: part='$part'.\n");
+            // dequote part
+            $part = self::dequote($part);
+            // de-percent-hex part
+            $part = self::percentHexDecode($part);
+            // save part to result
+            $result[] = $part;
+        }
+        return $result;
+    }
+
+    public static function writeToTty($text) {
+        $tty = fopen("/dev/tty","a");
+        if($tty===false) { return false; }
+        $bytes = fwrite($tty,$text);
+        if($bytes===false) { fclose($tty); return false; }
+        return fclose($tty);
+    }
 }
 ?>

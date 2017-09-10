@@ -14,8 +14,10 @@ class LongCiteRenTag extends LongCiteTag {
     }
 
     public function render() {
-        $this->setRenderedOutput(parent::render());
-        return $this->renderedOutputAdd("");
+        parent::renderPreperation();
+        $this->setRenderedOutput("");
+        $this->renderedOutputAdd($this->getMessenger()->renderMessagesHtml(true),true);
+        return $this->renderedOutputGet();
     }
 
 }

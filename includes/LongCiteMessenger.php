@@ -61,7 +61,7 @@ class LongCiteMessenger {
     /// @param $appendFlag - True to append to existing file, if any.
     /// returns true on success, else false.
     public function dumpToFile($appendFlag=true) {
-        if(true) { return true; }  /// disable for now
+        if (!$this->getEnableDebug()) { return false; }
         if($appendFlag) {
             $mode = "a";
         } else {
@@ -160,9 +160,6 @@ class LongCiteMessenger {
         $msgId = $this->prefixMsgIds[$msgType];
         $code = $this->langCode;
         $prefix = wfMessage($msgId)->inLanguage($code)->plain();
-        #$msgText = strip_tags($msgText,"<b>");
-        #$msgText = filter_var($msgText,FILTER_SANITIZE_STRING);
-        #$msgText = htmlentities($msgText,ENT_QUOTES);
         $msg = array(
             "type"      => $msgType,
             "prefix"    => $prefix,
@@ -182,8 +179,7 @@ class LongCiteMessenger {
         foreach($this->messages as $message) {
             $cssClass = $message["css-class"];
             $prefix   = $message["prefix"];
-            $text     = $message["text"];
-            $text     = htmlentities($text,ENT_QUOTES);
+            $text     = htmlspecialchars($message["text"]);
             $result  .= "<p class=$dq$cssClass$dq>";
             $result  .= "$prefix: $text";
             $result  .= "</p>\n";
@@ -271,5 +267,19 @@ class LongCiteMessenger {
         $this->langCode = $langCode;
     }
 
+    /// Write immediately to /dev/tty if debug enabled (and tty available).
+    public function writeToTty($msg) {
+        if(!$this->getEnableDebug()) { return false; }
+        $tty = fopen("/dev/tty","a");
+        if($tty===false) { return false; }
+        $bytes = fwrite($tty,$msg);
+        if($bytes===false) {
+            fclose($tty);
+            return false;
+        }
+        $status = fclose($tty);
+        if($status===false) { return $status; }
+        return $bytes;
+    }
 }
 ?>

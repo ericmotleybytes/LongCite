@@ -20,7 +20,7 @@
         "LongCiteOptTag"          : "includes/LongCiteOptTag.php",
         "LongCiteParam"           : "includes/LongCiteParam.php",
         "LongCiteParamAlphaId"    : "includes/LongCiteParamAlphaId.php",
-        "LongCiteParamPersonName" : "includes/LongCiteParamPersonName.php",
+        "LongCiteParamBoolean"    : "includes/LongCiteParamBoolean.php",
         "LongCiteParamLangCode"   : "includes/LongCiteParamLangCode.php",
         "LongCiteParamNote"       : "includes/LongCiteParamNote.php",
         "LongCiteParamPersonName" : "includes/LongCiteParamPersonName.php",

@@ -8,9 +8,8 @@
 /// Parent Class for other LongCite tag classes.
 class LongCiteParamAlphaId extends LongCiteParam {
 
-    public function __construct($paramNameKey, $tag) {
-        parent::__construct($paramNameKey, $tag);
-        $this->isMulti = false;
+    public function __construct($paramNameKey, $isMulti, $tag) {
+        parent::__construct($paramNameKey, $isMulti, $tag);
     }
 
 }

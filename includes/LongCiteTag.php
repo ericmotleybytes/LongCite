@@ -8,11 +8,6 @@
 
 /// Parent Class for other LongCite tag classes.
 class LongCiteTag {
-    const ParamCategoryLanguage    = "lang";
-    const ParamCategoryControl     = "ctrl";
-    const ParamCategoryCore        = "core";
-    const ParamCategoryDescription = "desc";
-    const ParamCategoryVerbose     = "verb";
     protected $master   = null;  ///< LongCiteMaster instance.
     protected $input    = null;  ///< Stuff between open and close tags.
     protected $args     = null;  ///< Settings within opening tag.
@@ -24,6 +19,7 @@ class LongCiteTag {
     protected $messenger = null;       ///< LongCiteMessenger object.
     protected $paramMsgKeys = array();  ///< Hash cat->arr of msg keys.
     protected $renderedOutput = "";     ///< Copy of rendered output html.
+    protected $argsToSkip = array();    ///< Gets 'lang' after language selection.
 
     public function __construct($master, $input, $args, $parser, $frame=false) {
         $this->master = $master;
@@ -33,40 +29,47 @@ class LongCiteTag {
         $this->frame   = $frame;
         $this->inputLangCode  = $master->getInputLangCode();
         $this->outputLangCode = $master->getOutputLangCode();
-        $this->messenger = new LongCiteMessenger($this->outputLangCode);
+        $this->messenger = new LongCiteMessenger($this->inputLangCode);
+        $this->argsToSkip = array();
         # set up param msg keys.
-        $this->paramMsgKeys = array(
-            self::ParamCategoryLanguage    => array(),
-            self::ParamCategoryCore        => array(),
-            self::ParamCategoryControl     => array(),
-            self::ParamCategoryDescription => array(),
-            self::ParamCategoryVerbose     => array()
+        $this->clearParamMsgKeys();
+        $this->addParamMsgKeys(
+            "alwayslang","key","author","note"
         );
-        $this->addParamMsgKeys(self::ParamCategoryLanguage,
-            "longcite-pn-alwayslang");
-        $this->addParamMsgKeys(self::ParamCategoryCore,
-            array("longcite-pn-key"));
-        $this->addParamMsgKeys(LongCiteTag::ParamCategoryDescription,
-            array("longcite-pn-author"));
-        $this->addParamMsgKeys(LongCiteTag::ParamCategoryDescription,
-            array("longcite-pn-note"));
         # Add css module if not already added.
         $parserOutput = $this->parser->getOutput();
         $this->master->loadCssModule($parserOutput);
     }
 
-    public function addParamMsgKeys($category,$msgKeys) {
+    public function addParamMsgKeys($msgKeys) {
         if(!is_array($msgKeys)) { $msgKeys = array($msgKeys); }
-        $theMsgKeys = $this->paramMsgKeys[$category];
         foreach($msgKeys as $msgKey) {
-            if(!in_array($msgKey,$theMsgKeys)) {
-                $theMsgKeys[] = $msgKey;
+            $msgKey = LongCiteParam::getParamNameKeyLong($msgKey);
+            $category = LongCiteParam::getParamCategory($msgKey);
+            if($category===false) {
+                trigger_error("Bad param name key ($msgKey).",E_USER_ERROR);
+                return false;
+            }
+            $curMsgKeys = $this->getParamMsgKeys($category);
+            if(!in_array($msgKey,$curMsgKeys)) {
+                $this->paramMsgKeys[$category][] = $msgKey;
             }
         }
-        $this->paramMsgKeys[$category] = $theMsgKeys;
+        return true;
+    }
+
+    public function clearParamMsgKeys() {
+        $this->paramMsgKeys = array(
+            LongCiteParam::CatLang => array(),
+            LongCiteParam::CatCore => array(),
+            LongCiteParam::CatCtrl => array(),
+            LongCiteParam::CatDesc => array(),
+            LongCiteParam::CatVerb => array()
+        );
     }
 
     public function determineInputLanguage() {
+        $this->argsToSkip = array();
         $parser   = $this->getParser();
         $frame    = $this->getFrame();
         $master   = $this->getMaster();
@@ -75,7 +78,7 @@ class LongCiteTag {
         $supportedLangCodes = $master->getSupportedLangCodes();
         // get list of msg keys for lang code param name, but there
         // should only be one entry on the list.
-        $langMsgKeys = $this->getParamMsgKeys(self::ParamCategoryLanguage);
+        $langMsgKeys = $this->getParamMsgKeys(LongCiteParam::CatLang);
         if(count($langMsgKeys)>1) {
             trigger_error("Too many language message keys.",E_USER_WARNING);
             return false;
@@ -96,7 +99,8 @@ class LongCiteTag {
             } else {
                 $newLangCode = $langCode;
             }
-            unset($this->args[$langParamName]);
+            //unset($this->args[$langParamName]);
+            $this->argsToSkip[] = "$langParamName";
         }
         $langParamObj = $this->getParamByMsgKey($langMsgKey);
         $langParamObj->addValues($newLangCode);
@@ -256,6 +260,18 @@ class LongCiteTag {
             }
             $parts[0] = trim($parts[0]);
             $parts[1] = trim($parts[1]);
+            # remove surrounding doublequotes if needed
+            if(substr($parts[1],0,1)=='"') {
+                if(substr($parts[1],-1)=='"') {
+                    $parts[1] = substr($parts[1],1,-1);
+                }
+            }
+            # remove surrounding singlequotes if needed
+            if(substr($parts[1],0,1)=="'") {
+                if(substr($parts[1],-1)=="'") {
+                    $parts[1] = substr($parts[1],1,-1);
+                }
+            }
             $arrOfArr[] = $parts;
         }
         return $arrOfArr;
@@ -263,10 +279,16 @@ class LongCiteTag {
 
     public function render() {
         $this->renderPreperation();
-        return $this->setRenderedOutput("");
+        $this->renderedOutputAdd($this->getMessenger()->renderMessagesHtml(true),true);
+        return $this->renderedOutputGet();
     }
 
-    public function renderedOutputAdd($html) {
+    public function renderedOutputAdd($text,$isHtml=false) {
+        if($isHtml) {
+            $html = $text;
+        } else {
+            $html = htmlspecialchars($text);
+        }
         $this->renderedOutput .= $html;
         return $this->renderedOutput;
     }
@@ -275,7 +297,12 @@ class LongCiteTag {
         return $this->renderedOutput;
     }
 
-    public function renderedOutputSet($html) {
+    public function renderedOutputSet($text,$isHtml=false) {
+        if($isHtml) {
+            $html = $text;
+        } else {
+            $html = htmlspecialchars($text);
+        }
         $this->renderedOutput = $html;
         return $this->renderedOutput;
     }
@@ -283,10 +310,10 @@ class LongCiteTag {
     public function renderPreperation() {
         $inLangCode = $this->determineInputLanguage();
         $cats = array(
-            self::ParamCategoryControl,
-            self::ParamCategoryCore,
-            self::ParamCategoryDescription,
-            self::ParamCategoryVerbose
+            LongCiteParam::CatCtrl,
+            LongCiteParam::CatCore,
+            LongCiteParam::CatDesc,
+            LongCiteParam::CatVerb
         );
         $validParamMsgKeys = $this->getParamMsgKeys($cats);
         $inLangCode = $this->getInputLangCode();
@@ -301,6 +328,9 @@ class LongCiteTag {
         }
         // process args from within opening tag
         foreach($this->args as $paramName => $paramVal) {
+            if(array_key_exists($paramName,$this->argsToSkip)) {
+                continue;  // Skip the 'lang' key already processed.
+            }
             if(!array_key_exists($paramName,$paramMap)) {
                 $errKey = "longcite-err-badtagpar";
                 $msg = $this->wikiMessage($errKey,$paramName,$tagMarkupName);
@@ -337,6 +367,7 @@ class LongCiteTag {
             $messenger->registerMessage(LongCiteMessenger::WarningType,$msg);
             return $this->getInputLangCode();
         }
+        $this->messenger->setLangCode($code);
         $this->inputLangCode = $code;
         return $code;
     }
@@ -349,7 +380,6 @@ class LongCiteTag {
             $messenger->registerMessage(LongCiteMessenger::WarningType,$msg);
             return $this->getOutputLangCode();
         }
-        $this->messenger->setLangCode($code);
         $this->outputLangCode = $code;
         return $code;
     }

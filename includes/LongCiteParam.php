@@ -8,35 +8,92 @@
 /// Parent Class for other LongCite tag classes.
 class LongCiteParam {
 
-    const ParamClassPrefix = "LongCiteParam";
-    const ParamModeLong    = "long";
-    const ParamModeShort   = "short";
+    const ParamClassPrefix  = "LongCiteParam";
+    const ParamModeLong     = "long";
+    const ParamModeShort    = "short";
+    const ParamMsgKeyPrefix = "longcite-pn-";
+    const CatLang = "language";
+    const CatCtrl = "control";
+    const CatCore = "core";
+    const CatDesc = "description";
+    const CatVerb = "verbose";
 
     protected static $paramClassMap = array(
-        "longcite-pn-alwayslang" => "LangCode",
-        "longcite-pn-author"     => "PersonName",
-        "longcite-pn-key"        => "AlphaId",
-        "longcite-pn-note"       => "Note"
+        "longcite-pn-alwayslang" => array("LangCode",false,self::CatLang),
+        "longcite-pn-author"     => array("PersonName",true,self::CatDesc),
+        "longcite-pn-key"        => array("AlphaId",false,self::CatCore),
+        "longcite-pn-note"       => array("Note",true,self::CatVerb),
+        "longcite-pn-render"     => array("Boolean",false,self::CatCtrl),
+        "longcite-pn-renlong"    => array("Boolean",false,self::CatCtrl),
+        "longcite-pn-renlang"    => array("Boolean",false,self::CatCtrl),
+        "longcite-pn-renctrl"    => array("Boolean",false,self::CatCtrl),
+        "longcite-pn-rencore"    => array("Boolean",false,self::CatCtrl),
+        "longcite-pn-rendesc"    => array("Boolean",false,self::CatCtrl),
+        "longcite-pn-renverb"    => array("Boolean",false,self::CatCtrl),
+        "longcite-pn-renskip"    => array("AlphaId",true,self::CatCtrl),
+        "longcite-pn-renonly"    => array("AlphaId",true,self::CatCtrl)
     );
 
-    public static function getParamClass($paramNameKey) {
+    /// Convert full or shortened param name msg keys to full msg keys.
+    public static function getParamNameKeyLong($paramNameKey) {
+        $prefix = self::ParamMsgKeyPrefix;
+        $prefixLen = mb_strlen($prefix);
+        if(mb_substr($paramNameKey,0,$prefixLen)==$prefix) {
+            $result = $paramNameKey;
+        } else {
+            $result = $prefix . $paramNameKey;
+        }
+        return $result;
+    }
+
+    /// Convert full or shortened param name msg keys to full msg keys.
+    public static function getParamNameKeyShort($paramNameKey) {
+        $prefix = self::ParamMsgKeyPrefix;
+        $prefixLen = mb_strlen($prefix);
+        if(mb_substr($paramNameKey,0,$prefixLen)==$prefix) {
+            $result = mb_substr($paramNameKey,$prefixLen);
+        } else {
+            $result = $paramNameKey;
+        }
+        return $result;
+    }
+
+    public static function getParamCategory($paramNameKey) {
+        $paramNameKey = self::getParamNameKeyLong($paramNameKey);
         if(!array_key_exists($paramNameKey,self::$paramClassMap)) { return false; }
-        $result = self::ParamClassPrefix . self::$paramClassMap[$paramNameKey];
+        $result = self::$paramClassMap[$paramNameKey][2];
+        return $result;
+    }
+
+    public static function getParamClass($paramNameKey) {
+        $paramNameKey = self::getParamNameKeyLong($paramNameKey);
+        if(!array_key_exists($paramNameKey,self::$paramClassMap)) { return false; }
+        $result = self::ParamClassPrefix . self::$paramClassMap[$paramNameKey][0];
+        return $result;
+    }
+
+    public static function getParamMulti($paramNameKey) {
+        $paramNameKey = self::getParamNameKeyLong($paramNameKey);
+        if(!array_key_exists($paramNameKey,self::$paramClassMap)) { return null; }
+        $result = self::ParamClassPrefix . self::$paramClassMap[$paramNameKey][1];
         return $result;
     }
 
     public static function getParamType($paramNameKey) {
+        $paramNameKey = self::getParamNameKeyLong($paramNameKey);
         if(!array_key_exists($paramNameKey,self::$paramClassMap)) { return false; }
-        $result = self::$paramClassMap[$paramNameKey];
+        $result = self::$paramClassMap[$paramNameKey][0];
         return $result;
     }
 
     public static function getParamDescKey($paramNameKey) {
+        $paramNameKey = self::getParamNameKeyLong($paramNameKey);
         $result = str_replace("-pn-","-pd-",$paramNameKey);
         return $result;
     }
 
     public static function getParamDescription($paramNameKey,$langCode=null) {
+        $paramNameKey = self::getParamNameKeyLong($paramNameKey);
         if(is_null($langCode)) {
             $master = LongCiteMaster::getActiveMaster();
             $langCode = $master->getOutputLangCode();
@@ -47,12 +104,14 @@ class LongCiteParam {
     }
 
     public static function newParam($paramNameKey,$tag) {
+        $paramNameKey = self::getParamNameKeyLong($paramNameKey);
         if(!array_key_exists($paramNameKey,self::$paramClassMap)) {
             return false;
         }
-        $paramClass = self::ParamClassPrefix . self::$paramClassMap[$paramNameKey];
+        $paramClass = self::ParamClassPrefix . self::$paramClassMap[$paramNameKey][0];
+        $isMulti    = self::$paramClassMap[$paramNameKey][1];
         try {
-            $result = new $paramClass($paramNameKey,$tag);
+            $result = new $paramClass($paramNameKey,$isMulti,$tag);
         } catch (Exception $e) {
             $result = false();
         }
@@ -66,10 +125,12 @@ class LongCiteParam {
     protected $outputDelimMsgKeys = array(); ///< Hash mode to msg key.
     protected $values     = array();   ///< Semi parsed values.
 
-    public function __construct($paramNameKey, $tag) {
+    public function __construct($paramNameKey, $isMulti, $tag) {
+        $paramNameKey = self::getParamNameKeyLong($paramNameKey);
         if(!array_key_exists($paramNameKey,self::$paramClassMap)) {
             throw new LongCiteException("Unrecognized param msg key ($paramNameKey).");
         }
+        $this->isMulti = $isMulti;
         if(!is_a($tag,"LongCiteTag")) {
             throw new LongCiteException("Tag is not a LongCiteTag.");
         }
@@ -92,12 +153,27 @@ class LongCiteParam {
         $valuesStr = $parser->recursiveTagParse($valuesStr,$frame);
         if($this->isMulti) {
             $inDelim = $this->getInputDelim();
-            $explodedValues = explode($inDelim,$valuesStr);
-            foreach(explodedValues as $val) {
-                $this->values[] = $val;
-            }
         } else {
-            $this->values = array($valuesStr);
+            $inDelim = null;
+        }
+        $vals = LongCiteUtil::parse($valuesStr,$inDelim);
+        foreach($vals as $val) {
+            if($this->isValueValid($val)) {
+                if($this->isMulti()) {
+                    $this->values[] = $val;
+                } else {
+                    $this->values = array($val);
+                }
+            } else {
+                $mess = $this->getMessenger();
+                $markupName = $this->getTag()->getTagMarkupName();
+                $paramName = $this->getName(true);
+                $msg = $this->wikiMessage(
+                    "longcite-err-invalidval",$val,$paramName,$markupName
+                );
+                $msg = $msg->plain();
+                $mess->registerMessageWarning($msg);
+            }
         }
         return true;
     }
@@ -140,10 +216,14 @@ class LongCiteParam {
         return $this->paramNameKey;
     }
 
-    public function getName() {
-        $outLangCode = $this->tag->getOutputLangCode();
+    public function getName($usingInLang=true) {
+        if($usingInLang) {
+            $langCode = $this->tag->getInputLangCode();
+        } else {
+            $langCode = $this->tag->getOutputLangCode();
+        }
         $msgKey = $this->paramNameKey;
-        $name = wfMessage($msgKey)->inLanguage($outLangCode)->plain();
+        $name = wfMessage($msgKey)->inLanguage($langCode)->plain();
         return $name;
     }
 
@@ -192,8 +272,35 @@ class LongCiteParam {
         return $this->isMulti;
     }
 
-    public function isValidValue($value) {
+    public function isValueValid($value) {
         return is_string($value);
+    }
+
+    public function parseBooleanValue($valueStr,$default=null) {
+        $valueStr = mb_strtolower(trim($valueStr));
+        if($valueStr=="") { return $default; }
+        $inLangCode = $this->getInputLangCode();
+        $msgKeyMap = array(
+            "longcite-pv-true"    => true,
+            "longcite-pv-false"   => false,
+            "longcite-pv-on"      => true,
+            "longcite-pv-off"     => false,
+            "longcite-pv-yes"     => true,
+            "longcite-pv-no"      => false,
+            "longcite-pv-numzero" => true,
+            "longcite-pv-numone"  => false,
+            "longcite-pv-null"    => $default,
+            "longcite-pv-unknown" => $default,
+            "longcite-pv-missing" => $default            
+        );
+        foreach($msgKeyMap as $msgKey => $val) {
+            $trans = wfMessage($msgKey)->inLanguage($inLangCode)->plain();
+            $trans = mb_strtolower(trim($trans));
+            if($trans==$valueStr) {
+                return $msgKeyMap[$msgKey];
+            }
+        }
+        return null;
     }
 
     public function setInputDelimMsgKey($delimMsgKey) {

@@ -23,7 +23,7 @@ class LongCiteParamLangCodeTest extends Testcase {
         // instantiate param
         $tag = new LongCiteTag($master,"",array(),$parser,$frame);
         $pnameKey = "longcite-pn-alwayslang";
-        $param = new LongCiteParamLangCode($pnameKey,$tag);
+        $param = new LongCiteParamLangCode($pnameKey,false,$tag);
         $this->assertInstanceOf(LongCiteParamLangCode::class,$param);
         $param = LongCiteParam::newParam($pnameKey,$tag);
         $this->assertInstanceOf(LongCiteParamLangCode::class,$param);
@@ -48,9 +48,8 @@ class LongCiteParamLangCodeTest extends Testcase {
         $param->addValues($v2);
         $this->assertEquals(array($v2),$param->getValues());
         $param->addValues($v3);
-        $exp1 = array($v3);
-        $exp2 = array(strtolower($v3));
-        $this->assertEquals($exp1,$param->getValues());
+        $exp = array(strtolower($v3));
+        $this->assertEquals($exp,$param->getValues());
     }
 
 }

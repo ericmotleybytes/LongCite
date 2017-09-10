@@ -22,8 +22,10 @@ class LongCiteOptTag extends LongCiteTag {
     /// Process the <longciteopt> tag.
     /// @return A string with rendered HTML.
     public function render() {
-        $this->setRenderedOutput(parent::render());
-        return $this->renderedOutputAdd("");
+        parent::renderPreperation();
+        $this->setRenderedOutput("");
+        $this->renderedOutputAdd($this->getMessenger()->renderMessagesHtml(true),true);
+        return $this->renderedOutputGet();
     }
 
 }
