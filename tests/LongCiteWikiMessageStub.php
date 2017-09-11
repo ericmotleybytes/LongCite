@@ -147,5 +147,6 @@ class LongCiteWikiMessageStub {
         }
         return $result;
     }
+
 }
 ?>

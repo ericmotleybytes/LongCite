@@ -9,7 +9,9 @@
 /// Class with utility routines.
 class LongCiteUtil {
 
-    function a_or_an($text,$upcase=true) {
+    protected static $i18nCache = array();  // hash language code to json
+
+    public static function a_or_an($text,$upcase=true) {
         $result = "";
         $lctext = strtolower($text);
         $t1 = substr($lctext,0,1);
@@ -186,5 +188,41 @@ class LongCiteUtil {
         if($bytes===false) { fclose($tty); return false; }
         return fclose($tty);
     }
+
+    public static function i18nRender($langCode,$msgKey,...$params) {
+        $langCode = mb_strtolower($langCode);
+        $jsonFile = __DIR__ . "/../i18n/" . $langCode . ".json";
+        if(array_key_exists($langCode,self::$i18nCache)) {
+            $jsonArr = self::$i18nCache[$langCode];
+        } else {
+            if(!file_exists($jsonFile)) {
+                trigger_error("File not found ($jsonFile).",E_USER_WARNING);
+                return false;
+            }
+            $jsonStr = file_get_contents($jsonFile);
+            if($jsonStr===false) {
+                trigger_error("Could not read ($jsonFile).",E_USER_WARNING);
+                return false;
+            }
+            $jsonArr = json_decode($jsonStr,true);
+            if(is_null($jsonArr)) {
+                trigger_error("Could not json_decode $jsonFile.",E_USER_WARNING);
+                return false;
+            }
+            self::$i18nCache[$langCode] = $jsonArr;
+        }
+        if(!array_key_exists($msgKey,$jsonArr)) {
+            trigger_error("Message key $msgKey not found in $jsonFile.",E_USER_WARNING);
+            return false;
+        }
+        $result = $jsonArr[$this->msgKey];
+        $n = 0;
+            $n += 1;
+        foreach($this->params as $param) {
+            $result = str_replace('$'.$n,$param,$result);
+        }
+        return $result;
+    }
+
 }
 ?>

@@ -25,7 +25,9 @@
         "LongCiteParamNote"       : "includes/LongCiteParamNote.php",
         "LongCiteParamPersonName" : "includes/LongCiteParamPersonName.php",
         "LongCiteException"       : "includes/LongCiteException.php",
-        "LongCiteUtil"            : "includes/LongCiteUtil.php"
+        "LongCiteUtil"            : "includes/LongCiteUtil.php",
+        "LongCiteUtilDate"        : "includes/LongCiteUtilDate.php",
+        "LongCiteUtilPersonName"  : "includes/LongCiteUtilPersonName.php"
     },
     "ExtensionFunctions" : ["LongCiteMaster::initialize"],
     "ConfigRegistry": {

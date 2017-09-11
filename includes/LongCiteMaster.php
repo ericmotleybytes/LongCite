@@ -85,9 +85,10 @@ class LongCiteMaster {
         }
         fwrite($sqlHdl,"CREATE TABLE IF NOT EXISTS " . $dbPrefix . "longcite_citation (\n");
         fwrite($sqlHdl," longcite_guid char(32),\n");
-        fwrite($sqlHdl," longcite_id   varchar(255),\n");
-        fwrite($sqlHdl," longcite_page varchar(255),\n");
-        fwrite($sqlHdl," longcite_json varchar(20000),\n");
+        fwrite($sqlHdl," longcite_id   varchar(255) CHARACTER SET utf8,\n");
+        fwrite($sqlHdl," longcite_host varchar(255) CHARACTER SET utf8,\n");
+        fwrite($sqlHdl," longcite_page varchar(255) CHARACTER SET utf8,\n");
+        fwrite($sqlHdl," longcite_json text CHARACTER SET utf8,\n");
         fwrite($sqlHdl," UNIQUE KEY " . $dbPrefix . "longcite_guid_pk  (longcite_guid),\n");
         fwrite($sqlHdl," KEY        " . $dbPrefix . "longcite_id_idx   (longcite_id),\n");
         fwrite($sqlHdl," KEY        " . $dbPrefix . "longcite_page_idx (longcite_page)\n");
