@@ -13,6 +13,12 @@ class LongCiteUtilDate {
     protected $langCode    = "";     // e.g., "en" or "de".
     protected $locale      = "";     // e.g., "en-US" or "de-DE".
     protected $rawDateStr  = "";
+    protected $bce     = "";
+    protected $bceList = array();
+    protected $ce      = "";
+    protected $ceList  = array();
+    protected $circa   = "";
+    protected $circaList = array();
     protected $ad1     = "";
     protected $ad2     = "";
     protected $ce1     = "";
@@ -53,6 +59,12 @@ class LongCiteUtilDate {
         $langCode = mb_strtolower($langCode);
         if($langCode==$this->langCode) { return; }  // already set
         $this->langCode = $langCode;
+        $this->bce    = $this->i18n("bce");
+        $this->ce     = $this->i18n("ce");
+        $this->circa  = $this->i18n("circa");
+        $this->bceList   = mb_split('\;',$this->bce);
+        $this->ceList    = mb_split('\;',$this->ce);
+        $this->circaList = mb_split('\;',$this->circa);
         $this->ad1    = $this->i18n("ad1");
         $this->ad2    = $this->i18n("ad2");
         $this->ce1    = $this->i18n("ce1");
@@ -87,7 +99,8 @@ class LongCiteUtilDate {
         $adjDate = mb_strtolower(trim($dateStr));
         $adjDate = mb_ereg_replace('[\ \t]+'," ",$adjDate); // condense multi-spaces
         // check prefix for c.. ca. and circa
-        $circas = array($this->circa1,$this->circa2,$this->circa3);
+        #$circas = array($this->circa1,$this->circa2,$this->circa3);
+        $circas = $this->circaList;
         foreach($circas as $circa) {
             $circa = mb_strtolower($circa);
             $circaLen = mb_strlen($circa);
@@ -98,7 +111,8 @@ class LongCiteUtilDate {
                 break;
             }
         }
-        $bces = array($this->bc1,$this->bc2,$this->bce1,$this->bce2);
+        #$bces = array($this->bc1,$this->bc2,$this->bce1,$this->bce2);
+        $bces = $this->bceList;
         foreach($bces as $bce) {
             $bce = mb_strtoupper($bce);
             $bceLen = mb_strlen($bce);
@@ -112,7 +126,8 @@ class LongCiteUtilDate {
         }
         $ces = array();
         if($this->isBCE===false) {
-            $ces = array($this->ad1,$this->ad2,$this->ce1,$this->ce2);
+            #$ces = array($this->ad1,$this->ad2,$this->ce1,$this->ce2);
+            $ces = $this->ceList;
         }
         foreach($ces as $ce) {
             $ce = mb_strtoupper($ce);
@@ -245,7 +260,7 @@ class LongCiteUtilDate {
     public function getDateStr() {
         $result = "";
         if($this->isCirca) {
-            $result .= $this->circa1 . " ";
+            $result .= $this->circaList[0] . " ";
         }
         if(is_null($this->year)) {
             return "?" . $this->rawDateStr . "?";
@@ -268,11 +283,11 @@ class LongCiteUtilDate {
             }
         }
         if($this->isBCE) {
-            $result .= " " . $this->bce1;
+            $result .= " " . $this->bceList[0];
         } elseif($this->year < 1000) {
-            $result .= " " . $this->ce1;
+            $result .= " " . $this->ceList[0];
         } elseif($this->year >= 10000) {
-            $result .= " " . $this->ce1;
+            $result .= " " . $this->ceList[0];
         }
         return $result;
     }

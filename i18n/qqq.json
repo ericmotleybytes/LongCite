@@ -5,6 +5,9 @@
     "longcite-extensionname"   : "Name of the extension.",
     "longcite-desc"            :
         "{{desc|name=Longcite|url=https://www.mediawiki.org/wiki/Extension:Longcite}}",
+    "longcite-date-bce"        : "Semi delim list of pre-common era indicators.",
+    "longcite-date-ce"         : "Semi delim list of common era indicators.",
+    "longcite-date-circa"      : "Semi delim list of circa indicators.",
     "longcite-date-ad1"        : "Date A.D. (anno domini) indicator form 1.",
     "longcite-date-ad2"        : "Date AD (anno domini) indicator form 2.",
     "longcite-date-ce1"        : "Date C.E. (Common Era) indicator form 1.",

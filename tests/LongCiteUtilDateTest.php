@@ -73,14 +73,23 @@ class LongCiteUtilDateTest extends Testcase {
         $actBCE   = $dateObj->getIsBCE();
         $actCirca = $dateObj->getIsCirca();
         $actParsedOk = $dateObj->getParsedOk();
+        if(false) {
+            LongCiteUtil::writeToTty("\n");
+            LongCiteUtil::writeToTty("Raw=$rawDate.\n");
+            LongCiteUtil::writeToTty("date=$expDate/$actDate.\n");
+            LongCiteUtil::writeToTty("langCode1=$langCode1/$actLangCode1.\n");
+            LongCiteUtil::writeToTty("langCode2=$langCode2/$actLangCode2.\n");
+            LongCiteUtil::writeToTty("BCE=$expBCE/$actBCE.\n");
+            LongCiteUtil::writeToTty("Circa=$expCirca/$actCirca.\n");
+        }
         $this->assertEquals($langCode1,$actLangCode1);
         $this->assertEquals($langCode2,$actLangCode2);
-        $this->assertEquals($expDate,$actDate);
+        $this->assertEquals($expBCE,$actBCE);
+        $this->assertEquals($expCirca,$actCirca);
         $this->assertEquals($expYear,$actYear);
         $this->assertEquals($expMonth,$actMonth);
         $this->assertEquals($expDay,$actDay);
-        $this->assertEquals($expBCE,$actBCE);
-        $this->assertEquals($expCirca,$actCirca);
+        $this->assertEquals($expDate,$actDate);
         $this->assertEquals($expParsedOk,$actParsedOk);
     }
 
