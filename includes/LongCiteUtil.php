@@ -215,10 +215,10 @@ class LongCiteUtil {
             trigger_error("Message key $msgKey not found in $jsonFile.",E_USER_WARNING);
             return false;
         }
-        $result = $jsonArr[$this->msgKey];
+        $result = $jsonArr[$msgKey];
         $n = 0;
             $n += 1;
-        foreach($this->params as $param) {
+        foreach($params as $param) {
             $result = str_replace('$'.$n,$param,$result);
         }
         return $result;

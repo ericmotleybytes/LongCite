@@ -10,7 +10,8 @@
 /// Support dates such as:
 class LongCiteUtilDate {
 
-    protected $langCode    = "en";     /// e.g., "en" or "de"
+    protected $langCode    = "";     // e.g., "en" or "de".
+    protected $locale      = "";     // e.g., "en-US" or "de-DE".
     protected $rawDateStr  = "";
     protected $ad1     = "";
     protected $ad2     = "";
@@ -25,18 +26,32 @@ class LongCiteUtilDate {
     protected $circa3  = "";
     protected $prefix  = "";
     protected $postfix = "";
-    protected $dateParts = array();
     protected $isCirca   = false;
     protected $isBCE     = false;
     protected $year      = null;
     protected $month     = null;
     protected $day       = null;
     protected $parsedOk  = false;
+    protected $parsedMsg = "";
+    protected $monthNamesLong  = array();
+    protected $monthNamesShort = array();
 
     /// Class constructor.
     public function __construct($rawDateStr,$langCode="en") {
-        $langCode = mb_strtolower($langCode);
         $this->rawDateStr  = $rawDateStr;
+        $this->setLangCode($langCode);
+        $this->parsedOk = $this->parse($this->rawDateStr);
+    }
+
+    public function i18n($msgKeySuffix) {
+        $msgKey = "longcite-date-" . $msgKeySuffix;
+        $result = LongCiteUtil::i18nRender($this->langCode,$msgKey);
+        return $result;
+    }
+
+    public function setLangCode($langCode) {
+        $langCode = mb_strtolower($langCode);
+        if($langCode==$this->langCode) { return; }  // already set
         $this->langCode = $langCode;
         $this->ad1    = $this->i18n("ad1");
         $this->ad2    = $this->i18n("ad2");
@@ -49,22 +64,28 @@ class LongCiteUtilDate {
         $this->circa1 = $this->i18n("circa1");
         $this->circa2 = $this->i18n("circa2");
         $this->circa3 = $this->i18n("circa3");
-        $this->parsedOk = $this->parse($this->rawDateStr);
+        $this->locale = $this->i18n("locale");
+        $this->monthNamesLong  = array();
+        $this->monthNamesShort = array();
+        $saveLocale = setlocale(LC_TIME,0);
+        $saveLocale = setlocale(LC_TIME,$this->locale);
+        for($m=1; $m<=12; $m++) {
+            $t = mktime(0,0,0,$m,1,2000);
+            $this->monthNamesLong[$m]  = strftime('%B',$t);
+            $this->monthNamesShort[$m] = strftime('%b',$t);
+        }
+        setlocale(LC_TIME,$saveLocale);  // restore locale
     }
 
-    public function i18n($msgKeySuffix) {
-        $msgKey = "longcite-date-" . $msgKeySuffix;
-        $result = LongCiteUtil::i18nRender($this->langCode,$msgKey);
-        return $result;
-    }
-
-    function parse($dateStr) {
+    public function parse($dateStr) {
         $this->isCirca = false;
         $this->isBCE   = false;
         $this->year    = null;
         $this->month   = null;
         $this->day     = null;
-        $adjDate = strtolower(trim($dateStr));
+        $this->parsedMsg = "";
+        $adjDate = mb_strtolower(trim($dateStr));
+        $adjDate = mb_ereg_replace('[\ \t]+'," ",$adjDate); // condense multi-spaces
         // check prefix for c.. ca. and circa
         $circas = array($this->circa1,$this->circa2,$this->circa3);
         foreach($circas as $circa) {
@@ -103,37 +124,122 @@ class LongCiteUtilDate {
                 break;
             }
         }
-        if(preg_match('/^\-?[0-9]+$/',$adjDate)===1) {
-            // year only
-            $year = (int)$adjDate;
-            if($this->isBCE===false) {
-                if($year<0) {
-                    $this->isBCE = true;
-                    $year = -$year;
+        $altDate = mb_ereg_replace('[\/\.\-\,]+'," ",$adjDate); // replace / . and ,
+        $altDate = mb_ereg_replace('\ +'," ",$altDate); // condense multi-spaces
+        $altParts = explode(" ",$altDate);
+        $altPartsCnt = count($altParts);
+        $year  = null;
+        $month = null;
+        $day   = null;
+        $matches = array();
+        $pat1 = '^([+-]?[0-9]+)$';   // just numeric year
+        $pat2 = '^([+-]?[0-9]+)[\-\.\/]{1}([0-9]+)$';   // year-month
+        $pat3 = '^([+-]?[0-9]+)[\-\.\/]{1}([0-9]+)[\-\.\/]{1}([0-9]+)$';  // yr-mon-day
+        if(mb_ereg($pat1,$adjDate,$matches)!==false) {
+            $year  = (int)$matches[1];
+        } elseif(mb_ereg($pat2,$adjDate,$matches)!==false) {
+            $year  = (int)$matches[1];
+            $month = (int)$matches[2];
+        } elseif(mb_ereg($pat3,$adjDate,$matches)!==false) {
+            $year  = (int)$matches[1];
+            $month = (int)$matches[2];
+            $day   = (int)$matches[3];
+        } elseif($altPartsCnt==2) {
+            if(is_numeric($altParts[0])) {
+                // should be like 1957 Oct
+                $monthInfo = $this->lookupMonth($altParts[1]);
+                if($monthInfo!==false) {
+                    $month = $monthInfo[0];
+                    $year  = (int)$altParts[0];
+                }
+            } elseif(is_numeric($altParts[1])) {
+                // should be like Oct 1957
+                $monthInfo = $this->lookupMonth($altParts[0]);
+                if($monthInfo!==false) {
+                    $month = $monthInfo[0];
+                    $year  = (int)$altParts[1];
                 }
             }
-            $year = abs($year);
+        } elseif($altPartsCnt==3) {
+            if(is_numeric($altParts[0])) {
+                if(is_numeric($altParts[2])) {
+                    // should be like 4 Oct 1957
+                    $monthInfo = $this->lookupMonth($altParts[1]);
+                    if($monthInfo!==false) {
+                        $day   = (int)$altParts[0];
+                        $month = $monthInfo[0];
+                        $year  = (int)$altParts[2];
+                    }
+                }
+            } else {
+                if(is_numeric($altParts[1]) and is_numeric($altParts[2])) {
+                    // should be like Oct 4 1957
+                    $monthInfo = $this->lookupMonth($altParts[0]);
+                    if($monthInfo!==false) {
+                        $day   = (int)$altParts[1];
+                        $month = $monthInfo[0];
+                        $year  = (int)$altParts[2];
+                    }
+                }
+            }
+        }
+        #LongCiteUtil::writeToTty("\nY-M-D=$year-$month-$day\n");
+        if($year!==null) {
+            if($year<=0) {
+                $this->isBCE = true;
+                $year = abs($year-1);
+            }
             $this->year = $year;
+            if($month!==null) {
+                if($month<0 or $month>12) {
+                    $this->parsedMsg = "Bad month ($month)";
+                    return $false;  // bad month
+                }
+                $this->month = $month;
+                if($day!=null) {
+                    if($day<0 or $day>31) {
+                        $this->parsedMsg = "Bad day ($day)";
+                        return false; // bad day
+                    }
+                    if($year>=1 and $year<=32767) {
+                        $dateOk = checkdate($month,$day,$year);
+                        if($dateOk===false) {
+                            $this->parsedMsg = "Bad checkdate ($year-$month-$day)";
+                            return false;
+                        }
+                    }
+                    $this->day = $day;
+                }
+            }
+            $this->parsedMsg = "ok";
             return true;
         }
-        $dateParts = date_parse($adjDate);
-        if($dateParts===false) {
-            // could not parse date
-            return false;
+        $this->parsedMsg = "Unrecognized ($dateStr).";
+        return false;
+    }
+
+    public function lookupMonth($possibleMonth) {
+        if(is_numeric($possibleMonth)) {
+            $m = (int)$possibleMonth;
+            if($m<1 or $m>12) { return false; }
+            $long  = $this->monthNamesLong[$m];
+            $short = $this->monthNamesShort[$m];
+            return array($m,$long,$short);
         }
-        $year  = $dateParts["year"];
-        $month = $dateParts["month"];
-        $day   = $dateParts["day"];
-        if($year===false) {
-            // could not parse critical year part
-            return false;
+        $testStr = mb_strtolower($possibleMonth);
+        for($m=1; $m<=12; $m++) {
+            $long  = $this->monthNamesLong[$m];
+            $short = $this->monthNamesShort[$m];
+            if($testStr==mb_strtolower($long)) {
+                return array($m,$long,$short);
+            } elseif($testStr==mb_strtolower($short)) {
+                return array($m,$long,$short);
+            }
         }
-        if($year<0) { $this->isBCE = true; }
-        $year = abs($year);
-        $this->year = $year;
-        if($month!==false) { $this->month = $month; }
-        if($day!==false)   { $this->day   = $day; }
-        return true;
+        return false;
+    }
+    public function getLangCode() {
+        return $this->langCode;
     }
 
     public function getDateStr() {
@@ -144,7 +250,16 @@ class LongCiteUtilDate {
         if(is_null($this->year)) {
             return "?" . $this->rawDateStr . "?";
         } else {
-            $result .= $this->year;
+            if($this->month==null) {
+                $result .= $this->year;
+            } else {
+                // pad year when with month
+                $yearStr = "" . $this->year;
+                while(strlen($yearStr)<4) {
+                    $yearStr = "0". $yearStr;
+                }
+                $result .= $yearStr;
+            }
         }
         if($this->month!==null) {
             $result .= "-" . substr("0".$this->month,-2);
@@ -156,8 +271,39 @@ class LongCiteUtilDate {
             $result .= " " . $this->bce1;
         } elseif($this->year < 1000) {
             $result .= " " . $this->ce1;
+        } elseif($this->year >= 10000) {
+            $result .= " " . $this->ce1;
         }
         return $result;
     }
+
+    public function getIsCirca() {
+        return $this->isCirca;
+    }
+
+    public function getIsBCE() {
+        return $this->isBCE;
+    }
+
+    public function getYear() {
+        return $this->year;
+    }
+
+    public function getMonth() {
+        return $this->month;
+    }
+
+    public function getDay() {
+        return $this->day;
+    }
+
+    public function getParsedOk() {
+        return $this->parsedOk;
+    }
+
+    public function getParsedMsg() {
+        return $this->parsedMsg;
+    }
+
 }
 ?>

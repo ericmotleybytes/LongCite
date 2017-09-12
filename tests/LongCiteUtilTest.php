@@ -12,7 +12,7 @@ use PHPUnit\Framework\Testcase;
 /// Some LongCite phpunit tests.
 class LongCiteUtilTest extends Testcase {
 
-    /// Test guid functions.
+    /// Test date functions.
     public function testGuid() {
         if (function_exists('openssl_random_pseudo_bytes')) {
             $guid = LongCiteUtil::generateOpensslGuid();

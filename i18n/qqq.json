@@ -16,6 +16,7 @@
     "longcite-date-circa1"     : "circa date indicator form 1.",
     "longcite-date-circa2"     : "c. circa date indicator form 2.",
     "longcite-date-circa3"     : "ca. circa date indicator form 3.",
+    "longcite-date-locale"     : "PHP locale to assume for language.",
     "longcite-delim-alsonote"  : "Output delimiter {Also note:}.",
     "longcite-delim-and"       : "Output delimiter, e.g., 'Bob and Ted'.",
     "longcite-delim-bar"       : "Output delimiter, e.g., 'Bob|Ted'.",
