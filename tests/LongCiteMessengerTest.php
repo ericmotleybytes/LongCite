@@ -7,10 +7,10 @@
 
 require_once __DIR__ . "/LongCiteWikiStub.php";
 
-use PHPUnit\Framework\Testcase;
+use PHPUnit\Framework\TestCase;
 
 /// Some LongCite phpunit tests.
-class LongCiteMessengerTest extends Testcase {
+class LongCiteMessengerTest extends TestCase {
 
     /// Test functions.
     public function testFunctions() {

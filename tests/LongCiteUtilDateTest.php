@@ -8,20 +8,20 @@
 require_once __DIR__ . "/../includes/LongCiteUtilDate.php";
 require_once __DIR__ . "/../includes/LongCiteUtil.php";
 
-use PHPUnit\Framework\Testcase;
+use PHPUnit\Framework\TestCase;
 
 /// Some LongCite phpunit tests.
-class LongCiteUtilDateTest extends Testcase {
+class LongCiteUtilDateTest extends TestCase {
 
     /// Test date functions.
     public function testDates() {
         $this->helpDt("en","2001-03-30","2001-03-30",2001,3,30,false,false);
         $this->helpDt("en","280 BC","280 B.C.E.",280,null,null,true,false);
-        $this->helpDt("en","c. 280 BC","circa 280 B.C.E.",280,null,null,true,true);
-        $this->helpDt("en","ca. 280 BCE","circa 280 B.C.E.",280,null,null,true,true);
-        $this->helpDt("en","circa 280 B.C.E.","circa 280 B.C.E.",280,null,null,true,true);
-        $this->helpDt("en","c. 280 b.c.","circa 280 B.C.E.",280,null,null,true,true);
-        $this->helpDt("en/de","c. 280 BCE","circa 280 v.u.Z.",280,null,null,true,true);
+        $this->helpDt("en","c. 280 BC","c. 280 B.C.E.",280,null,null,true,true);
+        $this->helpDt("en","ca. 280 BCE","c. 280 B.C.E.",280,null,null,true,true);
+        $this->helpDt("en","circa 280 B.C.E.","c. 280 B.C.E.",280,null,null,true,true);
+        $this->helpDt("en","c. 280 b.c.","c. 280 B.C.E.",280,null,null,true,true);
+        $this->helpDt("en/de","c. 280 BCE","c. 280 v.u.Z.",280,null,null,true,true);
         $this->helpDt("en","-150","151 B.C.E.",151,null,null,true,false);
         $this->helpDt("en","-150 bc","151 B.C.E.",151,null,null,true,false);
         $this->helpDt("en","150","150 C.E.",150,null,null,false,false);
@@ -32,17 +32,17 @@ class LongCiteUtilDateTest extends Testcase {
         $this->helpDt("en","1957.04","1957-04",1957,4,null,false,false);
         $this->helpDt("en","1957-04-25","1957-04-25",1957,4,25,false,false);
         $this->helpDt("en","1957/04/25","1957-04-25",1957,4,25,false,false);
-        $this->helpDt("en/de","c. 280 BCE","circa 280 v.u.Z.",280,null,null,true,true);
+        $this->helpDt("en/de","c. 280 BCE","c. 280 v.u.Z.",280,null,null,true,true);
         $this->helpDt("en","October 1957","1957-10",1957,10,null,false,false);
         $this->helpDt("en","1957 october","1957-10",1957,10,null,false,false);
         $this->helpDt("en","OCT 1957","1957-10",1957,10,null,false,false);
         $this->helpDt("en","1957 Oct","1957-10",1957,10,null,false,false);
         $this->helpDt("en","October 14, 1957","1957-10-14",1957,10,14,false,false);
         $this->helpDt("en","14-Oct-1957","1957-10-14",1957,10,14,false,false);
-        $this->helpDt("de/en","ca. 280 vuZ","circa 280 B.C.E.",280,null,null,true,true);
+        $this->helpDt("de/en","ca. 280 vuZ","c. 280 B.C.E.",280,null,null,true,true);
         $this->helpDt("de","2001-03-30","2001-03-30",2001,3,30,false,false);
         $this->helpDt("de","280 v.chr.","280 v.u.Z.",280,null,null,true,false);
-        $this->helpDt("de","c. 280 vuz","circa 280 v.u.Z.",280,null,null,true,true);
+        $this->helpDt("de","c. 280 vuz","c. 280 v.u.Z.",280,null,null,true,true);
         $this->helpDt("de","Oktober 1957","1957-10",1957,10,null,false,false);
         $this->helpDt("de","1957 oktober","1957-10",1957,10,null,false,false);
         $this->helpDt("de","OKT 1957","1957-10",1957,10,null,false,false);
@@ -93,5 +93,27 @@ class LongCiteUtilDateTest extends Testcase {
         $this->assertEquals($expParsedOk,$actParsedOk);
     }
 
+    public function testDateFormats() {
+        $this->helpDF("en","1957-10-04","04-Oct-1957","4 October 1957");
+        $this->helpDF("de","1957-03-04","04-Mär-1957","4 März 1957");
+        $this->helpDF("en","1957-10","Oct-1957","October 1957");
+        $this->helpDF("en","1957","1957","1957");
+        $this->helpDF("en","1957","1957","1957");
+        $this->helpDF("en","c. 1957-10-04","c. 04-Oct-1957","circa 4 October 1957");
+        $this->helpDF("en","c. 1957","c. 1957","circa 1957");
+        $this->helpDF("en","957 C.E.","957 C.E.","957 C.E.");
+        $this->helpDF("en","957 B.C.E.","957 B.C.E.","957 B.C.E.");
+    }
+
+    public function helpDF($lang,$exp1,$exp2,$exp3) {
+        $f1 = LongCiteUtilDate::NumMonthFormat;
+        $f2 = LongCiteUtilDate::AbbrMonthFormat;
+        $f3 = LongCiteUtilDate::FullMonthFormat;
+        $d = new LongCiteUtilDate($exp1,$lang);
+        $this->assertEquals($exp1,$d->getDateStr());
+        $this->assertEquals($exp1,$d->getDateStr($f1));
+        $this->assertEquals($exp2,$d->getDateStr($f2));
+        $this->assertEquals($exp3,$d->getDateStr($f3));
+    }
 }
 ?>

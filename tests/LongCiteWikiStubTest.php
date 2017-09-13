@@ -7,11 +7,11 @@
 
 require_once __DIR__ . "/LongCiteWikiStub.php";
 
-use PHPUnit\Framework\Testcase;
+use PHPUnit\Framework\TestCase;
 
 /// Some LongCite phpunit tests.
 //  @backupGlobals enabled
-class LongCiteWikiStubTest extends Testcase {
+class LongCiteWikiStubTest extends TestCase {
 
     /// Test various functions.
     public function testFunctions() {

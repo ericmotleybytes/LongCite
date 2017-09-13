@@ -7,10 +7,10 @@
 
 require_once __DIR__ . "/../includes/LongCiteUtil.php";
 
-use PHPUnit\Framework\Testcase;
+use PHPUnit\Framework\TestCase;
 
 /// Some LongCite phpunit tests.
-class LongCiteUtilTest extends Testcase {
+class LongCiteUtilTest extends TestCase {
 
     /// Test date functions.
     public function testGuid() {

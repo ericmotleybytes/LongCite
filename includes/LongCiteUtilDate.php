@@ -9,6 +9,9 @@
 /// Class for working with dates.
 /// Support dates such as:
 class LongCiteUtilDate {
+    const NumMonthFormat  = 10;
+    const AbbrMonthFormat = 20;
+    const FullMonthFormat = 30;
 
     protected $langCode    = "";     // e.g., "en" or "de".
     protected $locale      = "";     // e.g., "en-US" or "de-DE".
@@ -233,38 +236,70 @@ class LongCiteUtilDate {
         return $this->langCode;
     }
 
-    public function getDateStr() {
-        $result = "";
+    public function getDateStr($formatCode=LongCiteUtilDate::NumMonthFormat) {
+        $formatCodes = array(
+            self::NumMonthFormat,    // e.g., 1957-10-04
+            self::AbbrMonthFormat,   // e.g., 04-Oct-1957
+            self::FullMonthFormat    // e.g., 4 October 1957
+        );
+        if(!in_array($formatCode,$formatCodes)) {
+            return "?" . $this->rawDateStr . "?";
+        }
+        $circaStrs = array(
+            self::NumMonthFormat  => $this->circaList[1],
+            self::AbbrMonthFormat => $this->circaList[1],
+            self::FullMonthFormat => $this->circaList[0]
+        );
+        $datePart  = "";
+        $circaPart = "";
+        $eraPart   = "";
         if($this->isCirca) {
-            $result .= $this->circaList[0] . " ";
+            $circaPart = $circaStrs[$formatCode] . " ";
         }
         if(is_null($this->year)) {
             return "?" . $this->rawDateStr . "?";
         } else {
             if($this->month==null) {
-                $result .= $this->year;
+                $datePart .= $this->year;
             } else {
                 // pad year when with month
-                $yearStr = "" . $this->year;
+                $yearStr = (string)$this->year;
                 while(strlen($yearStr)<4) {
                     $yearStr = "0". $yearStr;
                 }
-                $result .= $yearStr;
+                $datePart .= $yearStr;
             }
         }
         if($this->month!==null) {
-            $result .= "-" . substr("0".$this->month,-2);
+            if($formatCode==self::NumMonthFormat) {
+                $datePart .= "-" . substr("0".$this->month,-2);
+            } elseif($formatCode==self::AbbrMonthFormat) {
+                $monthInfo = $this->lookupMonth($this->month);
+                $monthStr = $monthInfo[2];
+                $datePart = $monthStr . "-" . $datePart;
+            } else {
+                $monthInfo = $this->lookupMonth($this->month);
+                $monthStr = $monthInfo[1];
+                $datePart = $monthStr . " " . $datePart;
+            }
             if($this->day!==null) {
-                $result .= "-" . substr("0".$this->day,-2);
+                if($formatCode==self::NumMonthFormat) {
+                    $datePart .= "-" . substr("0".$this->day,-2);
+                } elseif($formatCode==self::AbbrMonthFormat) {
+                    $datePart = substr("0".$this->day,-2) . "-" . $datePart;
+                } else {
+                    $datePart = $this->day . " " . $datePart;
+                }
             }
         }
         if($this->isBCE) {
-            $result .= " " . $this->bceList[0];
+            $eraPart .= " " . $this->bceList[0];
         } elseif($this->year < 1000) {
-            $result .= " " . $this->ceList[0];
+            $eraPart .= " " . $this->ceList[0];
         } elseif($this->year >= 10000) {
-            $result .= " " . $this->ceList[0];
+            $eraPart .= " " . $this->ceList[0];
         }
+        $result = $circaPart . $datePart . $eraPart;
         return $result;
     }
 
