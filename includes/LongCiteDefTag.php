@@ -27,9 +27,17 @@ class LongCiteDefTag extends LongCiteTag {
     /// @param $frame - Recursive parsing frame.
     public function __construct($master, $input, $args, $parser, $frame=false) {
         parent::__construct($master, $input, $args, $parser, $frame);
-        $this->addParamMsgKeys("author");
+        // lang msgkey
+        $this->addParamMsgKeys("alwayslang");
+        // ctrl msg keys
         $this->addParamMsgKeys("render","renlang","renctrl","rencore","rendesc","renverb");
         $this->addParamMsgKeys("renlong","renskip","renonly");
+        // core msg keys
+        $this->addParamMsgKeys("key");
+        // desc msg keys
+        $this->addParamMsgKeys("author","pubdate");
+        // verbosr msg keys
+        $this->addParamMsgKeys("note");
     }
 
     /// Process the <longcitedef> tag.

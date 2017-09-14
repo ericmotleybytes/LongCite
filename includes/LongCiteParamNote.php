@@ -12,9 +12,9 @@ class LongCiteParamNote extends LongCiteParam {
         parent::__construct($paramNameKey,$isMulti,$tag);
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;
-        $this->setInputDelimMsgKey("longcite-delim-bar");
-        $this->setOutputDelimMsgKey($longMode,"longcite-delim-alsonote");
-        $this->setOutputDelimMsgKey($shortMode,"longcite-delim-bar");
+        $this->setInputDelimMsgKey("longcite-delimi-bar");
+        $this->setOutputDelimMsgKey($longMode,"longcite-delimo-alsonote");
+        $this->setOutputDelimMsgKey($shortMode,"longcite-delimo-bar");
     }
 
 }

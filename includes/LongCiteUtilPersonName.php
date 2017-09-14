@@ -6,8 +6,9 @@
 ### Note: This file uses Uses doxygen style annotation comments.
 ### Note: This file possibly includes some PHPUnit comment directives.
 
-/// Class for the <longciteopt> tag.
+/// Class for the parsing person names.
 /// Support raw names such as:
+///  [Dr.] Robert "Bob" von_Jones {Jr.} (M.D.;J.D.) 
 ///  Robert Jones                ; Jones, Robert
 ///  Robert "Bob" Jones          ; Jones, Robert "Bob"
 ///  Mr. Robert "Bob" Jones, Jr. ; Jones, Robert "Bob",Jr. 
@@ -124,7 +125,6 @@ class LongCiteUtilPersonName {
     protected $givenName   = "";       /// e.g., "Robert"
     protected $middleNames = array();  /// e.g., ["K."]
     protected $surname     = "";       /// e.g., "Jones"
-    protected $preposition = "";       /// e.g., "von"
     protected $disambig    = "";       /// e.g., "of Elea","of Citium"
     protected $nicknames   = array();  /// e.g., ["Bob"]
     protected $salutation  = array();  /// e.g., ["Mr."]

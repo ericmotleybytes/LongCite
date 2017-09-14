@@ -383,8 +383,12 @@ class LongCiteMaster {
     /// Call wfMessage the way we usually like.
     /// @param $msg_key - The i18n message key.
     /// @param $params - String parameters for wfMessage.
-    public function wikiMessage($msgKey, ...$params) {
-        $langCode = $this->getOutputLangCode();
+    private function wikiMessage($isInputLang=false,$msgKey, ...$params) {
+        if($isInputLang) {
+            $langCode = $this->getInputLangCode();
+        } else {
+            $langCode = $this->getOutputLangCode();
+        }
         $msgObj = wfMessage($msgKey);
         $theParams = array();
         foreach($params as $param) {
@@ -402,5 +406,14 @@ class LongCiteMaster {
         $msgObj = $msgObj->inLanguage($langCode);
         return $msgObj;
     }
+
+    public Function wikiMessageIn($msgKey, ...$params) {
+        return $this->wikiMessage(true,$msgKey,$params);
+    }
+
+    public Function wikiMessageOut($msgKey, ...$params) {
+        return $this->wikiMessage(false,$msgKey,$params);
+    }
+
 }
 ?>

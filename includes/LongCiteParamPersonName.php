@@ -12,9 +12,9 @@ class LongCiteParamPersonName extends LongCiteParam {
         parent::__construct($paramNameKey,$isMulti,$tag);
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;
-        $this->setInputDelimMsgKey("longcite-delim-semi");
-        $this->setOutputDelimMsgKey($longMode,"longcite-delim-and");
-        $this->setOutputDelimMsgKey($shortMode,"longcite-delim-semi");
+        $this->setInputDelimMsgKey("longcite-delimi-semi");
+        $this->setOutputDelimMsgKey($longMode,"longcite-delimo-and");
+        $this->setOutputDelimMsgKey($shortMode,"longcite-delimo-semi");
     }
 
 }

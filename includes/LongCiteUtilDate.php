@@ -8,6 +8,10 @@
 
 /// Class for working with dates.
 /// Support dates such as:
+///  300 B.C.E.
+///  20-Jan-2001
+///  2001-01-20
+///  January 1972
 class LongCiteUtilDate {
     const NumMonthFormat  = 10;
     const AbbrMonthFormat = 20;

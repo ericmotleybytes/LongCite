@@ -40,8 +40,8 @@ class LongCiteParamAlphaIdTest extends TestCase {
         $this->assertFalse($param->isMulti());
         $nameMsgKey = $param->getNameKey();
         $this->assertEquals($pnameKey,$nameMsgKey);
-        $name = $param->getName();
-        $this->assertEquals("key",$name);
+        $names = $param->getNames();
+        $this->assertEquals("key",$names[0]);
         $type = $param->getType();
         $this->assertEquals("AlphaId",$type);
         $master = $param->getMaster();

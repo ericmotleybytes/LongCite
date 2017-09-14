@@ -87,14 +87,14 @@ class LongCiteTag {
             return false;
         }
         $langMsgKey = $langMsgKeys[0];
-        $langParamName = $this->wikiMessage($langMsgKey)->plain();
+        $langParamName = $this->wikiMessageIn($langMsgKey)->plain();
         if(array_key_exists($langParamName,$this->args)) {
             $langCode = trim($this->args[$langParamName]);
             $langCode = $parser->recursiveTagParse($langCode,$frame);
             $langCode = strtolower($langCode);
             if(!in_array($langCode,$supportedLangCodes)) {
                 $mess = $this->getMessenger();
-                $msg = $this->wikiMessage("longcite-err-badlang",$langCode);
+                $msg = $this->wikiMessageIn("longcite-err-badlang",$langCode);
                 $mess->registerMessageWarning($msg);
             } else {
                 $newLangCode = $langCode;
@@ -171,15 +171,31 @@ class LongCiteTag {
         }
         $validParamNameKeys = $this->getParamMsgKeys();
         if(!in_array($paramNameKey,$validParamNameKeys)) {
-            $paramName  = $this->wikiMessage($paramNameKey)->plain();
+            $paramName  = $this->wikiMessageIn($paramNameKey)->plain();
             $markupName = $this->getTagMarkupName();
-            $msg = $this->wikiMessage(longcite-err-badtagpar,$paramName,$markupName);
+            $msg = $this->wikiMessageIn(longcite-err-badtagpar,$paramName,$markupName);
             $this->getMessenger()->registerMessageWarning($msg);
             return false;
         }
         $param = LongCiteParam::newParam($paramNameKey,$this);
         $this->paramObjs[$paramNameKey] = $param;
         return $param;
+    }
+
+    public function getParamNameKey($paramName) {
+        $paramName = trim(mb_strtolower($paramName));
+        foreach($this->getParamMsgKeys() as $paramNameKey) {
+            $paramNamesStr = $this->wikiMessageIn($paramNameKey)->plain();
+            $paramNamesStr = trim(mb_strtolower($paramNamesStr));
+            $paramNames = mb_split('\;',$paramNamesStr);
+            foreach($paramNames as $parName) {
+                $parName = trim(mb_strtolower($parName));
+                if($paramName==$parName) {
+                    return $paramNameKey;
+                }
+            }
+        }
+        return false;
     }
 
     public function getParser() {
@@ -254,7 +270,7 @@ class LongCiteTag {
         foreach($parLines as $parLine) {
             $parts = explode("=",$parLine,2);
             if(count($parts)!=2) {
-                $msg = $this->wikiMessage("longcite-err-cannotparse",$parLine)->plain();
+                $msg = $this->wikiMessageIn("longcite-err-cannotparse",$parLine)->plain();
                 $this->getMessenger()->registerMessageWarning($msg);
                 continue;
             }
@@ -333,7 +349,7 @@ class LongCiteTag {
             }
             if(!array_key_exists($paramName,$paramMap)) {
                 $errKey = "longcite-err-badtagpar";
-                $msg = $this->wikiMessage($errKey,$paramName,$tagMarkupName);
+                $msg = $this->wikiMessageIn($errKey,$paramName,$tagMarkupName);
                 $mess->registerMessageWarning($msg);
                 continue;
             }
@@ -349,7 +365,7 @@ class LongCiteTag {
             $paramVal  = trim($parts[1]);
             if(!array_key_exists($paramName,$paramMap)) {
                 $errKey = "longcite-err-badtagpar";
-                $msg = $this->wikiMessage($errKey,$paramName,$tagMarkupName);
+                $msg = $this->wikiMessageIn($errKey,$paramName,$tagMarkupName);
                 $mess->registerMessageWarning($msg);
                 continue;
             }
@@ -363,7 +379,7 @@ class LongCiteTag {
         $supportedCodes = $this->master->getSupportedLangCodes();
         if(!in_array($code,$supportedCodes)) {
             $messenger = $this->messenger;
-            $msg = $this->wikiMessage("longcite-err-badlang",$code)->plain();
+            $msg = $this->wikiMessageIn("longcite-err-badlang",$code)->plain();
             $messenger->registerMessage(LongCiteMessenger::WarningType,$msg);
             return $this->getInputLangCode();
         }
@@ -376,7 +392,7 @@ class LongCiteTag {
         $supportedCodes = $this->master->getSupportedLangCodes();
         if(!in_array($code,$supportedCodes)) {
             $messenger = $this->messenger;
-            $msg = $this->wikiMessage("longcite-err-badlang",$code)->plain();
+            $msg = $this->wikiMessageIn("longcite-err-badlang",$code)->plain();
             $messenger->registerMessage(LongCiteMessenger::WarningType,$msg);
             return $this->getOutputLangCode();
         }
@@ -388,8 +404,13 @@ class LongCiteTag {
         $this->renderedOutput = $html;
     }
 
-    public function wikiMessage($msgKey, ...$params) {
-        $langCode = $this->getOutputLangCode();
+
+    private function wikiMessage($isInputLang=false,$msgKey, ...$params) {
+        if($isInputLang) {
+            $langCode = $this->getInputLangCode();
+        } else {
+            $langCode = $this->getOutputLangCode();
+        }
         $msgObj = wfMessage($msgKey);
         $theParams = array();
         foreach($params as $param) {
@@ -406,6 +427,14 @@ class LongCiteTag {
         }
         $msgObj = $msgObj->inLanguage($langCode);
         return $msgObj;
+    }
+
+    public Function wikiMessageIn($msgKey, ...$params) {
+        return $this->wikiMessage(true,$msgKey,$params);
+    }
+
+    public Function wikiMessageOut($msgKey, ...$params) {
+        return $this->wikiMessage(false,$msgKey,$params);
     }
 
 }

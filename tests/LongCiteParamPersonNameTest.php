@@ -35,8 +35,8 @@ class LongCiteParamPersonNameTest extends TestCase {
         $this->assertTrue($param->isMulti());
         $nameMsgKey = $param->getNameKey();
         $this->assertEquals($pnameKey,$nameMsgKey);
-        $name = $param->getName();
-        $this->assertEquals("author",$name);
+        $names = $param->getNames();
+        $this->assertEquals("author",$names[0]);
         $type = $param->getType();
         $this->assertEquals("PersonName",$type);
         $master = $param->getMaster();
@@ -44,12 +44,12 @@ class LongCiteParamPersonNameTest extends TestCase {
         $this->assertEquals("en",$param->getInputLangCode());
         $this->assertEquals("en",$param->getOutputLangCode());
         # delims
-        $this->assertEquals("longcite-delim-semi",$param->getInputDelimMsgKey());
+        $this->assertEquals("longcite-delimi-semi",$param->getInputDelimMsgKey());
         $this->assertEquals(";",$param->getInputDelim());
         $msgKey1 = $param->getOutputDelimMsgKey("long");
         $msgKey2 = $param->getOutputDelimMsgKey("short");
-        $this->assertEquals("longcite-delim-and",$msgKey1);
-        $this->assertEquals("longcite-delim-semi",$msgKey2);
+        $this->assertEquals("longcite-delimo-and",$msgKey1);
+        $this->assertEquals("longcite-delimo-semi",$msgKey2);
         $this->assertEquals(" and ",$param->getOutputDelim("long"));
         $this->assertEquals(";",$param->getOutputDelim("short"));
         # values

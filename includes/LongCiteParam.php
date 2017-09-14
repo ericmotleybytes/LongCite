@@ -23,6 +23,7 @@ class LongCiteParam {
         "longcite-pn-author"     => array("PersonName",true,self::CatDesc),
         "longcite-pn-key"        => array("AlphaId",false,self::CatCore),
         "longcite-pn-note"       => array("Note",true,self::CatVerb),
+        "longcite-pn-pubdate"    => array("Date",true,self::CatDesc),
         "longcite-pn-render"     => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renlong"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renlang"    => array("Boolean",false,self::CatCtrl),
@@ -124,6 +125,8 @@ class LongCiteParam {
     protected $inputDelimMsgKey = "";  ///< Input delimiter msgKey (if needed).
     protected $outputDelimMsgKeys = array(); ///< Hash mode to msg key.
     protected $values     = array();   ///< Semi parsed values.
+    protected $renderPrefix = "";
+    protected $renderSuffix = "";
 
     public function __construct($paramNameKey, $isMulti, $tag) {
         $paramNameKey = self::getParamNameKeyLong($paramNameKey);
@@ -136,11 +139,11 @@ class LongCiteParam {
         }
         $this->tag = $tag;
         $this->paramNameKey = $paramNameKey;
-        $this->setInputDelimMsgKey("longcite-delim-semi");
+        $this->setInputDelimMsgKey("longcite-delimi-semi");
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;
-        $this->setOutputDelimMsgKey($longMode,"longcite-delim-and");
-        $this->setOutputDelimMsgKey($shortMode,"longcite-delim-semi");
+        $this->setOutputDelimMsgKey($longMode,"longcite-delimo-and");
+        $this->setOutputDelimMsgKey($shortMode,"longcite-delimo-semi");
     }
 
     // Add values to the parameter.
@@ -167,8 +170,8 @@ class LongCiteParam {
             } else {
                 $mess = $this->getMessenger();
                 $markupName = $this->getTag()->getTagMarkupName();
-                $paramName = $this->getName(true);
-                $msg = $this->wikiMessage(
+                $paramName = $this->getNames(true)[0];
+                $msg = $this->wikiMessageIn(
                     "longcite-err-invalidval",$val,$paramName,$markupName
                 );
                 $msg = $msg->plain();
@@ -216,15 +219,16 @@ class LongCiteParam {
         return $this->paramNameKey;
     }
 
-    public function getName($usingInLang=true) {
+    public function getNames($usingInLang=true) {
         if($usingInLang) {
             $langCode = $this->tag->getInputLangCode();
         } else {
             $langCode = $this->tag->getOutputLangCode();
         }
         $msgKey = $this->paramNameKey;
-        $name = wfMessage($msgKey)->inLanguage($langCode)->plain();
-        return $name;
+        $namesStr = wfMessage($msgKey)->inLanguage($langCode)->plain();
+        $names = mb_split('\;',$namesStr);
+        return $names;
     }
 
     public function getOutputDelim($mode=LongCiteParam::ParamModeLong) {
@@ -314,8 +318,13 @@ class LongCiteParam {
         $this->outputDelimMsgKeys[$mode] = $msgKey;
     }
 
-    public function wikiMessage($msgKey, ...$params) {
-        $langCode = $this->getOutputLangCode();
+
+    private function wikiMessage($isInputLang=false,$msgKey, ...$params) {
+        if($isInputLang) {
+            $langCode = $this->getInputLangCode();
+        } else {
+            $langCode = $this->getOutputLangCode();
+        }
         $msgObj = wfMessage($msgKey);
         $theParams = array();
         foreach($params as $param) {
@@ -332,6 +341,14 @@ class LongCiteParam {
         }
         $msgObj = $msgObj->inLanguage($langCode);
         return $msgObj;
+    }
+
+    public Function wikiMessageIn($msgKey, ...$params) {
+        return $this->wikiMessage(true,$msgKey,$params);
+    }
+
+    public Function wikiMessageOut($msgKey, ...$params) {
+        return $this->wikiMessage(false,$msgKey,$params);
     }
 
 }

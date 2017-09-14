@@ -35,8 +35,8 @@ class LongCiteParamLangCodeTest extends TestCase {
         $this->assertFalse($param->isMulti());
         $nameMsgKey = $param->getNameKey();
         $this->assertEquals($pnameKey,$nameMsgKey);
-        $name = $param->getName();
-        $this->assertEquals("lang",$name);
+        $names = $param->getNames();
+        $this->assertEquals("lang",$names[0]);
         $type = $param->getType();
         $this->assertEquals("LangCode",$type);
         # values

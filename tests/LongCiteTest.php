@@ -22,21 +22,5 @@ class LongCiteTest extends TestCase {
         $this->assertEquals(4,2+2);
     }
 
-    // check that json files are each valid json.
-    public function testJsonFiles() {
-        $jsonFiles = array();
-        $jsonFiles[] = __DIR__."/../extension.json";
-        $jsonFiles[] = __DIR__."/../i18n/en.json";
-        $jsonFiles[] = __DIR__."/../i18n/de.json";
-        $jsonFiles[] = __DIR__."/../i18n/qqq.json";
-        foreach($jsonFiles as $jsonFile) {
-            $this->assertFileExists($jsonFile);
-            $jsonStr = file_get_contents($jsonFile);
-            $this->assertNotFalse($jsonStr);
-            $jsonArr = json_decode($jsonStr,true);
-            $this->assertNotNull($jsonArr);
-        }
-    }
-
 }
 ?>
