@@ -8,6 +8,11 @@
 
 /// Class with utility routines.
 class LongCiteUtil {
+    const GenderMale     = "M";
+    const GenderFemale   = "F";
+    const GenderNeutral  = "N";
+    const GenderUnknown  = "U";
+    const GenderOther    = "O";
 
     protected static $i18nCache = array();  // hash language code to json
 
@@ -189,40 +194,123 @@ class LongCiteUtil {
         return fclose($tty);
     }
 
-    public static function i18nRender($langCode,$msgKey,...$params) {
+    public static function i18nCache($langCode) {
         $langCode = mb_strtolower($langCode);
         $jsonFile = __DIR__ . "/../i18n/" . $langCode . ".json";
+        $jsonArr = false;
         if(array_key_exists($langCode,self::$i18nCache)) {
             $jsonArr = self::$i18nCache[$langCode];
         } else {
             if(!file_exists($jsonFile)) {
-                trigger_error("File not found ($jsonFile).",E_USER_WARNING);
+                #trigger_error("File not found ($jsonFile).",E_USER_WARNING);
                 return false;
             }
             $jsonStr = file_get_contents($jsonFile);
             if($jsonStr===false) {
-                trigger_error("Could not read ($jsonFile).",E_USER_WARNING);
+                #trigger_error("Could not read ($jsonFile).",E_USER_WARNING);
                 return false;
             }
             $jsonArr = json_decode($jsonStr,true);
             if(is_null($jsonArr)) {
-                trigger_error("Could not json_decode $jsonFile.",E_USER_WARNING);
+                #trigger_error("Could not json_decode $jsonFile.",E_USER_WARNING);
                 return false;
             }
             self::$i18nCache[$langCode] = $jsonArr;
         }
+        return $jsonArr;
+    }
+
+    public static function i18MsgKeys($langCode,$pattern=null) {
+        $langCode = mb_strtolower($langCode);
+        $jsonArr  = self::i18nCache($langCode);
+        if($jsonArr===false) { return false; }
+        $msgKeys  = array_keys($jsonArr);
+        if(is_null($pattern)) {
+            $results = $msgKeya;
+        } else {
+            $results = array();
+            foreach($msgKeys as $msgKey) {
+                if(mb_ereg($pattern,$msgKey)!==false) {
+                    $results[] = $msgKey;
+                }
+            }
+        }
+        return $results;
+    }
+
+    public static function i18nRender($langCode,$msgKey,...$params) {
+        $langCode = mb_strtolower($langCode);
+        $jsonArr  = self::i18nCache($langCode);
+        if($jsonArr===false) {
+            trigger_error("Language code $langCode not found.",E_USER_WARNING);
+            return false;
+        }
         if(!array_key_exists($msgKey,$jsonArr)) {
-            trigger_error("Message key $msgKey not found in $jsonFile.",E_USER_WARNING);
+            trigger_error("Message key $msgKey not found in $langCode.",E_USER_WARNING);
             return false;
         }
         $result = $jsonArr[$msgKey];
         $n = 0;
-            $n += 1;
         foreach($params as $param) {
+            $n += 1;
             $result = str_replace('$'.$n,$param,$result);
         }
         return $result;
     }
 
+    public static function i18nTranslateWord($word,$fromLang,$toLang,$keyPat,$prefGend) {
+        $results = array();
+        $testWord = mb_strtolower(trim($word));
+        $fromLang = mb_strtolower($fromLang);
+        $toLang   = mb_strtolower($toLang);
+        $prefGend = mb_strtoupper($prefGend);
+        $fromArr  = self::i18nCache($fromLang);
+        $toArr    = self::i18nCache($toLang);
+        // find appropriate msgKey in from lang.
+        $fromMatch = null;
+        foreach($fromArr as $msgKey => $fromMsgValStr) {
+            if(mb_ereg($keyPat,$msgKey)===false) { continue; }
+            $fromVals = mb_split('\;',$fromMsgValStr);
+            foreach($fromVals as $fromVal) {
+                $fromGendForms = mb_split('\/',$fromVal);
+                $cntFromGendForms = count($fromGendForms);
+                $maxIdx = $cntFromGendForms - 1;
+                $idx = -1;
+                $prefForm = "";
+                foreach($fromGendForms as $fromGendForm) {
+                    $idx++;
+                    if($idx==0) {
+                        if($idx<$maxIdx) {
+                            $indGend = self::GenderMale;
+                        } else {
+                            $indGend = self::GenderUnknown;
+                        }
+                    } elseif($idx==1) {
+                        $indGend = self::GenderFemale;
+                    } elseif($idx==2) {
+                        $indGend = self::GenderNeutral;
+                    } else {
+                        $indGend = self::GenderUnknown;
+                    }
+                    $fromGendForm = trim($fromGendForm);
+                    $testForm1 = mb_strtolower($$fromGendForm);
+                    $testForm2 = mb_ereg_replace('\.',"",$testForm1);
+                    if($testWord==$testForm1 or $testWord==$testForm2) {
+                        $fromMatch = array($msgKey,$indGend);
+                        break 3;
+                    }
+                }
+            }
+        }
+        // return false if no match
+        if(is_null($fromMatch)) { return false; }
+        // lookup preferred translation in to lang
+        $msgKey  = $fromMatch[0];
+        $indGend = $fromMatch[1];
+        if(!array_key_exists($msgKey,$toArr)) { return false; }
+        $toMsgKeyValStr = $toArr[$msgKey];
+        # TBD - match gendered parts
+        return $results;
+    }
 }
 ?>
