@@ -85,5 +85,20 @@ class LongCiteUtilTest extends TestCase {
         $this->assertEquals($exp,$act);
     }
 
+    public function testI18nTranslateWord() {
+        $e = "en";
+        $d = "de";
+        $this->helpTran("mr","Mr.",$e,$e);
+        $this->helpTran("mister","Hr.",$e,$d);
+        $this->helpTran("Herr","Mr.",$d,$e);
+        $this->helpTran("doktorin","Dr.",$d,$d);
+    }
+
+    public function helpTran($word,$exp,$fLang,$tLang,$gend=null) {
+        $pat = '^longcite\-nst\-.*$';
+        $act = LongCiteUtil::i18nTranslateWord($word,$fLang,$tLang,$pat,$gend);
+        $this->assertEquals($exp,$act);
+    }
+
 }
 ?>

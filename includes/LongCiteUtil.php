@@ -258,8 +258,9 @@ class LongCiteUtil {
         return $result;
     }
 
-    public static function i18nTranslateWord($word,$fromLang,$toLang,$keyPat,$prefGend) {
-        $results = array();
+    public static function i18nTranslateWord($word,$fromLang,$toLang,
+        $keyPat,$prefGend=null) {
+        if($prefGend===null) { $prefGend = self::GenderUnknown; }
         $testWord = mb_strtolower(trim($word));
         $fromLang = mb_strtolower($fromLang);
         $toLang   = mb_strtolower($toLang);
@@ -279,23 +280,27 @@ class LongCiteUtil {
                 $prefForm = "";
                 foreach($fromGendForms as $fromGendForm) {
                     $idx++;
-                    if($idx==0) {
-                        if($idx<$maxIdx) {
-                            $indGend = self::GenderMale;
+                    $fromGendForm = trim($fromGendForm);
+                    $testForm1 = mb_strtolower($fromGendForm);
+                    $testForm2 = mb_ereg_replace('\.',"",$testForm1);
+                    if($testWord==$testForm1 or $testWord==$testForm2) {
+                        if($idx==0) {
+                            if($idx<$maxIdx) {
+                                $indGend = self::GenderMale;
+                            } else {
+                                $indGend = self::GenderUnknown;
+                            }
+                        } elseif($idx==1) {
+                            $indGend = self::GenderFemale;
+                        } elseif($idx==2) {
+                            $indGend = self::GenderNeutral;
                         } else {
                             $indGend = self::GenderUnknown;
                         }
-                    } elseif($idx==1) {
-                        $indGend = self::GenderFemale;
-                    } elseif($idx==2) {
-                        $indGend = self::GenderNeutral;
-                    } else {
-                        $indGend = self::GenderUnknown;
-                    }
-                    $fromGendForm = trim($fromGendForm);
-                    $testForm1 = mb_strtolower($$fromGendForm);
-                    $testForm2 = mb_ereg_replace('\.',"",$testForm1);
-                    if($testWord==$testForm1 or $testWord==$testForm2) {
+                        // if word doesn't give gender clue, caller paramerter.
+                        if($indGend==self::GenderUnknown) {
+                            $indGend = $prefGend;
+                        }
                         $fromMatch = array($msgKey,$indGend);
                         break 3;
                     }
@@ -305,12 +310,35 @@ class LongCiteUtil {
         // return false if no match
         if(is_null($fromMatch)) { return false; }
         // lookup preferred translation in to lang
+        $trans =false;
         $msgKey  = $fromMatch[0];
         $indGend = $fromMatch[1];
         if(!array_key_exists($msgKey,$toArr)) { return false; }
-        $toMsgKeyValStr = $toArr[$msgKey];
-        # TBD - match gendered parts
-        return $results;
+        $toMsgValStr = $toArr[$msgKey];
+        $toVals = mb_split('\;',$toMsgValStr);
+        $toPrefVal = $toVals[0];
+        $toGendForms = mb_split('\/',$toPrefVal);
+        $cntToGendForms = count($toGendForms);
+        if($cntToGendForms==1) {
+            $trans = $toGendForms[0];
+        } elseif($cntToGendForms==2) {
+            if($indGend==self::GenderFemale) {
+                $trans = $toGendForms[1];
+            } else {
+                $trans = $toGendForms[0];
+            }
+        } elseif($cntToGendForms>=3) {
+            if($indGend==self::GenderMale) {
+                $trans = $toGendForms[0];
+            } elseif($indGend==self::GenderFemale) {
+                $trans = $toGendForms[1];
+            } elseif($indGend==self::GenderNeutral) {
+                $trans = $toGendForms[2];
+            } else {
+                $trans = $toGendForms[2];
+            }
+        }
+        return $trans;
     }
 }
 ?>

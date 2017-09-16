@@ -26,7 +26,7 @@ class LongCiteUtilPersonName {
     const NamePartCredential    = "credential";
     const NamePartPosition      = "position";
 
-    protected static $supportedLangCodes = array("en","de");
+    /*
     protected static $prefTitleAbbrevs = array(
         "en" => array(
             "Archbishop" => array("archbishop","de=Erzbischof"),
@@ -91,6 +91,7 @@ class LongCiteUtilPersonName {
                 "vizepräsident","vizepräsidentin","en=V.P."),
         ),
     );
+    */
     protected static $prefCredAbbrevs = array(
         "en" => array(
             "J.D."  => array("j.d.","jd.","jd",
