@@ -88,16 +88,24 @@ class LongCiteUtilTest extends TestCase {
     public function testI18nTranslateWord() {
         $e = "en";
         $d = "de";
-        $this->helpTran("mr","Mr.",$e,$e);
-        $this->helpTran("mister","Hr.",$e,$d);
-        $this->helpTran("Herr","Mr.",$d,$e);
-        $this->helpTran("doktorin","Dr.",$d,$d);
+        $m = LongCiteUtil::GenderMale;
+        $f = LongCiteUtil::GenderFemale;
+        $n = LongCiteUtil::GenderNeutral;
+        $u = LongCiteUtil::GenderUnknown;
+        $this->helpTran("mr","Mr.",$e,$e,$u,$m);
+        $this->helpTran("mister","Hr.",$e,$d,$u,$m);
+        $this->helpTran("Herr","Mr.",$d,$e,$u,$m);
+        $this->helpTran("doktorin","Dr.",$d,$d,$u,$f);
     }
 
-    public function helpTran($word,$exp,$fLang,$tLang,$gend=null) {
+    public function helpTran($word,$exp,$fLang,$tLang,
+        $gend=LongCiteUtil::GenderUnknown,$igend=LongCiteUtil::GenderUnknown) {
         $pat = '^longcite\-nst\-.*$';
-        $act = LongCiteUtil::i18nTranslateWord($word,$fLang,$tLang,$pat,$gend);
+        $expIndGend = $igend;
+        $indGend = null;
+        $act = LongCiteUtil::i18nTranslateWord($word,$fLang,$tLang,$pat,$gend,$indGend);
         $this->assertEquals($exp,$act);
+        $this->assertEquals($expIndGend,$indGend);
     }
 
 }

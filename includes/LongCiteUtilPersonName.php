@@ -26,72 +26,6 @@ class LongCiteUtilPersonName {
     const NamePartCredential    = "credential";
     const NamePartPosition      = "position";
 
-    /*
-    protected static $prefTitleAbbrevs = array(
-        "en" => array(
-            "Archbishop" => array("archbishop","de=Erzbischof"),
-            "Bishop" => array("bishop","bish.","bish","de=Bischof"),  //*1*
-            "Chancellor" => array("chancellor","chan.","chan",
-                "de=Kanzler/Kanzlerin"),
-            "Dalai Lama" => array("dalai lama","de=Dalai Lama"),
-            "Dir."  => array("dir.","dir","director","de=Dir."),
-            "Dr."   => array("dr.","dr","doctor","de=Dr."),
-            "Hon."  => array("hon.","hon",
-                "honorable","honourable","de=Geehrter Hr."), //*2*
-            "Lama"  => array("lama","de=Lama"),
-            "Lord"  => array("lord","de=Gnädiger Hr."),
-            "Miss"  => array("miss","de=Frl."),
-            "Mr."   => array("mr.","mr","mister","master","de=Hr."),
-            "Mrs."  => array("mrs.","mrs","mistress","missus","de=Fr."),
-            "Ms."   => array("ms.","ms","de=Fr."),
-            "P.M."  => array("p.m.","pm.","pm","prime minister","de=P.M."),
-            "Pastor"=> array("pastor","pr.","pr","ptr.","ptr","de=Pastor"),
-            "Pope"  => array("pope","de=Papst"),
-            "Pres." => array("pres.","pres","president","de=Präs."),
-            "Prof." => array("prof.","prof","professor","de=Prof."),
-            "Rabbi" => array("rabbi","de=Rabbi"),
-            "Rep."  => array("rep.","rep","representative",
-                "congressman","congresswoman","de=Abgeordnete"),
-            "Rev."  => array("rev.","rev","revd.","revd","reverend","de=Hochw."),
-            "Rt. Rev." => array("rt. rev.","rt.rev.","rt.rev","rt rev",
-                "right reverend","de=Hochw."),
-            "Sen."  => array("sen.","sen","senator","de=Senator/Senatorin"),
-            "Sir"   => array("sir","de=Gnädiger Hr."),
-            "V.P."  => array("v.p.","vp","vice president","de=Vizepräs."),
-        ),
-        "de" => array(
-            "Abgeordnete"  => array("abgeordnete","en=Rep."),
-            "Bischof"=> array("bischof","en=Bishop"),
-            "Dalai Lama" => array("dalai lama","en=Dalai Lama"),
-            "Dir."  => array("dir.","dir","direktor","direktorin","de=Dir."),
-            "Dr."    => array("dr.","dr","doktor","en=Dr."),
-            "Erzbischof" => array("erzbischof","en=Archbishop"),
-            "Fr."    => array("fr.","fr","frau","dame","en=Mrs."),
-            "Frl."   => array("frl.","frl","fräulein","en=Miss"),
-            "Geehrter Hr." =>
-                array("geehrter hr.","geehrter hr.","geehrter herr","en=Hon."),
-            "Gnädiger Hr." =>
-                array("gnädiger hr.","gnädiger hr.","gnädiger herr","en=Sir"),
-            "Hochw." => array("hochw.","hochw","hochwürden","en=Rev."),
-            "Hr."    => array("hr.","hr","herr","en=Mr."),
-            "Hrn."   => array("hrn.","hrn","herrn","en=Mr."),
-            "Kanzler" => array("kanzler","en=Chancellor"),
-            "Kanzlerin" => array("kanzlerin","en=Chancellor"),
-            "Lama"   => array("lama","en=Lama"),
-            "P.M."      => array("p.m.","pm.","pm",
-                "premierminister","premireministerin","en=P.M."),
-            "Papst"  => array("pope","en=Pope"),
-            "Pastor" => array("pastor","en=Pastor"),
-            "Präs."  => array("präs.","präs","präsident","präsidentin","en=Pres."),
-            "Prof."  => array("prof.","prof","professor","en=Prof."),
-            "Rabbi"  => array("rabbi","en=Rabbi"),
-            "Senator"   => array("senator","en=Sen."),
-            "Senatorin" => array("senatorin","en=Sen."),
-            "Vizepräs." => array("vizepräs.","vizepräs",
-                "vizepräsident","vizepräsidentin","en=V.P."),
-        ),
-    );
-    */
     protected static $prefCredAbbrevs = array(
         "en" => array(
             "J.D."  => array("j.d.","jd.","jd",
@@ -420,7 +354,83 @@ class LongCiteUtilPersonName {
     public function getRawCredentials() { return $this->rawCredentials; }
     public function getRawNicknames() { return $this->rawNicknames; }
     public function getRawDisambiguators() { return $this->rawDisambigs; }
-    public function getAnnNameParts() { return $this->annNameParts; }
+    public function getAnnNameParts($langCode=null) {
+        if($langCode===null) {
+            return $this->annNameParts;
+        }
+        $fromLangCode = $this->langCodeParsed;
+        $toLangCode = mb_strtolower($langCode);
+        $results = array();
+        $prefGend = null;
+        $indGend = null;
+        foreach($this->annNameParts as $namePart) {
+            $rawPart  = $namePart[0];
+            $partType = $namePart[1];
+            if($partType==self::NamePartTitle) {
+                $pat = '^longcite\-nst\-.*$';
+                $newPart = LongCiteUtil::i18nTranslateWord(
+                    $rawPart,$fromLangCode,$toLangCode,$pat,$prefGend,$indGend
+                );
+                if($newPart===false) {
+                    $results = $namePart;
+                } else {
+                    $results[] = array($newPart,$partType);
+                    if($indGend!==LongCiteUtil::GenderUnknown) {
+                        $prefGend = $indGend;
+                    }
+                }
+            } else {
+                $results[] = $namePart;
+            }
+        }
+        return $results;
+    }
+    public function getRenderedNameAll($langCode=null) {
+        if($langCode===null) {
+            $langCode = $this->langCodeParsed;
+        } else {
+            $langCode = mb_strtolower($langCode);
+        }
+        $annParts = $this->getAnnNameParts($langCode);
+        // init result
+        $result = "";
+        // do titles
+        foreach($annParts as $annPart) {
+            if($annPart[1]!==self::NamePartTitle) { continue; }
+            $result .= " " . $annPart[0];
+        }
+        // do everything except credentials and positions (and titles)
+        $skip = array(self::NamePartTitle,self::NamePartCredential,self::NamePartPosition);
+        foreach($annParts as $annPart) {
+            if(in_array($annPart[1],$skip)) { continue; }
+            if($annPart[1]==self::NamePartName) {
+                $result .= " " . $annPart[0];
+            } elseif($annPart[1]==self::NamePartSurname) {
+                $result .= " _" . $annPart[0] . "_";
+            } elseif($annPart[1]==self::NamePartNickname) {
+                $result .= ' "' . $annPart[0] . '"';
+            } elseif($annPart[1]==self::NamePartQualifier) {
+                $result .= ', ' . $annPart[0];
+            } elseif($annPart[1]==self::NamePartDisambiguator) {
+                $result .= ' ' . $annPart[0];
+            }
+        }
+        // do credentials
+        foreach($annParts as $annPart) {
+            if($annPart[1]!==self::NamePartCredential) { continue; }
+            $result .= ", " . $annPart[0];
+        }
+        // do positions
+        $posCnt = 0;
+        foreach($annParts as $annPart) {
+            if($annPart[1]!==self::NamePartPosition) { continue; }
+            $result .= " (" . $annPart[0] . ")";
+        }
+        // return results
+        $result = trim($result);
+        $result = mb_ereg_replace('\ +'," ",$result);  // collapse spaces
+        return $result;
+    }
 
     // Footnotes:
     // *1* : https://en.wikipedia.org/wiki/Index_of_religious_honorifics_and_titles

@@ -259,8 +259,9 @@ class LongCiteUtil {
     }
 
     public static function i18nTranslateWord($word,$fromLang,$toLang,
-        $keyPat,$prefGend=null) {
+        $keyPat,$prefGend=null,&$indGend = null) {
         if($prefGend===null) { $prefGend = self::GenderUnknown; }
+        if($indGend===null)  { $indGend  = self::GenderUnknown; }
         $testWord = mb_strtolower(trim($word));
         $fromLang = mb_strtolower($fromLang);
         $toLang   = mb_strtolower($toLang);

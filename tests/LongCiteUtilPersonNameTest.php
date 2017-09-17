@@ -48,6 +48,11 @@ class LongCiteUtilPersonNameTest extends TestCase {
         $actParts = $nameObj->getAnnNameParts();
         $actJson = json_encode($actParts);
         $this->assertEquals($expJson,$actJson);
+        $expStr  = 'Dr. Prof. Mr. Robert "Bob" T. _Von Jones_, Jr.';
+        $expStr .= " of Pittsburg, M.D., J.D.";
+        $expStr .= " (CEO of Dorks, Inc.)";
+        $actStr = $nameObj->GetRenderedNameAll();
+        $this->assertEquals($expStr,$actStr);
     }
 
 }
