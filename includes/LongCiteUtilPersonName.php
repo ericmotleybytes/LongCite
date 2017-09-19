@@ -26,51 +26,6 @@ class LongCiteUtilPersonName {
     const NamePartCredential    = "credential";
     const NamePartPosition      = "position";
 
-    protected static $prefCredAbbrevs = array(
-        "en" => array(
-            "J.D."  => array("j.d.","jd.","jd",
-                "d.jur.","djur.","djur","doctor of jurisprudence","de=Dr. jud."),
-            "M.D."  => array("m.d.","md.","md","de=Dr. med."),
-            "P.M."  => array("p.m.","pm.","pm","prime minister","de=P.M."),
-            "PhD."  => array("phd.","ph.d.","phd","doctor of philosophy","de=Dr. phil."),
-        ),
-        "de" => array(
-            "Dr. med." => array("dr.","dr","doktor","en=M.D."),
-            "Dr. jud." => array("dr. jud.","dr jud.","dr.jud.","dr jud","j.u.d.","jud",
-                "juris utriusque doktor","juris utriusque","en=J.D." ),
-            "Dr. phil." => array("dr. phil.","dr phil.","dr.phil.","dr phil",
-                "doktor der philosophie","en=PhD."),
-            "P.M."      => array("p.m.","pm.","pm",
-                "premierminister","premireministerin","en=P.M."),
-        ),
-    );
-    protected static $prefQualAbbrevs = array(
-        "en" => array(
-            "Jr."  => array("jr.","jr","junior","de=d.J."),
-            "Sr."  => array("sr.","sr","senior","de=d.Ä."),
-            "I"    => array("i","i.","first","the first","de=I"),
-            "II"   => array("ii","ii.","second","the second","de=II"),
-            "III"  => array("iii","iii.","third","the third","de=III"),
-            "IV"   => array("iv","iv.","forth","the forth","de=IV"),
-        ),
-        "de" => array(
-            "d.J." => array("d.j.","dj.","dj","der jüngere","en=Jr."),
-            "d.Ä." => array("d.ä.","dä.","dä","der ältere","en=Sr."),
-            "I"    => array("i","i.","erste","der erste","en=I"),
-            "II"   => array("ii","ii.","zweite","der zweite","en=II"),
-            "III"  => array("iii","iii.","dritte","der dritte","en=III"),
-            "IV"   => array("iv","iv.","vierte","der vierte","en=IV"),
-        ),
-    );
-
-    public static function standardTitle($raw,$inLangCode,$outLangCode,$isMasculine=null) {
-        $msgKeyPrefix = "longcite-nst-";
-        // check for Mr.
-        
-        $result = LongCiteUtil::i18nRender($this->langCode,$msgKey);
-        
-    }
-
     protected $langCode    = "";       /// e.g., "en" or "de".
     protected $langCodeParsed = "";    /// langCode when parsed.
     protected $rawName     = "";       /// e.g., 'Robert "Bob" K. von_Jones, Jr.'.
@@ -379,6 +334,57 @@ class LongCiteUtilPersonName {
                         $prefGend = $indGend;
                     }
                 }
+            } elseif($partType==self::NamePartQualifier) {
+                $pat = '^longcite\-nsq\-.*$';
+                $newPart = LongCiteUtil::i18nTranslateWord(
+                    $rawPart,$fromLangCode,$toLangCode,$pat,$prefGend,$indGend
+                );
+                if($newPart===false) {
+                    $results = $namePart;
+                } else {
+                    $results[] = array($newPart,$partType);
+                    if($indGend!==LongCiteUtil::GenderUnknown) {
+                        $prefGend = $indGend;
+                    }
+                }
+            } elseif($partType==self::NamePartCredential) {
+                $pat = '^longcite\-nsc\-.*$';
+                $newPart = LongCiteUtil::i18nTranslateWord(
+                    $rawPart,$fromLangCode,$toLangCode,$pat,$prefGend,$indGend
+                );
+                if($newPart===false) {
+                    $results = $namePart;
+                } else {
+                    $results[] = array($newPart,$partType);
+                    if($indGend!==LongCiteUtil::GenderUnknown) {
+                        $prefGend = $indGend;
+                    }
+                }
+            } elseif($partType==self::NamePartDisambiguator) {
+                $pat = '^longcite\-nsd\-.*$';
+                $newPart = LongCiteUtil::i18nTranslateWord(
+                    $rawPart,$fromLangCode,$toLangCode,$pat,$prefGend,$indGend
+                );
+                if($newPart===false) {
+                    $newWords = array();
+                    foreach(mb_split('\ ',$rawPart) as $rawWord) {
+                        $newWord = LongCiteUtil::i18nTranslateWord(
+                            $rawWord,$fromLangCode,$toLangCode,$pat,$prefGend,$indGend
+                        );
+                        if($newWord===false) {
+                            $newWords[] = $rawWord;
+                        } else {
+                            $newWords[] = $newWord;
+                        }
+                    }
+                    $newPart = implode(" ",$newWords);
+                    $results[] = array($newPart,$partType);
+                } else {
+                    $results[] = array($newPart,$partType);
+                    if($indGend!==LongCiteUtil::GenderUnknown) {
+                        $prefGend = $indGend;
+                    }
+                }
             } else {
                 $results[] = $namePart;
             }
@@ -435,6 +441,8 @@ class LongCiteUtilPersonName {
     // Footnotes:
     // *1* : https://en.wikipedia.org/wiki/Index_of_religious_honorifics_and_titles
     // *2* : https://en.wikipedia.org/wiki/The_Honourable
+    // *   : https://dict.tu-chemnitz.de
+    // *   : https://www.dict.cc/english-german/
 
 }
 ?>

@@ -53,6 +53,18 @@ class LongCiteUtilPersonNameTest extends TestCase {
         $expStr .= " (CEO of Dorks, Inc.)";
         $actStr = $nameObj->GetRenderedNameAll();
         $this->assertEquals($expStr,$actStr);
+        // try German
+        $expStr  = 'Dr. Prof. Hr. Robert "Bob" T. _Von Jones_, d.J.';
+        $expStr .= " von Pittsburg, Dr. med, Dr. Jud.";
+        $expStr .= " (CEO of Dorks, Inc.)";
+        $actStr = $nameObj->GetRenderedNameAll("de");
+        $this->assertEquals($expStr,$actStr);
+        // try Spanish
+        $expStr  = 'Dr. Prof. Sr. Robert "Bob" T. _Von Jones_, Júnior';
+        $expStr .= " de Pittsburg, M.D., Lic.";
+        $expStr .= " (CEO of Dorks, Inc.)";
+        $actStr = $nameObj->GetRenderedNameAll("es");
+        $this->assertEquals($expStr,$actStr);
     }
 
 }
