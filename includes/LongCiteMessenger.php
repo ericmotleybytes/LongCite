@@ -21,6 +21,7 @@ class LongCiteMessenger {
     protected $enables      = array();  ///< Hash array of true/false by msg type.
     protected $langCode     = "en";     ///< Output language code.
     protected $dumpFile = __DIR__."/../dump.out"; ///< Message dump file.
+    protected $doTrigger = false;      ///< Use php trigger_error (for debugging only!).
 
     /// Class instance constructor.
     public function __construct($langCode="en") {
@@ -77,6 +78,10 @@ class LongCiteMessenger {
         }
         $status = fclose($f);
         return $status;
+    }
+
+    public function getDoTrigger() {
+        return $this->doTrigger;
     }
 
     public function getEnable($msgType) {
@@ -160,6 +165,10 @@ class LongCiteMessenger {
         $msgId = $this->prefixMsgIds[$msgType];
         $code = $this->langCode;
         $prefix = wfMessage($msgId)->inLanguage($code)->plain();
+        if(!is_string($msgText)) {
+            trigger_error("Message text is not a string.",E_USER_ERROR);
+            return false;
+        }
         $msg = array(
             "type"      => $msgType,
             "prefix"    => $prefix,
@@ -167,6 +176,16 @@ class LongCiteMessenger {
             "text"      => $msgText
         );
         $this->messages[] = $msg;
+        if($this->doTrigger) {
+            $tmp = print_r($msg,true);
+            if($msgType==self::WarningType) {
+                trigger_error($tmp,E_USER_WARNING);
+            } elseif($msgType==self::ErrorType) {
+                trigger_error($tmp,E_USER_ERROR);
+            } else {
+                trigger_error($tmp,E_USER_NOTICE);
+            }
+        }
         return true;
     }
 
@@ -227,6 +246,10 @@ class LongCiteMessenger {
         }
         if($clear) { $this->clearMessages(); }
         return true;
+    }
+
+    public function setDoTrigger($triggerFlag) {
+        $this->doTrigger = $triggerFlag;
     }
 
     public function setEnable($msgType,$flag) {

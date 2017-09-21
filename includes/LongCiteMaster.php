@@ -37,7 +37,7 @@ class LongCiteMaster {
     protected $sqlTableFile =
         __DIR__.'/../GeneratedTables.sql'; ///< Generated file for update.php.
     protected $cssModule = "ext.longCite"; ///< LongCite CSS module name.
-    protected $supportedLangCodes = array("en","de");  ///< supported output codes.
+    protected $supportedLangCodes = array("en","de","es");  ///< supported output codes.
     protected $outputLangCode = "en";    ///< Can be changed to another supported code.
     protected $parser = null;            ///< Gets parser object as setup hook.
     protected $tagObjects = array();         ///< Gets tag objects the parser finds.

@@ -181,7 +181,6 @@ class LongCiteUtilDate {
                 }
             }
         }
-        #LongCiteUtil::writeToTty("\nY-M-D=$year-$month-$day\n");
         if($year!==null) {
             if($year<=0) {
                 $this->isBCE = true;

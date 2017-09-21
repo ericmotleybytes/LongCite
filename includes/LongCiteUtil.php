@@ -152,16 +152,9 @@ class LongCiteUtil {
     }
 
     public static function parse($text,$delim=null) {
-        #LongCiteUtil::writeToTty("\nParse:\nbeg: text='$text'.\n");
         $result = array();
-        #// trim whole
-        #$text = trim($text);
-        #if($text=="") { return array($text); }
         // backslash to percent hex whole
         $text = self::backslashes2percenthex($text);
-        #LongCiteUtil::writeToTty("hex: text='$text'.\n");
-        #// dequote whole
-        #$text = self::dequote($text);
         // delim whole
         if(is_null($delim)) {
             $parts = array($text);
@@ -169,13 +162,9 @@ class LongCiteUtil {
             $parts = explode($delim,$text);
         }
         // process parts
-        #$partCnt=0;
         foreach($parts as $part) {
-            #$partCnt++;
-            #LongCiteUtil::writeToTty("part$partCnt: part='$part'.\n");
             // trim part
             $part = trim($part);
-            #LongCiteUtil::writeToTty("part$partCnt trimmed: part='$part'.\n");
             // dequote part
             $part = self::dequote($part);
             // de-percent-hex part
@@ -268,7 +257,7 @@ class LongCiteUtil {
         $prefGend = mb_strtoupper($prefGend);
         $fromArr  = self::i18nCache($fromLang);
         $toArr    = self::i18nCache($toLang);
-        // find appropriate msgKey in from lang.
+        // find appropriate msgKey using from lang value.
         $fromMatch = null;
         foreach($fromArr as $msgKey => $fromMsgValStr) {
             if(mb_ereg($keyPat,$msgKey)===false) { continue; }

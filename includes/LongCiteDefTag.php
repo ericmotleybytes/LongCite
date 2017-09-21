@@ -27,6 +27,11 @@ class LongCiteDefTag extends LongCiteTag {
     /// @param $frame - Recursive parsing frame.
     public function __construct($master, $input, $args, $parser, $frame=false) {
         parent::__construct($master, $input, $args, $parser, $frame);
+        #$mess = $this->getMessenger();
+        #$mess->setEnableDebug(true);  // DBG true just for debugging
+        #$mess->setDoTrigger(true);    // DBG true just for debugging
+        // clear all param msg keys
+        $this->clearParamMsgKeys();
         // lang msgkey
         $this->addParamMsgKeys("alwayslang");
         // ctrl msg keys
@@ -35,8 +40,8 @@ class LongCiteDefTag extends LongCiteTag {
         // core msg keys
         $this->addParamMsgKeys("key");
         // desc msg keys
-        $this->addParamMsgKeys("author","pubdate");
-        // verbosr msg keys
+        $this->addParamMsgKeys("author","item","pubdate");
+        // verbose msg keys
         $this->addParamMsgKeys("note");
     }
 
@@ -44,9 +49,38 @@ class LongCiteDefTag extends LongCiteTag {
     /// @return A string with rendered HTML.
     public function render() {
         parent::renderPreperation();
+        // init rendering
         $this->setRenderedOutput("");
-        $this->renderedOutputAdd($this->getMessenger()->renderMessagesHtml(true),true);
-        return $this->renderedOutputGet();
+        $paramObjs = $this->getParamObjects();
+        // Process control params.
+        foreach($paramObjs as $paramMsgKey => $paramObj) {
+            if($paramObj->getCategory()!=LongCiteParam::CatCore) { continue; }
+            $paramNameMsgKey = $paramObj->getNameKey();
+            if($paramNameMsgKey=="longcite-pn-renlang") {
+                $paramClass = LongCiteParam::getParamClass($paramNameMsgKey);
+                $values = $paramObj->getValues();
+                $outLangCode = $values[0];
+                $tag->setOutputLangCode($outLangCode);
+            }
+        }
+        // TBD
+        // Render objects to display
+        // render core params, if any.
+        foreach($paramObjs as $paramMsgKey => $paramObj) {
+            if($paramObj->getCategory()!=LongCiteParam::CatCore) { continue; }
+            $status = $paramObj->renderParam();
+        }
+        // render description params, if any.
+        if(array_key_exists("longcite-pn-item",$paramObjs)) {
+            $paramObj = $paramObjs["longcite-pn-item"];
+            $status = $paramObj->renderParam();
+        }
+        // Render possible registered warning/error messages.
+        $mess = $this->getMessenger();
+        $html = $mess->renderMessagesHtml(true);
+        $this->renderedOutputAdd($html,true);
+        $result = trim($this->renderedOutputGet());
+        return $result;
     }
 
 }

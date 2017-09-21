@@ -21,12 +21,13 @@ class LongCiteParam {
     protected static $paramClassMap = array(
         "longcite-pn-alwayslang" => array("LangCode",false,self::CatLang),
         "longcite-pn-author"     => array("PersonName",true,self::CatDesc),
+        "longcite-pn-item"       => array("AlphaId",false,self::CatDesc),
         "longcite-pn-key"        => array("AlphaId",false,self::CatCore),
         "longcite-pn-note"       => array("Note",true,self::CatVerb),
         "longcite-pn-pubdate"    => array("Date",true,self::CatDesc),
         "longcite-pn-render"     => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renlong"    => array("Boolean",false,self::CatCtrl),
-        "longcite-pn-renlang"    => array("Boolean",false,self::CatCtrl),
+        "longcite-pn-renlang"    => array("LangCode",false,self::CatCtrl),
         "longcite-pn-renctrl"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-rencore"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-rendesc"    => array("Boolean",false,self::CatCtrl),
@@ -34,6 +35,12 @@ class LongCiteParam {
         "longcite-pn-renskip"    => array("AlphaId",true,self::CatCtrl),
         "longcite-pn-renonly"    => array("AlphaId",true,self::CatCtrl)
     );
+
+    public static function getAllCategories() {
+        $validCats = array(self::CatLang, self::CatCtrl, self::CatCore,
+            self::CatDesc, self::CatVerb);
+        return $validCats;
+    }
 
     /// Convert full or shortened param name msg keys to full msg keys.
     public static function getParamNameKeyLong($paramNameKey) {
@@ -111,22 +118,25 @@ class LongCiteParam {
         }
         $paramClass = self::ParamClassPrefix . self::$paramClassMap[$paramNameKey][0];
         $isMulti    = self::$paramClassMap[$paramNameKey][1];
+        $category   = self::$paramClassMap[$paramNameKey][2];
         try {
             $result = new $paramClass($paramNameKey,$isMulti,$tag);
+            $result->setCategory($category);
         } catch (Exception $e) {
             $result = false();
         }
         return $result;
     }
 
-    protected $paramNameKey = "";      ///< i18n msg key (except for "lang").
+    protected $paramNameKey = "";      ///< i18n msg key.
     protected $tag        = null;      ///< LongCiteTag (or child) object.
     protected $isMulti    = false;     ///< Are multivalues allowed.
     protected $inputDelimMsgKey = "";  ///< Input delimiter msgKey (if needed).
     protected $outputDelimMsgKeys = array(); ///< Hash mode to msg key.
     protected $values     = array();   ///< Semi parsed values.
-    protected $renderPrefix = "";
-    protected $renderSuffix = "";
+    protected $category   = null;      ///< Param category.
+    protected $renderPrefixMsgKey = "longcite-pun-space";
+    protected $renderSuffixMsgKey = "longcite-pun-period";
 
     public function __construct($paramNameKey, $isMulti, $tag) {
         $paramNameKey = self::getParamNameKeyLong($paramNameKey);
@@ -181,10 +191,16 @@ class LongCiteParam {
         return true;
     }
 
+
+    public function getCategory() {
+        return $this->category;
+    }
+
     public function getFrame() {
         $frame = $this->getTag()->getFrame();
         return $frame;
     }
+
 
     public function getInputDelimMsgKey() {
         if($this->isMulti===false) { return false; }
@@ -259,6 +275,14 @@ class LongCiteParam {
         return $parser;
     }
 
+    public function getRenderPrefixMsgKey() {
+        return $this->renderPrefixMsgKey;
+    }
+
+    public function getRenderSuffixMsgKey() {
+        return $this->renderSuffixMsgKey;
+    }
+
     public function getTag() {
         return $this->tag;
     }
@@ -307,6 +331,31 @@ class LongCiteParam {
         return null;
     }
 
+    public function renderParam() {
+        $values = $this->getValues();
+        if(count($values)==0) { return false; }
+        $tag = $this->getTag();
+        $prefixMsgKey = $this->getRenderPrefixMsgKey();
+        $prefix = $this->wikiMessageOut($prefixMsgKey)->plain();
+        $tag->renderedOutputAdd($prefix,false);
+        $delim  = $this->getOutputDelim();
+        $stuff = implode($delim,$values);
+        $tag->renderedOutputAdd($stuff,false);
+        $suffixMsgKey = $this->getRenderSuffixMsgKey();
+        $suffix = $this->wikiMessageOut($suffixMsgKey)->plain();
+        $tag->renderedOutputAdd($suffix,false);
+        return true;
+    }
+
+    public function setCategory($cat) {
+        $validCats = self::getAllCategories();
+        if(!in_array($cat,$validCats)) {
+            trigger_error("Invalid param category ($cat).",E_USER_WARNING);
+            return false;
+        }
+        $this->category = $cat;
+    }
+
     public function setInputDelimMsgKey($delimMsgKey) {
         $this->inputDelimMsgKey = $delimMsgKey;
     }
@@ -318,6 +367,13 @@ class LongCiteParam {
         $this->outputDelimMsgKeys[$mode] = $msgKey;
     }
 
+    public function setRenderPrefixMsgKey($prefixMsgKey) {
+        $this->renderPrefixMsgKey = $prefixMsgKey;
+    }
+
+    public function setRenderSuffix($suffixMsgKey) {
+        $this->renderPrefixMsgKey = $suffixMsgKey;
+    }
 
     private function wikiMessage($isInputLang=false,$msgKey, ...$params) {
         if($isInputLang) {

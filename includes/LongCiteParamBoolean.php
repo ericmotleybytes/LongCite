@@ -19,7 +19,7 @@ class LongCiteParamBoolean extends LongCiteParam {
     }
 
     public function isValueValid($valueStr) {
-        $check  = $this->parseBooleanValue($values,false);
+        $check  = $this->parseBooleanValue($valueStr,false);
         if(is_null($check)) {
             return false;
         }
