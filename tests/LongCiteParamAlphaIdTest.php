@@ -52,9 +52,9 @@ class LongCiteParamAlphaIdTest extends TestCase {
         $v1 = "Einstein (1920)";
         $v2 = "Smith (1902)";
         $param->addValues($v1);
-        $this->assertEquals(array($v1),$param->getValues());
+        $this->assertEquals(array($v1),$param->getBasicValues());
         $param->addValues($v2);
-        $this->assertEquals(array($v2),$param->getValues());
+        $this->assertEquals(array($v2),$param->getBasicValues());
     }
 
 }

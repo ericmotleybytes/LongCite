@@ -40,7 +40,7 @@ class LongCiteUtilDate {
     public function __construct($rawDateStr,$langCode="en") {
         $this->rawDateStr  = $rawDateStr;
         $this->setLangCode($langCode);
-        $this->parsedOk = $this->parse($this->rawDateStr);
+        $this->parsedOk = $this->parseDate($this->rawDateStr);
     }
 
     public function i18n($msgKeySuffix) {
@@ -72,14 +72,14 @@ class LongCiteUtilDate {
         setlocale(LC_TIME,$saveLocale);  // restore locale
     }
 
-    public function parse($dateStr) {
+    public function parseDate($dateStr) {
         $this->isCirca = false;
         $this->isBCE   = false;
         $this->year    = null;
         $this->month   = null;
         $this->day     = null;
         $this->parsedMsg = "";
-        $adjDate = mb_strtolower(trim($dateStr));
+        $adjDate = mb_strtolower(LongCiteUtil::eregTrim($dateStr));
         $adjDate = mb_ereg_replace('[\ \t]+'," ",$adjDate); // condense multi-spaces
         // check prefix for c.. ca. and circa
         #$circas = array($this->circa1,$this->circa2,$this->circa3);
@@ -90,7 +90,7 @@ class LongCiteUtilDate {
             $testStr = mb_strtolower(mb_substr($adjDate,0,$circaLen));
             if($testStr==$circa) {
                 $this->isCirca = true;
-                $adjDate = trim(mb_substr($adjDate,$circaLen));
+                $adjDate = LongCiteUtil::eregTrim(mb_substr($adjDate,$circaLen));
                 break;
             }
         }
@@ -103,7 +103,7 @@ class LongCiteUtilDate {
             $testStr = mb_strtoupper(mb_substr($adjDate,-$bceLen));
             if($testStr==$bce) {
                 $this->isBCE = true;
-                $adjDate = trim(mb_substr($adjDate,0,$adjDateLen-$bceLen));
+                $adjDate = LongCiteUtil::eregTrim(mb_substr($adjDate,0,$adjDateLen-$bceLen));
                 break;
             }
         }
@@ -118,13 +118,13 @@ class LongCiteUtilDate {
             $adjDateLen = mb_strlen($adjDate);
             $testStr = mb_strtoupper(mb_substr($adjDate,-$ceLen));
             if($testStr==$ce) {
-                $adjDate = trim(mb_substr($adjDate,0,$adjDateLen-$ceLen));
+                $adjDate = LongCiteUtil::eregTrim(mb_substr($adjDate,0,$adjDateLen-$ceLen));
                 break;
             }
         }
         $altDate = mb_ereg_replace('[\/\.\-\,]+'," ",$adjDate); // replace / . and ,
         $altDate = mb_ereg_replace('\ +'," ",$altDate); // condense multi-spaces
-        $altParts = explode(" ",$altDate);
+        $altParts = mb_split('\ ',$altDate);
         $altPartsCnt = count($altParts);
         $year  = null;
         $month = null;

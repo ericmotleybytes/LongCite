@@ -143,7 +143,7 @@ class LongCiteMessenger {
         $file     = $info["file"];
         $line     = $info["line"];
         $file     = basename($file,".php");
-        $msgText  = trim("($class::$function:$line) $msgText");
+        $msgText  = LongCiteUtil::eregTrim("($class::$function:$line) $msgText");
         return $this->registerMessage(self::TraceType,$msgText);
     }
 

@@ -86,7 +86,7 @@ class LongCiteUtilPersonName {
 
     protected function parseAll($rawName) {
         $this->langCodeParsed = $this->langCode;
-        $adjName = trim($rawName);
+        $adjName = LongCiteUtil::eregTrim($rawName);
         $adjName = mb_ereg_replace('[\ \t]+'," ",$adjName); // collapse spaces
         $this->rawName  = $adjName;
         $adjName = $this->parseTitles($adjName);
@@ -123,7 +123,7 @@ class LongCiteUtilPersonName {
         $callable = array($this,"parseTitlesMatch");
         $workName = mb_ereg_replace_callback($pat,$callable,$adjName);
         if($workName!==false) {
-            $adjName = trim($workName);
+            $adjName = LongCiteUtil::eregTrim($workName);
             $adjName = mb_ereg_replace('\ +'," ",$adjName); // collapse spaces
         }
         return $adjName;
@@ -134,7 +134,7 @@ class LongCiteUtilPersonName {
         $delimPat = "\\" . $this->inSemi;
         $titles = mb_split($delimPat,$matchString);
         foreach($titles as $title) {
-            $this->rawTitles[] = trim($title);
+            $this->rawTitles[] = LongCiteUtil::eregTrim($title);
         }
         return "";
     }
@@ -146,7 +146,7 @@ class LongCiteUtilPersonName {
         $callable = array($this,"parsePositionsMatch");
         $workName = mb_ereg_replace_callback($pat,$callable,$adjName);
         if($workName!==false) {
-            $adjName = trim($workName);
+            $adjName = LongCiteUtil::eregTrim($workName);
             $adjName = mb_ereg_replace('\ +'," ",$adjName); // collapse spaces
         }
         return $adjName;
@@ -157,7 +157,7 @@ class LongCiteUtilPersonName {
         $delimPat = "\\" . $this->inBar;
         $positions = mb_split($delimPat,$matchString);
         foreach($positions as $position) {
-            $this->rawPositions[] = trim($position);
+            $this->rawPositions[] = LongCiteUtil::eregTrim($position);
         }
         return "";
     }
@@ -169,7 +169,7 @@ class LongCiteUtilPersonName {
         $callable = array($this,"parseCredentialsMatch");
         $workName = mb_ereg_replace_callback($pat,$callable,$adjName);
         if($workName!==false) {
-            $adjName = trim($workName);
+            $adjName = LongCiteUtil::eregTrim($workName);
             $adjName = mb_ereg_replace('\ +'," ",$adjName); // collapse spaces
         }
         return $adjName;
@@ -180,7 +180,7 @@ class LongCiteUtilPersonName {
         $delimPat = "\\" . $this->inSemi;
         $credentials = mb_split($delimPat,$matchString);
         foreach($credentials as $credential) {
-            $this->rawCredentials[] = trim($credential);
+            $this->rawCredentials[] = LongCiteUtil::eregTrim($credential);
         }
         return "";
     }
@@ -236,7 +236,7 @@ class LongCiteUtilPersonName {
             if($isNickname!==false) {
                 $namePart = mb_ereg_replace($eqq,"",$namePart);  // remove quotes
                 $namePart = mb_ereg_replace($patUnderFix," ",$namePart);
-                $namePart = trim($namePart);
+                $namePart = LongCiteUtil::eregTrim($namePart);
                 if(mb_strlen($namePart)>0) {
                     $nameAnnotatedParts[] = array($namePart,self::NamePartNickname);
                 }
@@ -246,7 +246,7 @@ class LongCiteUtilPersonName {
             if($isDisambiguator!==false) {
                 $namePart = mb_ereg_replace($edd,"",$namePart);  // remove --'s
                 $namePart = mb_ereg_replace($patUnderFix," ",$namePart);
-                $namePart = trim($namePart);
+                $namePart = LongCiteUtil::eregTrim($namePart);
                 if(mb_strlen($namePart)>0) {
                     $nameAnnotatedParts[] = array($namePart,self::NamePartDisambiguator);
                 }
@@ -256,11 +256,11 @@ class LongCiteUtilPersonName {
             if($isQualifier!==false) {
                 $namePart = mb_ereg_replace($eCurlyL,"",$namePart);  // remove {'s
                 $namePart = mb_ereg_replace($eCurlyR,"",$namePart);  // remove }'s
-                $namePart = trim($namePart);
+                $namePart = LongCiteUtil::eregTrim($namePart);
                 $quals = mb_split("\\".$this->inSemi,$namePart);
                 foreach($quals as $qual) {
                     $qual = mb_ereg_replace("\\" . $this->inUnder," ",$namePart);
-                    $qual = trim($qual);
+                    $qual = LongCiteUtil::eregTrim($qual);
                     $nameAnnotatedParts[] = array($qual,self::NamePartQualifier);
                 }
                 continue;
@@ -268,7 +268,7 @@ class LongCiteUtilPersonName {
             $isSurname = mb_ereg($eu,$namePart);
             if($isSurname!==false) {
                 $namePart = mb_ereg_replace($patUnderFix," ",$namePart);
-                $namePart = trim($namePart);
+                $namePart = LongCiteUtil::eregTrim($namePart);
                 $bestSurnameIdx = $idx;
             }
             $lastNameIdx = $idx;
@@ -285,20 +285,20 @@ class LongCiteUtilPersonName {
     }
 
     protected function parseNameQqMatch($matches) {
-        $result = trim($matches[1]);
+        $result = LongCiteUtil::eregTrim($matches[1]);
         $result = mb_ereg_replace('\ ',$this->inUnder,$result);
         return $this->inQuote2 . $result . $this->inQuote2;
     }
 
     protected function parseNameDdMatch($matches) {
-        $result = trim($matches[1]);
+        $result = LongCiteUtil::eregTrim($matches[1]);
         $result = mb_ereg_replace('\ ',$this->inUnder,$result);
         $dd = $this->inDash . $this->inDash;
         return $dd . $result . $dd;
     }
 
     protected function parseNameCurlyMatch($matches) {
-        $result = trim($matches[1]);
+        $result = LongCiteUtil::eregTrim($matches[1]);
         $result = mb_ereg_replace('\ ',$this->inUnder,$result);
         return $this->inCurlyL . $result . $this->inCurlyR;
     }
@@ -433,7 +433,7 @@ class LongCiteUtilPersonName {
             $result .= " (" . $annPart[0] . ")";
         }
         // return results
-        $result = trim($result);
+        $result = LongCiteUtil::eregTrim($result);
         $result = mb_ereg_replace('\ +'," ",$result);  // collapse spaces
         return $result;
     }

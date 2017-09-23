@@ -12,8 +12,6 @@ class LongCiteParamDate extends LongCiteParam {
     const AbbrMonth = LongCiteUtilDate::AbbrMonthFormat;
     const FullMonth = LongCiteUtilDate::FullMonthFormat;
 
-    protected $dateObjs = array();
-
     public function __construct($paramNameKey,$isMulti,$tag) {
         parent::__construct($paramNameKey,$isMulti,$tag);
         $longMode = LongCiteParam::ParamModeLong;
@@ -27,26 +25,31 @@ class LongCiteParamDate extends LongCiteParam {
         $result = true;
         $inLangCode = $this->getInputLangCode();
         parent::addValues($valuesStr);
-        $rawValues = parent::getValues();
-        foreach($rawValues as $rawValue) {
-            $dateObj = new LongCiteUtilDate($rawDate,$inLangCode);
-            $this->dateObjs[] = $dateObj;
+        $cnt = count($this->annValues);
+        for($idx=0; $idx<$cnt; $idx++) {
+            if(!$this->annValues[$idx][self::AnnValIsValid]) { continue; }
+            $basicVal = $this->annValues[self::AnnValBasic];
+            $dateObj = new LongCiteUtilDate($basicVal,$inLangCode);
             if($dateObj->getParsedOk()===false) {
                 $result = false;
                 $mess = $this->getMessenger();
-                $msg = wfMessage("longcite-err-unrecdate",$rawValue);
+                $msg = wfMessage("longcite-err-unrecdate",$basicVal);
                 $msg = $msg->inLanguage($inLangCode)->plain();
                 $mess->registerMessageWarning($msg);
+                $this->annValues[$idx][self::AnnValIsRecog] = false;
+            } else {
+                $this->annValues[$idx][self::AnnValIsRecog] = true;
             }
+            $this->annValues[$idx][self::AnnValAsObj] = $dateObj;
         }
         return $result;
     }
 
-    public function getValues($fmtCode=LongCiteParamDate::NumMonth) {
+    public function getFormattedValues($fmtCode=LongCiteParamDate::NumMonth) {
         $result = array();
         $outLangCode = $this->getOutputLangCode();
-        foreach($this->dateObjs as $dateObj) {
-            $dateObj->setLangCode($outLangCode);
+        foreach($this->annValues as $annValue) {
+            $dateObj = $annValue[self::AnnValAsObj];
             $result[] = $dateObj->getDateStr($fmtCode);
         }
         return $result;

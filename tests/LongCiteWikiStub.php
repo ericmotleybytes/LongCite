@@ -104,7 +104,7 @@ class LongCiteWikiStub {
         }
         // Invoke the extension functions
         foreach($wgExtensionFunctions as $extfunc) {
-            $callable = explode("::",$extfunc);
+            $callable = mb_split('\:\:',$extfunc);
             if(count($callable)==1) { $callable = $extfunc; }
             call_user_func($callable);
         }

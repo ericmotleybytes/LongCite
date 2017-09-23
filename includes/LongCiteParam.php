@@ -17,11 +17,16 @@ class LongCiteParam {
     const CatCore = "core";
     const CatDesc = "description";
     const CatVerb = "verbose";
+    const AnnValBasic   = "basic";
+    const AnnValIsValid = "isValid";
+    const AnnValIsRecog = "isRecognized";
+    const AnnValAsHtml  = "asHtml";
+    const AnnValAsObj   = "asObject";
 
     protected static $paramClassMap = array(
         "longcite-pn-alwayslang" => array("LangCode",false,self::CatLang),
         "longcite-pn-author"     => array("PersonName",true,self::CatDesc),
-        "longcite-pn-item"       => array("AlphaId",false,self::CatDesc),
+        "longcite-pn-item"       => array("Item",false,self::CatDesc),
         "longcite-pn-key"        => array("AlphaId",false,self::CatCore),
         "longcite-pn-note"       => array("Note",true,self::CatVerb),
         "longcite-pn-pubdate"    => array("Date",true,self::CatDesc),
@@ -133,10 +138,11 @@ class LongCiteParam {
     protected $isMulti    = false;     ///< Are multivalues allowed.
     protected $inputDelimMsgKey = "";  ///< Input delimiter msgKey (if needed).
     protected $outputDelimMsgKeys = array(); ///< Hash mode to msg key.
-    protected $values     = array();   ///< Semi parsed values.
+    protected $annValues  = array();   ///< Annotated values, array of hash arrays.
     protected $category   = null;      ///< Param category.
     protected $renderPrefixMsgKey = "longcite-pun-space";
     protected $renderSuffixMsgKey = "longcite-pun-period";
+    protected $paramOrder = 0;  ///< Param order within containing tag.
 
     public function __construct($paramNameKey, $isMulti, $tag) {
         $paramNameKey = self::getParamNameKeyLong($paramNameKey);
@@ -162,22 +168,26 @@ class LongCiteParam {
         $tag = $this->getTag();
         $parser = $tag->getParser();
         $frame  = $tag->getFrame();
-        $valuesStr = trim($valuesStr);
+        $result = true;
+        $valuesStr = LongCiteUtil::eregTrim($valuesStr);
         $valuesStr = $parser->recursiveTagParse($valuesStr,$frame);
         if($this->isMulti) {
             $inDelim = $this->getInputDelim();
         } else {
             $inDelim = null;
         }
-        $vals = LongCiteUtil::parse($valuesStr,$inDelim);
+        $vals = LongCiteUtil::parseValuesStr($valuesStr,$inDelim);
         foreach($vals as $val) {
+            $annValue = array();
+            $annValue[self::AnnValBasic]   = $val;
+            $annValue[self::AnnValIsRecog] = null;
+            $annValue[self::AnnValAsHtml]  = null;
+            $annValue[self::AnnValAsObj]   = null;
+            $annValue[self::AnnValIsValid] = null;
             if($this->isValueValid($val)) {
-                if($this->isMulti()) {
-                    $this->values[] = $val;
-                } else {
-                    $this->values = array($val);
-                }
+                $annValue[self::AnnValIsValid] = true;
             } else {
+                $annValue[self::AnnValIsValid] = false;
                 $mess = $this->getMessenger();
                 $markupName = $this->getTag()->getTagMarkupName();
                 $paramName = $this->getNames(true)[0];
@@ -186,11 +196,34 @@ class LongCiteParam {
                 );
                 $msg = $msg->plain();
                 $mess->registerMessageWarning($msg);
+                $result = false;
+            }
+            if($this->isMulti()) {
+                $this->annValues[] = $annValue;
+            } else {
+                $this->annValues = array($annValue);
             }
         }
         return true;
     }
 
+    public function getAnnotatedValues($evenInvalid=false) {
+        $results = array();
+        foreach($this->annValues as $annValue) {
+            if($evenInvalid or $annValue[self::AnnValIsValid]) {
+                $results[] = $annValue;
+            }
+        }
+        return $results;
+    }
+
+    public function getBasicValues($evenInvalid=false) {
+        $results = array();
+        foreach($this->getAnnotatedValues($evenInvalid) as $annValue) {
+            $results[] = $annValue[self::AnnValBasic];
+        }
+        return $results;
+    }
 
     public function getCategory() {
         return $this->category;
@@ -270,6 +303,10 @@ class LongCiteParam {
         return $code;
     }
 
+    public function getParamOrder() {
+        return $this->paramOrder;
+    }
+
     public function getParser() {
         $parser = $this->getTag()->getParser();
         return $parser;
@@ -292,10 +329,6 @@ class LongCiteParam {
         return $result;
     }
 
-    public function getValues() {
-        return $this->values;
-    }
-
     public function isMulti() {
         return $this->isMulti;
     }
@@ -305,7 +338,7 @@ class LongCiteParam {
     }
 
     public function parseBooleanValue($valueStr,$default=null) {
-        $valueStr = mb_strtolower(trim($valueStr));
+        $valueStr = mb_strtolower(LongCiteUtil::eregTrim($valueStr));
         if($valueStr=="") { return $default; }
         $inLangCode = $this->getInputLangCode();
         $msgKeyMap = array(
@@ -323,7 +356,7 @@ class LongCiteParam {
         );
         foreach($msgKeyMap as $msgKey => $val) {
             $trans = wfMessage($msgKey)->inLanguage($inLangCode)->plain();
-            $trans = mb_strtolower(trim($trans));
+            $trans = mb_strtolower(LongCiteUtil::eregTrim($trans));
             if($trans==$valueStr) {
                 return $msgKeyMap[$msgKey];
             }
@@ -332,7 +365,7 @@ class LongCiteParam {
     }
 
     public function renderParam() {
-        $values = $this->getValues();
+        $values = $this->getBasicValues();
         if(count($values)==0) { return false; }
         $tag = $this->getTag();
         $prefixMsgKey = $this->getRenderPrefixMsgKey();
@@ -365,6 +398,10 @@ class LongCiteParam {
     /// @msgKey = The i18n message key.
     public function setOutputDelimMsgKey($mode,$msgKey) {
         $this->outputDelimMsgKeys[$mode] = $msgKey;
+    }
+
+    public function setParamOrder($order) {
+        $this->paramOrder = $order;
     }
 
     public function setRenderPrefixMsgKey($prefixMsgKey) {

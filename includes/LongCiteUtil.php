@@ -151,7 +151,29 @@ class LongCiteUtil {
         return $newText;
     }
 
-    public static function parse($text,$delim=null) {
+    public static function eregTrim($str) {
+        $str = mb_ereg_replace('^[\ \t\n]+',"",$str); // trim leading spaces and tabs
+        $str = mb_ereg_replace('[\ \t\n]+$',"",$str); // trim trailing spaces and tabs
+        return $str;
+    }
+
+    /// RegEx quote a multibyte string to prep for mb_split.
+    public static function eregQuote($delim) {
+        $regexCharArr = array("\\",'+','*','?','[','^',']','$',
+            '(',')','{','}','=','!','<','>','|',':','-',' ','/');
+        $delimCharArr = preg_split('//u',$delim,null,PREG_SPLIT_NO_EMPTY);
+        $result = "";
+        foreach($delimCharArr as $delimChar) {
+            if(in_array($delimChar,$regexCharArr)) {
+                $result .= "\\" . $delimChar;
+            } else {
+                $result .= $delimChar;
+            }
+        }
+        return $result;
+    }
+
+    public static function parseValuesStr($text,$delim=null) {
         $result = array();
         // backslash to percent hex whole
         $text = self::backslashes2percenthex($text);
@@ -159,12 +181,13 @@ class LongCiteUtil {
         if(is_null($delim)) {
             $parts = array($text);
         } else {
-            $parts = explode($delim,$text);
+            $delimReg = self::eregQuote($delim);
+            $parts = mb_split($delimReg,$text);
         }
         // process parts
         foreach($parts as $part) {
             // trim part
-            $part = trim($part);
+            $part = self::eregTrim($part);
             // dequote part
             $part = self::dequote($part);
             // de-percent-hex part
@@ -247,11 +270,21 @@ class LongCiteUtil {
         return $result;
     }
 
+    /// Use i18n definitions to translate an word read from input to a preferred
+    /// word (possibly in a different language) using gender clues if available.
+    /// This is used in the LongCiteUtilPersonName class.
+    /// For example, the longcite-nst-* i18n message keys equate to ";" delimited
+    /// name titles (such as Mr. or Mrs.). Any of the multiple title variations
+    /// for a single title are listed, but the first one is the preferred form.
+    /// The source can match any of the listed forms, but the translation will
+    /// be the preferred (first) form. In addition, each form can have up to
+    /// three gender specific variations, "/" delimited, in "masculine/feminine/neutral"
+    /// forms. No slashes means all genders use the same form variation.
     public static function i18nTranslateWord($word,$fromLang,$toLang,
         $keyPat,$prefGend=null,&$indGend = null) {
         if($prefGend===null) { $prefGend = self::GenderUnknown; }
         if($indGend===null)  { $indGend  = self::GenderUnknown; }
-        $testWord = mb_strtolower(trim($word));
+        $testWord = mb_strtolower(self::eregTrim($word));
         $fromLang = mb_strtolower($fromLang);
         $toLang   = mb_strtolower($toLang);
         $prefGend = mb_strtoupper($prefGend);
@@ -270,7 +303,7 @@ class LongCiteUtil {
                 $prefForm = "";
                 foreach($fromGendForms as $fromGendForm) {
                     $idx++;
-                    $fromGendForm = trim($fromGendForm);
+                    $fromGendForm = self::eregTrim($fromGendForm);
                     $testForm1 = mb_strtolower($fromGendForm);
                     $testForm2 = mb_ereg_replace('\.',"",$testForm1);
                     if($testWord==$testForm1 or $testWord==$testForm2) {
@@ -330,5 +363,111 @@ class LongCiteUtil {
         }
         return $trans;
     }
+
+    /// Use i18n definitions to translate an item clause read from input to a preferred
+    /// item clause (possibly in a different language) accepting variation hints.
+    /// This is used in the LongCiteParamItem class.
+    /// For example, the longcite-itm-* i18n message keys equate to ";" delimited
+    /// item clauses (such as 'newspaper article' or 'radio program').
+    /// Any of the multiple title variations for a item are listed, but the first one
+    /// is the preferred form. The source can match any of the listed forms, but the
+    /// translation will be the preferred (first) form. In addition, each form can
+    /// optionally have a [] prefix whixh indicates the proper form of "a" and "the",
+    /// such as [A/The] or [An/The]. The first variation within the [] brackets is
+    /// used with the preferred form.
+    public static function i18nTranslateItem($item,$fromLang,$toLang,$keyPat) {
+        $testItem = mb_strtolower(self::eregTrim($item));
+        $fromLang = mb_strtolower($fromLang);
+        $toLang   = mb_strtolower($toLang);
+        $fromArr  = self::i18nCache($fromLang);
+        $toArr    = self::i18nCache($toLang);
+        // find appropriate msgKey using from lang value.
+        $matchedMsgKey = null;
+        foreach($fromArr as $msgKey => $fromMsgValStr) {
+            if(mb_ereg($keyPat,$msgKey)===false) { continue; }
+            $fromVals = mb_split('\;',$fromMsgValStr);
+            foreach($fromVals as $fromVal) {
+                // look for variants in [] brackets
+                $fromVariants = self::i18nVariants($fromVal);
+                foreach($fromVariants as $fromVar) {
+                    $fromVar = mb_strtolower($fromVar);
+                    if($testItem==$fromVar) {
+                        // found a match!
+                        $matchedMsgKey = $msgKey;
+                        break 3;
+                    }
+                }
+            }
+        }
+        // return false if no match
+        if(is_null($matchedMsgKey)) { return false; }
+        // lookup preferred translation in to lang
+        $trans =false;
+        $msgKey  = $matchedMsgKey;
+        if(!array_key_exists($msgKey,$toArr)) { return false; }
+        $toMsgValStr = $toArr[$msgKey];
+        $toVals = mb_split('\;',$toMsgValStr);
+        $toPrefVal = $toVals[0];
+        $toVars = self::i18nVariants($toPrefVal);
+        $toPrefVar = $toVars[0];
+        return $toPrefVar;
+    }
+
+    public static function i18nVariants($formStr) {
+        $results = array();
+        $matches = array();
+        $util = "LongCiteUtil";
+        $pat = '/\[[^\]]*\]/u';
+        $cnt = preg_match_all($pat,$formStr,$matches,PREG_PATTERN_ORDER);
+        if($cnt===false) {
+            trigger_error("preg_match_all problem.",E_USER_WARNING);
+            return false;
+        } elseif($cnt=0) {
+            $results = array($formStr);
+            return $results;
+        } else {
+            $mats = $matches[0];
+            $matCnt = 0;
+            $variants = array();
+            $base = array("");
+            foreach($mats as $mat) {
+                $matCore = mb_substr($mat,1,-1);
+                $matIdx = $matCnt;
+                $matCnt++;
+                $marker = '[[' . $matCnt . ']]';
+                $matPat = '/' . $util::eregQuote($mat) . '/u';
+                $formStr = preg_replace($matPat,$marker,$formStr,1);
+                $vars = mb_split('/',$matCore);
+                array_push($vars,"");  // add empty string variant
+                $newBase = array();
+                foreach($base as $b) {
+                    $varCnt = 0;
+                    foreach($vars as $var) {
+                        $varIdx = $varCnt;
+                        $varCnt++;
+                        $newBase[] = "$b/$var";
+                    }
+                }
+                $base = $newBase;
+            }
+            foreach($base as $b) {
+                $b = mb_ereg_replace('^/',"",$b);  // remove xtra leading slash
+                $subs = mb_split('/',$b);
+                $subCnt = 0;
+                $workStr = $formStr;
+                foreach($subs as $sub) {
+                    $subCnt++;
+                    $subPat = $util::eregQuote('[['.$subCnt.']]');
+                    $workStr = mb_ereg_replace($subPat,$sub,$workStr);
+                }
+                $workStr = $util::eregTrim($workStr);
+                $workStr = mb_ereg_replace('[\ ]+'," ",$workStr); // collapse
+                $results[] = $workStr;
+            }
+        }
+        return $results;
+    }
+
+
 }
 ?>

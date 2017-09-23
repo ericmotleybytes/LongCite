@@ -76,7 +76,7 @@ class LongCiteTagTest extends TestCase {
         );
         $this->assertEquals($expArr,$actArr);
         $this->assertEquals(1,$messenger->getMessageCount());
-        $act = trim($messenger->renderMessagesText());
+        $act = LongCiteUtil::eregTrim($messenger->renderMessagesText());
         $exp = "WARNING: Cannot parse (dummy).";
         $this->assertEquals($exp,$act);
         $messenger->clearMessages();

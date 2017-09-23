@@ -9,6 +9,7 @@
 /// Defines utility routines and data structures.
 class LongCiteMaster {
     const DefaultInputLanguageCode = "en";  ///< Parsing input default always en.
+    const DefaultCharacterEncoding = "UTF-8"; ///< Standard for MediaWiki.
 
     protected static $activeMaster = null;  ///< Main active master object instance.
 
@@ -45,6 +46,18 @@ class LongCiteMaster {
     /// Class instance constructor.
     function __construct() {
         global $wgLang;
+        $status = mb_internal_encoding(self::DefaultCharacterEncoding);
+        if($status===false) {
+            $msg = "Problem with mb_internal_encoding(";
+            $msg .= self::DefaultCharacterEncoding . ").";
+            trigger_error($msg,E_USER_WARNING);
+        }
+        $status = mb_regex_encoding(self::DefaultCharacterEncoding);
+        if($status===false) {
+            $msg = "Problem with mb_regex_encoding(";
+            $msg .= self::DefaultCharacterEncoding . ").";
+            trigger_error($msg,E_USER_WARNING);
+        }
         $cssLoaded = false;
         $this->messenger = new LongCiteMessenger(); // instantiate now
         // Determine the default output language.

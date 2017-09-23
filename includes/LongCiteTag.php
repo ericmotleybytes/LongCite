@@ -17,7 +17,7 @@ class LongCiteTag {
     protected $outputLangCode = "en";  ///< Language for producing output text.
     protected $messenger = null;       ///< LongCiteMessenger object.
     protected $paramMsgKeys = array();  ///< Hash cat->arr of msg keys.
-    protected $paramObjs    = array();  ///< Hash of paramNameMsgKey to param object.
+    protected $paramObjHash = array();  ///< Hash of paramNameMsgKey to param object.
     protected $renderedOutput = "";     ///< Copy of rendered output html.
     protected $argsToSkip = array();    ///< Gets 'lang' after language selection.
 
@@ -89,7 +89,7 @@ class LongCiteTag {
         $langMsgKey = $langMsgKeys[0];
         $langParamName = $this->wikiMessageIn($langMsgKey)->plain();
         if(array_key_exists($langParamName,$this->args)) {
-            $langCode = trim($this->args[$langParamName]);
+            $langCode = LongCiteUtil::eregTrim($this->args[$langParamName]);
             $langCode = $parser->recursiveTagParse($langCode,$frame);
             $langCode = strtolower($langCode);
             if(!in_array($langCode,$supportedLangCodes)) {
@@ -137,8 +137,8 @@ class LongCiteTag {
     }
 
     public function getParamByMsgKey($paramNameKey) {
-        if(array_key_exists($paramNameKey,$this->paramObjs)) {
-            $result = $this->paramObjs[$paramNameKey];
+        if(array_key_exists($paramNameKey,$this->paramObjHash)) {
+            $result = $this->paramObjHash[$paramNameKey];
             $phpClass = get_class($result);
             return $result;
         }
@@ -153,7 +153,8 @@ class LongCiteTag {
         }
         $param = LongCiteParam::newParam($paramNameKey,$this);
         $phpClass = get_class($param);
-        $this->paramObjs[$paramNameKey] = $param;
+        $this->paramObjHash[$paramNameKey] = $param;
+        $param->setParamOrder(count($this->paramObjHash));
         return $param;
     }
 
@@ -188,13 +189,13 @@ class LongCiteTag {
     }
 
     public function getParamNameKey($paramName) {
-        $paramName = trim(mb_strtolower($paramName));
+        $paramName = LongCiteUtil::eregTrim(mb_strtolower($paramName));
         foreach($this->getParamMsgKeys() as $paramNameKey) {
             $paramNamesStr = $this->wikiMessageIn($paramNameKey)->plain();
-            $paramNamesStr = trim(mb_strtolower($paramNamesStr));
+            $paramNamesStr = LongCiteUtil::eregTrim(mb_strtolower($paramNamesStr));
             $paramNames = mb_split('\;',$paramNamesStr);
             foreach($paramNames as $parName) {
-                $parName = trim(mb_strtolower($parName));
+                $parName = LongCiteUtil::eregTrim(mb_strtolower($parName));
                 if($paramName==$parName) {
                     return $paramNameKey;
                 }
@@ -203,8 +204,8 @@ class LongCiteTag {
         return false;
     }
 
-    public function getParamObjects() {
-        return $this->paramObjs;
+    public function getParamObjectHash() {
+        return $this->paramObjHash;
     }
 
     public function getParser() {
@@ -230,11 +231,11 @@ class LongCiteTag {
     public function preprocessInput($input) {
         $contchar = "\\";  # if at end of line it marks a continuation.
         // remove html comments from content
-        $input = preg_replace( '/<!--(.|\s)*?-->/' , '' , $input);
+        $input = preg_replace( '/<!--(.|\s)*?-->/u' , '' , $input);
         // convert /r/n to /n (if any)
-        $input = str_replace("\r\n","\n",$input);
+        $input = mb_ereg_replace('\r\n','\n',$input);
         // break up into rawlines
-        $rawLines = explode("\n",$input);
+        $rawLines = mb_split('\n',$input);
         // recursive parse each raw line.
         $tempLines = array();
         $parser = $this->getParser();
@@ -247,14 +248,14 @@ class LongCiteTag {
         $parLines = array();
         $continuing = false;
         foreach($tempLines as $tempLine) {
-            $tempLine = trim($tempLine);
+            $tempLine = LongCiteUtil::eregTrim($tempLine);
             $lastchar = substr($tempLine,-1);
             if($lastchar==$contchar) {
-                $tempLine = trim(substr($tempLine,0,-1));
+                $tempLine = LongCiteUtil::eregTrim(substr($tempLine,0,-1));
             }
             if($continuing) {
                 $lastidx = count($parLines) - 1;
-                $parLines[$lastidx] = trim($parLines[$lastidx] . " " . $tempLine);
+                $parLines[$lastidx] = LongCiteUtil::eregTrim($parLines[$lastidx] . " " . $tempLine);
             } else {
                 $parLines[] = $tempLine;
             }
@@ -277,14 +278,14 @@ class LongCiteTag {
     public function preprocessSemiParsedLines($parLines) {
         $arrOfArr = array(); // an array of arrays
         foreach($parLines as $parLine) {
-            $parts = explode("=",$parLine,2);
+            $parts = mb_split('\=',$parLine,2);
             if(count($parts)!=2) {
                 $msg = $this->wikiMessageIn("longcite-err-cannotparse",$parLine)->plain();
                 $this->getMessenger()->registerMessageWarning($msg);
                 continue;
             }
-            $parts[0] = trim($parts[0]);
-            $parts[1] = trim($parts[1]);
+            $parts[0] = LongCiteUtil::eregTrim($parts[0]);
+            $parts[1] = LongCiteUtil::eregTrim($parts[1]);
             # remove surrounding doublequotes if needed
             if(substr($parts[1],0,1)=='"') {
                 if(substr($parts[1],-1)=='"') {
@@ -305,7 +306,7 @@ class LongCiteTag {
     public function render() {
         $this->renderPreperation();
         $this->renderedOutputAdd($this->getMessenger()->renderMessagesHtml(true),true);
-        $result = trim($this->renderedOutputGet());
+        $result = LongCiteUtil::eregTrim($this->renderedOutputGet());
     }
 
     public function renderedOutputAdd($text,$isHtml=false) {
@@ -377,8 +378,8 @@ class LongCiteTag {
         $semiParsedLines = $this->preprocessInput($this->input);
         $parsedArrOfArr  = $this->preprocessSemiParsedLines($semiParsedLines);
         foreach($parsedArrOfArr as $parts) {
-            $paramName = strtolower(trim($parts[0]));
-            $paramVal  = trim($parts[1]);
+            $paramName = strtolower(LongCiteUtil::eregTrim($parts[0]));
+            $paramVal  = LongCiteUtil::eregTrim($parts[1]);
             if(!array_key_exists($paramName,$paramMap)) {
                 $errKey = "longcite-err-badtagpar";
                 $msg = $this->wikiMessageIn($errKey,$paramName,$tagMarkupName)->plain();

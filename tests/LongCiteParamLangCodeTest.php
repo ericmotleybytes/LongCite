@@ -44,12 +44,12 @@ class LongCiteParamLangCodeTest extends TestCase {
         $v2 = "de";
         $v3 = "EN";
         $param->addValues($v1);
-        $this->assertEquals(array($v1),$param->getValues());
+        $this->assertEquals(array($v1),$param->getBasicValues());
         $param->addValues($v2);
-        $this->assertEquals(array($v2),$param->getValues());
+        $this->assertEquals(array($v2),$param->getBasicValues());
         $param->addValues($v3);
         $exp = array(strtolower($v3));
-        $this->assertEquals($exp,$param->getValues());
+        $this->assertEquals($exp,$param->getBasicValues());
     }
 
 }

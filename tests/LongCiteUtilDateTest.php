@@ -57,7 +57,7 @@ class LongCiteUtilDateTest extends TestCase {
         $expMonth=null,$expDay=null,$expBCE=false,$expCirca=false) {
         $expParsedOk = true;
         if(mb_substr($expDate,0,1)=="?") { $expParsedOk = false; }
-        $langCodes = explode("/",$langCode);
+        $langCodes = mb_split('/',$langCode);
         $langCode1 = $langCodes[0];
         $langCode2 = $langCodes[0];
         if(count($langCodes)>1) { $langCode2 = $langCodes[1]; }

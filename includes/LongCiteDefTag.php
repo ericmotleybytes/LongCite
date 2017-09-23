@@ -51,14 +51,14 @@ class LongCiteDefTag extends LongCiteTag {
         parent::renderPreperation();
         // init rendering
         $this->setRenderedOutput("");
-        $paramObjs = $this->getParamObjects();
+        $paramObjHash = $this->getParamObjectHash();
         // Process control params.
-        foreach($paramObjs as $paramMsgKey => $paramObj) {
+        foreach($paramObjHash as $paramMsgKey => $paramObj) {
             if($paramObj->getCategory()!=LongCiteParam::CatCore) { continue; }
             $paramNameMsgKey = $paramObj->getNameKey();
             if($paramNameMsgKey=="longcite-pn-renlang") {
                 $paramClass = LongCiteParam::getParamClass($paramNameMsgKey);
-                $values = $paramObj->getValues();
+                $values = $paramObj->getBasicValues();
                 $outLangCode = $values[0];
                 $tag->setOutputLangCode($outLangCode);
             }
@@ -66,20 +66,20 @@ class LongCiteDefTag extends LongCiteTag {
         // TBD
         // Render objects to display
         // render core params, if any.
-        foreach($paramObjs as $paramMsgKey => $paramObj) {
+        foreach($paramObjHash as $paramMsgKey => $paramObj) {
             if($paramObj->getCategory()!=LongCiteParam::CatCore) { continue; }
             $status = $paramObj->renderParam();
         }
         // render description params, if any.
-        if(array_key_exists("longcite-pn-item",$paramObjs)) {
-            $paramObj = $paramObjs["longcite-pn-item"];
+        if(array_key_exists("longcite-pn-item",$paramObjHash)) {
+            $paramObj = $paramObjHash["longcite-pn-item"];
             $status = $paramObj->renderParam();
         }
         // Render possible registered warning/error messages.
         $mess = $this->getMessenger();
         $html = $mess->renderMessagesHtml(true);
         $this->renderedOutputAdd($html,true);
-        $result = trim($this->renderedOutputGet());
+        $result = LongCiteUtil::eregTrim($this->renderedOutputGet());
         return $result;
     }
 
