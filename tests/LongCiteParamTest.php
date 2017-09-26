@@ -56,9 +56,9 @@ class LongCiteParamTest extends TestCase {
         // statics
         $pk = "longcite-pn-author";
         $paramClass = LongCiteParam::getParamClass($pk);
-        $this->assertEquals("LongCiteParamPersonName",$paramClass);
+        $this->assertEquals("LongCiteParamAuthor",$paramClass);
         $paramType = LongCiteParam::getParamType($pk);
-        $this->assertEquals("PersonName",$paramType);
+        $this->assertEquals("Author",$paramType);
         $paramDescKey = LongCiteParam::getParamDescKey($pk);
         $this->assertEquals("longcite-pd-author",$paramDescKey);
         $paramDesc = LongCiteParam::getParamDescription($pk);

@@ -54,5 +54,6 @@ class LongCiteParamDate extends LongCiteParam {
         }
         return $result;
     }
+
 }
 ?>

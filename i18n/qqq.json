@@ -163,6 +163,7 @@
     "longcite-pn-renonly"      : "Render only these parameters.",
     "longcite-pn-renskip"      : "Do not render these parameters.",
     "longcite-pn-renverb"      : "Render verbose parameters?",
+    "longcite-pre-author"      : "Prefix for author clause.",
     "longcite-pun-colon"       : "Punctuation :",
     "longcite-pun-empty"       : "Punctuation empty string.",
     "longcite-pun-exclaim"     : "Punctuation !",

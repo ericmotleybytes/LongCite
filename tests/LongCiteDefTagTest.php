@@ -32,16 +32,23 @@ class LongCiteDefTagTest extends TestCase {
         $master = LongCiteMaster::getActiveMaster();
         #
         $args["lang"] = "de";
-        $input1   = "schlüssel=Russell, B. (1948)\n";
-        $input2   = "ding = Buch\n";
-        $input3   = "rensprache=de\n";
-        $input    = $input1 . $input2 . $input3;
+        $inputArr = array();
+        $inputArr[0]   = "schlüssel=DeMarco & Lister (1987)\n";
+        $inputArr[1]   = "ding = Buch\n";
+        $inputArr[2]   = "rensprache=de\n";
+        $inputArr[3]   = "autoren=Tom DeMarco;Timothy Lister\n";
+        $input         = implode("",$inputArr);
         $expMess  = "";
-        $expOut1  = "Russell, B. (1948). ";
-        $expOut2  = '<span class="mw-longcite-pv-recogitem">';
-        $expOut3  = 'Ein Buch';
-        $expOut4  = '</span>.';
-        $expOut = $expOut1 . $expOut2 . $expOut3 . $expOut4;
+        $expOutArr = array();
+        $expOutArr[0] = "DeMarco &amp; Lister (1987). ";
+        $expOutArr[1] = '<span class="mw-longcite-pv-recogitem">';
+        $expOutArr[2] = 'Ein Buch';
+        $expOutArr[3] = '</span>.';
+        $expOutArr[4] = ' Geschrieben von ';
+        $expOutArr[5] = 'Tom _DeMarco_';
+        $expOutArr[6] = '; ';
+        $expOutArr[7] = 'Timothy _Lister_.';
+        $expOut = implode("",$expOutArr);
         #
         $setup = array();
         $setup["master"]  = $master;
@@ -51,11 +58,23 @@ class LongCiteDefTagTest extends TestCase {
         $setup["expOut"]  = $expOut;
         $this->helpRender($setup);
         #
-        $input3   = "rensprache=en\n";
-        $input    = $input1 . $input2 . $input3;
-        $setup["input"]   = $input;
-        $expOut3  = 'A book';
-        $expOut = $expOut1 . $expOut2 . $expOut3 . $expOut4;
+        $inputArr[2]    = "rensprache=en\n";
+        $input          = implode("",$inputArr);
+        $setup["input"] = $input;
+        $expOutArr[2]   = 'A book';
+        $expOutArr[4]   = ' Written by ';
+        $expOutArr[6]   = '; ';
+        $expOut = implode("",$expOutArr);
+        $setup["expOut"] = $expOut;
+        $this->helpRender($setup);
+        #
+        $inputArr[2]    = "rensprache=es\n";
+        $input          = implode("",$inputArr);
+        $setup["input"] = $input;
+        $expOutArr[2]   = 'Un libro';
+        $expOutArr[4]   = ' Escrito por ';
+        $expOutArr[6]   = '; ';
+        $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
         $this->helpRender($setup);
     }

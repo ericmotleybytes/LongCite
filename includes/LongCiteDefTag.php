@@ -77,6 +77,10 @@ class LongCiteDefTag extends LongCiteTag {
             $paramObj = $paramObjHash["longcite-pn-item"];
             $status = $paramObj->renderParam();
         }
+        if(array_key_exists("longcite-pn-author",$paramObjHash)) {
+            $paramObj = $paramObjHash["longcite-pn-author"];
+            $status = $paramObj->renderParam();
+        }
         // Render possible registered warning/error messages.
         $mess = $this->getMessenger();
         $html = $mess->renderMessagesHtml(true);

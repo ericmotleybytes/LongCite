@@ -25,7 +25,7 @@ class LongCiteParam {
 
     protected static $paramClassMap = array(
         "longcite-pn-alwayslang" => array("LangCode",false,self::CatLang),
-        "longcite-pn-author"     => array("PersonName",true,self::CatDesc),
+        "longcite-pn-author"     => array("Author",true,self::CatDesc),
         "longcite-pn-item"       => array("Item",false,self::CatDesc),
         "longcite-pn-key"        => array("AlphaId",false,self::CatCore),
         "longcite-pn-note"       => array("Note",true,self::CatVerb),
@@ -158,7 +158,8 @@ class LongCiteParam {
         $this->setInputDelimMsgKey("longcite-delimi-semi");
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;
-        $this->setOutputDelimMsgKey($longMode,"longcite-delimo-and");
+        #$this->setOutputDelimMsgKey($longMode,"longcite-delimo-and");
+        $this->setOutputDelimMsgKey($longMode,"longcite-delimo-semi");
         $this->setOutputDelimMsgKey($shortMode,"longcite-delimo-semi");
         $this->category = self::getParamCategory($paramNameKey);
     }
@@ -383,15 +384,25 @@ class LongCiteParam {
     public function renderParamPrefix() {
         $tag = $this->getTag();
         $prefixMsgKey = $this->getRenderPrefixMsgKey();
-        $prefix = $this->wikiMessageOut($prefixMsgKey)->plain();
-        $tag->renderedOutputAdd($prefix,false);        
+        if(!is_array($prefixMsgKey)) {
+            $prefixMsgKey = array($prefixMsgKey);
+        }
+        foreach($prefixMsgKey as $msgKey) {
+            $prefix = $this->wikiMessageOut($msgKey)->plain();
+            $tag->renderedOutputAdd($prefix,false);
+        }
     }
 
     public function renderParamSuffix() {
         $tag = $this->getTag();
         $suffixMsgKey = $this->getRenderSuffixMsgKey();
-        $suffix = $this->wikiMessageOut($suffixMsgKey)->plain();
-        $tag->renderedOutputAdd($suffix,false);
+        if(!is_array($suffixMsgKey)) {
+            $suffixMsgKey = array($suffixMsgKey);
+        }
+        foreach($suffixMsgKey as $msgKey) {
+            $suffix = $this->wikiMessageOut($msgKey)->plain();
+            $tag->renderedOutputAdd($suffix,false);
+        }
     }
 
     public function renderParamValues() {
@@ -430,8 +441,8 @@ class LongCiteParam {
         $this->renderPrefixMsgKey = $prefixMsgKey;
     }
 
-    public function setRenderSuffix($suffixMsgKey) {
-        $this->renderPrefixMsgKey = $suffixMsgKey;
+    public function setRenderSuffixMsgKey($suffixMsgKey) {
+        $this->renderSuffixMsgKey = $suffixMsgKey;
     }
 
     private function wikiMessage($isInputLang=false,$msgKey, ...$params) {
