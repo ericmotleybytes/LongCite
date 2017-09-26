@@ -15,9 +15,9 @@
 /// rendered later via <longciteren>).
 class LongCiteDefTag extends LongCiteTag {
 
-    protected $validDefParamNames = array(
-        "id", "author"
-    );
+    ##protected $validDefParamNames = array(
+    ##    "id", "author"
+    ##);
 
     /// Class constructor.
     /// @param $master - The LongCiteMaster instance doing the instantiation.
@@ -52,18 +52,20 @@ class LongCiteDefTag extends LongCiteTag {
         // init rendering
         $this->setRenderedOutput("");
         $paramObjHash = $this->getParamObjectHash();
+        $dbg = $this->paramMsgKeys;
         // Process control params.
         foreach($paramObjHash as $paramMsgKey => $paramObj) {
-            if($paramObj->getCategory()!=LongCiteParam::CatCore) { continue; }
+            $paramNameMsgKey = $paramObj->getNameKey();
+            if($paramObj->getCategory()!=LongCiteParam::CatCtrl) { continue; }
             $paramNameMsgKey = $paramObj->getNameKey();
             if($paramNameMsgKey=="longcite-pn-renlang") {
                 $paramClass = LongCiteParam::getParamClass($paramNameMsgKey);
                 $values = $paramObj->getBasicValues();
                 $outLangCode = $values[0];
+                $tag = $paramObj->getTag();
                 $tag->setOutputLangCode($outLangCode);
             }
         }
-        // TBD
         // Render objects to display
         // render core params, if any.
         foreach($paramObjHash as $paramMsgKey => $paramObj) {

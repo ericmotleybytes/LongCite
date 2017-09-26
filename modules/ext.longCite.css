@@ -13,3 +13,9 @@
 .mw-longcite-msgtyp-trace {
     color:teal;
 }
+.mw-longcite-pv-recogitem {
+    font-family: "Comic Sans MS",Impact;
+}
+.mw-longcite-pv-unrecogitem {
+    font-style: normal;
+}

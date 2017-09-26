@@ -12,9 +12,9 @@ class LongCiteParamBoolean extends LongCiteParam {
         parent::__construct($paramNameKey,$isMulti,$tag);
     }
 
-    public function addValues($values) {
+    public function addValues($values,$okHtml=null) {
         $values = mb_strtolower($values);
-        $result = parent::addValues($values);
+        $result = parent::addValues($values,$okHtml);
         return $result;
     }
 

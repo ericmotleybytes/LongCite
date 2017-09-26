@@ -12,9 +12,9 @@ class LongCiteParamLangCode extends LongCiteParam {
         parent::__construct($paramNameKey,$isMulti,$tag);
     }
 
-    public function addValues($values) {
-        $values = mb_strtolower($values);
-        $result = parent::addValues($values);
+    public function addValues($valuesStr,$okHtml=null) {
+        $valuesStr = mb_strtolower($valuesStr);
+        $result = parent::addValues($valuesStr,$okHtml);
         return $result;
     }
 

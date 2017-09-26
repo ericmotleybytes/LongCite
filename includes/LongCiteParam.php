@@ -160,17 +160,23 @@ class LongCiteParam {
         $shortMode = LongCiteParam::ParamModeShort;
         $this->setOutputDelimMsgKey($longMode,"longcite-delimo-and");
         $this->setOutputDelimMsgKey($shortMode,"longcite-delimo-semi");
+        $this->category = self::getParamCategory($paramNameKey);
     }
 
     // Add values to the parameter.
     // @param $valuesStr - Scalar string, but if multi may have multiple delimited values.
-    public function addValues($valuesStr) {
+    public function addValues($valuesStr,$okHtml=null) {
         $tag = $this->getTag();
         $parser = $tag->getParser();
         $frame  = $tag->getFrame();
         $result = true;
         $valuesStr = LongCiteUtil::eregTrim($valuesStr);
         $valuesStr = $parser->recursiveTagParse($valuesStr,$frame);
+        if($okHtml===null) {
+            $valuesStr = strip_tags($valuesStr);
+        } else {
+            $valuesStr = strip_tags($valuesStr,$okHtml);
+        }
         if($this->isMulti) {
             $inDelim = $this->getInputDelim();
         } else {
@@ -365,19 +371,35 @@ class LongCiteParam {
     }
 
     public function renderParam() {
+        $tag = $this->getTag();
         $values = $this->getBasicValues();
         if(count($values)==0) { return false; }
+        $this->renderParamPrefix();
+        $this->renderParamValues();
+        $this->renderParamSuffix();
+        return true;
+    }
+
+    public function renderParamPrefix() {
         $tag = $this->getTag();
         $prefixMsgKey = $this->getRenderPrefixMsgKey();
         $prefix = $this->wikiMessageOut($prefixMsgKey)->plain();
-        $tag->renderedOutputAdd($prefix,false);
-        $delim  = $this->getOutputDelim();
-        $stuff = implode($delim,$values);
-        $tag->renderedOutputAdd($stuff,false);
+        $tag->renderedOutputAdd($prefix,false);        
+    }
+
+    public function renderParamSuffix() {
+        $tag = $this->getTag();
         $suffixMsgKey = $this->getRenderSuffixMsgKey();
         $suffix = $this->wikiMessageOut($suffixMsgKey)->plain();
         $tag->renderedOutputAdd($suffix,false);
-        return true;
+    }
+
+    public function renderParamValues() {
+        $tag = $this->getTag();
+        $delim  = $this->getOutputDelim();
+        $values = $this->getBasicValues();
+        $stuff = implode($delim,$values);
+        $tag->renderedOutputAdd($stuff,false);
     }
 
     public function setCategory($cat) {

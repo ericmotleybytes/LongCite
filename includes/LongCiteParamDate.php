@@ -21,10 +21,10 @@ class LongCiteParamDate extends LongCiteParam {
         $this->setOutputDelimMsgKey($shortMode,"longcite-delimo-semi");
     }
 
-    public function addValues($valuesStr) {
+    public function addValues($valuesStr,$okHtml=null) {
         $result = true;
         $inLangCode = $this->getInputLangCode();
-        parent::addValues($valuesStr);
+        parent::addValues($valuesStr,$okHtml);
         $cnt = count($this->annValues);
         for($idx=0; $idx<$cnt; $idx++) {
             if(!$this->annValues[$idx][self::AnnValIsValid]) { continue; }

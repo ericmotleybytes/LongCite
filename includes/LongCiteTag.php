@@ -307,6 +307,7 @@ class LongCiteTag {
         $this->renderPreperation();
         $this->renderedOutputAdd($this->getMessenger()->renderMessagesHtml(true),true);
         $result = LongCiteUtil::eregTrim($this->renderedOutputGet());
+        return $result;
     }
 
     public function renderedOutputAdd($text,$isHtml=false) {
@@ -359,7 +360,7 @@ class LongCiteTag {
                 $paramMap[$paramName] = $paramMsgKey;
             }
         }
-        // process args from within opening tag
+        // save inputs from args from within opening tag
         foreach($this->args as $paramName => $paramVal) {
             if(in_array($paramName,$this->argsToSkip)) {
                 continue;  // Skip the 'lang' key already processed.
