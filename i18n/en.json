@@ -165,6 +165,7 @@
     "longcite-pn-renverb"      : "renverb;render_verbose",
     "longcite-pn-title"        : "title;titled;entitled",
     "longcite-pre-author"      : " Written by ",
+    "longcite-pre-pubdate"     : " Publication date ",
     "longcite-pre-title"       : " Entitled ",
     "longcite-pun-colon"       : ":",
     "longcite-pun-empty"       : "",

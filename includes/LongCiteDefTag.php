@@ -74,7 +74,8 @@ class LongCiteDefTag extends LongCiteTag {
         }
         // render description params, if any.
         $orderArr = array(
-            "longcite-pn-item","longcite-pn-title","longcite-pn-author"
+            "longcite-pn-item","longcite-pn-title","longcite-pn-author",
+            "longcite-pn-pubdate"
         );
         foreach($orderArr as $paramNameMsgKey) {
             if(array_key_exists($paramNameMsgKey,$paramObjHash)) {

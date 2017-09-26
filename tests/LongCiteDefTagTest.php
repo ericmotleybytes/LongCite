@@ -33,24 +33,27 @@ class LongCiteDefTagTest extends TestCase {
         #
         $args["lang"] = "de";
         $inputArr = array();
-        $inputArr[0]   = "schlüssel=DeMarco & Lister (1987)\n";
+        $inputArr[0]   = "schlüssel=DeMarco & Lister (1987/2013)\n";
         $inputArr[1]   = "ding = Buch\n";
         $inputArr[2]   = "rensprache=de\n";
         $inputArr[3]   = "autoren=Tom DeMarco;Timothy Lister\n";
         $inputArr[4]   = "titel=Peopleware\n";
+        $inputArr[5]   = "veröffdatum=1987;2013\n";
         $input         = implode("",$inputArr);
         $expMess  = "";
-        $expOutArr = array();
-        $expOutArr[0] = "DeMarco &amp; Lister (1987). ";
-        $expOutArr[1] = '<span class="mw-longcite-pv-recogitem">';
-        $expOutArr[2] = 'Ein Buch';
-        $expOutArr[3] = '</span>.';
-        $expOutArr[4] = ' Mit dem Titel ';
-        $expOutArr[5] = '<i>&quot;Peopleware&quot;</i>.';
-        $expOutArr[6] = ' Geschrieben von ';
-        $expOutArr[7] = 'Tom _DeMarco_';
-        $expOutArr[8] = '; ';
-        $expOutArr[9] = 'Timothy _Lister_.';
+        $expOutArr     = array();
+        $expOutArr[0]  = "DeMarco &amp; Lister (1987/2013). ";
+        $expOutArr[1]  = '<span class="mw-longcite-pv-recogitem">';
+        $expOutArr[2]  = 'Ein Buch';
+        $expOutArr[3]  = '</span>.';
+        $expOutArr[4]  = ' Mit dem Titel ';
+        $expOutArr[5]  = '<i>&quot;Peopleware&quot;</i>.';
+        $expOutArr[6]  = ' Geschrieben von ';
+        $expOutArr[7]  = 'Tom _DeMarco_';
+        $expOutArr[8]  = '; ';
+        $expOutArr[9]  = 'Timothy _Lister_.';
+        $expOutArr[10] = ' Veröffentlichungsdatum ';
+        $expOutArr[11] = '1987; 2013.';
         $expOut = implode("",$expOutArr);
         #
         $setup = array();
@@ -68,6 +71,7 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[4] = ' Entitled ';
         $expOutArr[6]   = ' Written by ';
         $expOutArr[8]   = '; ';
+        $expOutArr[10] = ' Publication date ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"] = $expOut;
         $this->helpRender($setup);
@@ -79,6 +83,7 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[4] = ' Titulado ';
         $expOutArr[6]   = ' Escrito por ';
         $expOutArr[8]   = '; ';
+        $expOutArr[10] = ' Fecha de publicación ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
         $this->helpRender($setup);

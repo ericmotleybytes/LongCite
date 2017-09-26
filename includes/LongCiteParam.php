@@ -29,7 +29,7 @@ class LongCiteParam {
         "longcite-pn-item"       => array("Item",false,self::CatDesc),
         "longcite-pn-key"        => array("AlphaId",false,self::CatCore),
         "longcite-pn-note"       => array("Note",true,self::CatVerb),
-        "longcite-pn-pubdate"    => array("Date",true,self::CatDesc),
+        "longcite-pn-pubdate"    => array("PubDate",true,self::CatDesc),
         "longcite-pn-render"     => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renlong"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renlang"    => array("LangCode",false,self::CatCtrl),

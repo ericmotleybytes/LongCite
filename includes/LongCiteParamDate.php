@@ -17,7 +17,8 @@ class LongCiteParamDate extends LongCiteParam {
         $longMode = LongCiteParam::ParamModeLong;
         $shortMode = LongCiteParam::ParamModeShort;
         $this->setInputDelimMsgKey("longcite-delimi-semi");
-        $this->setOutputDelimMsgKey($longMode,"longcite-delimo-and");
+        #$this->setOutputDelimMsgKey($longMode,"longcite-delimo-and");
+        $this->setOutputDelimMsgKey($longMode,"longcite-delimo-semi");
         $this->setOutputDelimMsgKey($shortMode,"longcite-delimo-semi");
     }
 
@@ -28,7 +29,7 @@ class LongCiteParamDate extends LongCiteParam {
         $cnt = count($this->annValues);
         for($idx=0; $idx<$cnt; $idx++) {
             if(!$this->annValues[$idx][self::AnnValIsValid]) { continue; }
-            $basicVal = $this->annValues[self::AnnValBasic];
+            $basicVal = $this->annValues[$idx][self::AnnValBasic];
             $dateObj = new LongCiteUtilDate($basicVal,$inLangCode);
             if($dateObj->getParsedOk()===false) {
                 $result = false;
@@ -53,6 +54,29 @@ class LongCiteParamDate extends LongCiteParam {
             $result[] = $dateObj->getDateStr($fmtCode);
         }
         return $result;
+    }
+
+    public function renderParamValues() {
+        $tag       = $this->getTag();
+        $delim     = $this->getOutputDelim();
+        $frLang    = $this->getInputLangCode();
+        $toLang    = $this->getOutputLangCode();
+        $fmtCode   = LongCiteParamDate::NumMonth;
+        $annValues = $this->getAnnotatedValues();
+        $htmlValues = array();
+        $idx = -1;
+        foreach($annValues as $annValue) {
+            $idx++;
+            if(!$annValue[LongCiteParam::AnnValIsValid]) {
+                continue;
+            }
+            $dateObj = $annValue[self::AnnValAsObj];
+            $dateStr = $dateObj->getDateStr($fmtCode);
+            $htmlVal = htmlspecialchars($dateStr);
+            $htmlValues[] = $htmlVal;
+        }
+        $stuff = implode($delim,$htmlValues);
+        $tag->renderedOutputAdd($stuff,true);
     }
 
 }

@@ -166,6 +166,7 @@
     "longcite-pn-renverb"      : "Render verbose parameters?",
     "longcite-pn-title"        : "Input parameter name 'title'.",
     "longcite-pre-author"      : "Prefix for author clause.",
+    "longcite-pre-pubdate"     : "Prefix for pubdate clause.",
     "longcite-pre-title"       : "Prefix for title clause.",
     "longcite-pun-colon"       : "Punctuation :",
     "longcite-pun-empty"       : "Punctuation empty string.",
