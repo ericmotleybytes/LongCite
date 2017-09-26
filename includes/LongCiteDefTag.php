@@ -40,7 +40,7 @@ class LongCiteDefTag extends LongCiteTag {
         // core msg keys
         $this->addParamMsgKeys("key");
         // desc msg keys
-        $this->addParamMsgKeys("author","item","pubdate");
+        $this->addParamMsgKeys("item","title","author","pubdate");
         // verbose msg keys
         $this->addParamMsgKeys("note");
     }
@@ -73,13 +73,14 @@ class LongCiteDefTag extends LongCiteTag {
             $status = $paramObj->renderParam();
         }
         // render description params, if any.
-        if(array_key_exists("longcite-pn-item",$paramObjHash)) {
-            $paramObj = $paramObjHash["longcite-pn-item"];
-            $status = $paramObj->renderParam();
-        }
-        if(array_key_exists("longcite-pn-author",$paramObjHash)) {
-            $paramObj = $paramObjHash["longcite-pn-author"];
-            $status = $paramObj->renderParam();
+        $orderArr = array(
+            "longcite-pn-item","longcite-pn-title","longcite-pn-author"
+        );
+        foreach($orderArr as $paramNameMsgKey) {
+            if(array_key_exists($paramNameMsgKey,$paramObjHash)) {
+                $paramObj = $paramObjHash[$paramNameMsgKey];
+                $status = $paramObj->renderParam();
+            }
         }
         // Render possible registered warning/error messages.
         $mess = $this->getMessenger();

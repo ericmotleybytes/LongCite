@@ -38,7 +38,8 @@ class LongCiteParam {
         "longcite-pn-rendesc"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renverb"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renskip"    => array("AlphaId",true,self::CatCtrl),
-        "longcite-pn-renonly"    => array("AlphaId",true,self::CatCtrl)
+        "longcite-pn-renonly"    => array("AlphaId",true,self::CatCtrl),
+        "longcite-pn-title"      => array("Title",false,self::CatDesc)
     );
 
     public static function getAllCategories() {

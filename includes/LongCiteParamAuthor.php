@@ -9,8 +9,6 @@ require_once __DIR__.'/LongCiteParamPersonName.php';
 
 /// Parent Class for other LongCite tag classes.
 class LongCiteParamAuthor extends LongCiteParamPersonName {
-    const CssClassRecognized   = "mw-longcite-pv-recogitem";
-    const CssClassUnrecognized = "mw-longcite-pv-unrecogitem";
 
     public function __construct($paramNameKey, $isMulti, $tag) {
         parent::__construct($paramNameKey, $isMulti, $tag);
