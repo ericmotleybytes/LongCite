@@ -24,6 +24,7 @@
         "LongCiteParamBoolean"    : "includes/LongCiteParamBoolean.php",
         "LongCiteParamDate"       : "includes/LongCiteParamDate.php",
         "LongCiteParamItem"       : "includes/LongCiteParamItem.php",
+        "LongCiteParamKey"        : "includes/LongCiteParamKey.php",
         "LongCiteParamLangCode"   : "includes/LongCiteParamLangCode.php",
         "LongCiteParamNote"       : "includes/LongCiteParamNote.php",
         "LongCiteParamPersonName" : "includes/LongCiteParamPersonName.php",

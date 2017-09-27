@@ -43,7 +43,7 @@ class LongCiteDefTagTest extends TestCase {
         $input         = implode("",$inputArr);
         $expMess  = "";
         $expOutArr     = array();
-        $expOutArr[0]  = "DeMarco &amp; Lister (1987/2013). ";
+        $expOutArr[0]  = '<b>DeMarco &amp; Lister (1987/2013)</b>. ';
         $expOutArr[1]  = '<span class="mw-longcite-pv-recogitem">';
         $expOutArr[2]  = 'Ein Buch';
         $expOutArr[3]  = '</span>.';

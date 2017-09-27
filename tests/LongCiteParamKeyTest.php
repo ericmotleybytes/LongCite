@@ -1,5 +1,5 @@
 <?php
-/// Source code file for LongCiteParamAlphaIdTest unit testing class.
+/// Source code file for LongCiteParamKeyTest unit testing class.
 /// MIT License. See <https://opensource.org/licenses/MIT>.
 /// @file
 ### Note: This file uses Uses doxygen style annotation comments.
@@ -10,7 +10,7 @@ require_once __DIR__ . "/LongCiteWikiStub.php";
 use PHPUnit\Framework\TestCase;
 
 /// Some LongCite phpunit tests.
-class LongCiteParamAlphaIdTest extends TestCase {
+class LongCiteParamKeyTest extends TestCase {
 
     /// Test functions.
     public function testFunctions() {
@@ -43,7 +43,7 @@ class LongCiteParamAlphaIdTest extends TestCase {
         $names = $param->getNames();
         $this->assertEquals("key",$names[0]);
         $type = $param->getType();
-        $this->assertEquals("AlphaId",$type);
+        $this->assertEquals("Key",$type);
         $master = $param->getMaster();
         $this->assertInstanceOf(LongCiteMaster::class,$master);
         $this->assertEquals("en",$param->getInputLangCode());
