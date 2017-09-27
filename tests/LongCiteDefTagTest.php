@@ -43,7 +43,8 @@ class LongCiteDefTagTest extends TestCase {
         $input         = implode("",$inputArr);
         $expMess  = "";
         $expOutArr     = array();
-        $expOutArr[0]  = '<b>DeMarco &amp; Lister (1987/2013)</b>. ';
+        $expOutArr[0]  = '<p class="mw-longcite-refdef-hang">';
+        $expOutArr[0] .= '<b>DeMarco &amp; Lister (1987/2013)</b>. ';
         $expOutArr[1]  = '<span class="mw-longcite-pv-recogitem">';
         $expOutArr[2]  = 'Ein Buch';
         $expOutArr[3]  = '</span>.';
@@ -52,11 +53,12 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[6]  = ' Mit dem Untertitel ';
         $expOutArr[7]  = '<i>&quot;Productive Projects and Teams&quot;</i>.';
         $expOutArr[8]  = ' Geschrieben von ';
-        $expOutArr[9]  = 'Tom _DeMarco_';
+        $expOutArr[9]  = 'Tom DeMarco';
         $expOutArr[10] = '; ';
-        $expOutArr[11] = 'Timothy _Lister_.';
+        $expOutArr[11] = 'Timothy Lister.';
         $expOutArr[12] = ' Veröffentlichungsdatum ';
         $expOutArr[13] = '1987; 2013.';
+        $expOutArr[14] = '</p>';
         $expOut = implode("",$expOutArr);
         #
         $setup = array();

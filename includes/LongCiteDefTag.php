@@ -83,6 +83,10 @@ class LongCiteDefTag extends LongCiteTag {
                 $status = $paramObj->renderParam();
             }
         }
+        // Enclose reference in a paragraph
+        $this->renderedOutputTrim();
+        $this->renderedOutputPrepend('<p class="mw-longcite-refdef-hang">',true);
+        $this->renderedOutputAppend('</p>'."\n",true);
         // Render possible registered warning/error messages.
         $mess = $this->getMessenger();
         $html = $mess->renderMessagesHtml(true);

@@ -412,7 +412,7 @@ class LongCiteUtilPersonName {
             if($annPart[1]==self::NamePartName) {
                 $result .= " " . $annPart[0];
             } elseif($annPart[1]==self::NamePartSurname) {
-                $result .= " _" . $annPart[0] . "_";
+                $result .= " " . $annPart[0];
             } elseif($annPart[1]==self::NamePartNickname) {
                 $result .= ' "' . $annPart[0] . '"';
             } elseif($annPart[1]==self::NamePartQualifier) {

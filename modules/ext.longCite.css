@@ -19,3 +19,7 @@
 .mw-longcite-pv-unrecogitem {
     font-family: "Comic Sans MS","Impact","sans-serif";
 }
+.mw-longcite-refdef-hang {
+    padding-left: 25px;
+    text-indent: -25px;
+}

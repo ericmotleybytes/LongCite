@@ -320,7 +320,27 @@ class LongCiteTag {
         return $this->renderedOutput;
     }
 
+    public function renderedOutputAppend($text,$isHtml=false) {
+        if($isHtml) {
+            $html = $text;
+        } else {
+            $html = htmlspecialchars($text);
+        }
+        $this->renderedOutput = $this->renderedOutput . $html;
+        return $this->renderedOutput;
+    }
+
     public function renderedOutputGet() {
+        return $this->renderedOutput;
+    }
+
+    public function renderedOutputPrepend($text,$isHtml=false) {
+        if($isHtml) {
+            $html = $text;
+        } else {
+            $html = htmlspecialchars($text);
+        }
+        $this->renderedOutput = $html . $this->renderedOutput;
         return $this->renderedOutput;
     }
 
@@ -332,6 +352,10 @@ class LongCiteTag {
         }
         $this->renderedOutput = $html;
         return $this->renderedOutput;
+    }
+
+    public function renderedOutputTrim() {
+        $this->renderedOutput = LongCiteUtil::eregTrim($this->renderedOutput);
     }
 
     public function renderPreperation() {
