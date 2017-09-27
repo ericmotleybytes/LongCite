@@ -41,6 +41,7 @@ class LongCiteDefTagTest extends TestCase {
         $inputArr[5]   = "veröffdatum=1987;2013\n";
         $inputArr[6]   = "untertitel=Productive Projects and Teams\n";
         $inputArr[7]   = "verlag=Addison-Wesley\n";
+        $inputArr[8]   = "verlagsort=Upper Saddle River, New Jersey, USA\n";
         $input         = implode("",$inputArr);
         $expMess  = "";
         $expOutArr     = array();
@@ -61,7 +62,9 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[13] = '1987; 2013.';
         $expOutArr[14] = ' Veröffentlicht von ';
         $expOutArr[15] = 'Addison-Wesley.';
-        $expOutArr[16] = '</p>';
+        $expOutArr[16] = ' Veröffentlicht am ';
+        $expOutArr[17] = 'Upper Saddle River, New Jersey, USA.';
+        $expOutArr[18] = '</p>';
         $expOut = implode("",$expOutArr);
         #
         $setup = array();
@@ -81,6 +84,7 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[8]   = ' Written by ';
         $expOutArr[12]  = ' Publication date ';
         $expOutArr[14]  = ' Published by ';
+        $expOutArr[16]  = ' Publisher location ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"] = $expOut;
         $this->helpRender($setup);
@@ -94,6 +98,7 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[8]   = ' Escrito por ';
         $expOutArr[12]  = ' Fecha de publicación ';
         $expOutArr[14]  = ' Publicado por ';
+        $expOutArr[16]  = ' Publicado en ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
         $this->helpRender($setup);
