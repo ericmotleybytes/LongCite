@@ -134,6 +134,7 @@
     "longcite-nst-vp"          : "Vice President;V.P.",
     "longcite-pd-alwayslang"   : "Selects the language for other parameter names.",
     "longcite-pd-author"       : "Specifies who wrote it.",
+    "longcite-pd-edition"      : "Specifies the edition.",
     "longcite-pd-item"         : "Specifies what is being described, e.g., 'Book'.",
     "longcite-pd-key"          : "Specifies the citation reference key.",
     "longcite-pd-note"         : "Additional notes.",
@@ -153,6 +154,7 @@
     "longcite-pd-title"        : "Specifies the title of the item.",
     "longcite-pn-alwayslang"   : "lang",
     "longcite-pn-author"       : "author;authors",
+    "longcite-pn-edition"      : "edition;editions",
     "longcite-pn-item"         : "item",
     "longcite-pn-key"          : "key",
     "longcite-pn-note"         : "note;notes",
@@ -195,5 +197,6 @@
     "longcite-pv-true"         : "true",
     "longcite-pv-unknown"      : "unknown",
     "longcite-pv-yes"          : "yes",
+    "longcite-suf-edition"     : " edition.",
     "longcite-timestamp"       : "[TIMESTAMP=$1]"
 }

@@ -134,6 +134,7 @@
     "longcite-nst-vp"          : "Vizepräsident/Vizepräsidentin/Vizepräs.",
     "longcite-pd-alwayslang"   : "Wählt die Sprache für andere Parameternamen aus.",
     "longcite-pd-author"       : "Gibt an, wer es geschrieben hat.",
+    "longcite-pd-edition"      : "Gibt die Edition an.",
     "longcite-pd-item"         : "Gibt an, was beschrieben wird, z. B. 'Buch'.",
     "longcite-pd-key"          : "Gibt den Ziffernreferenzschlüssel an.",
     "longcite-pd-note"         : "Zusätzliche Bemerkungen.",
@@ -153,6 +154,7 @@
     "longcite-pd-title"        : "Gibt den Titel des Ding an.",
     "longcite-pn-alwayslang"   : "lang",
     "longcite-pn-author"       : "autor;autorin;autoren;autorinnen",
+    "longcite-pn-edition"      : "edition;editionen;auflage;auflagen",
     "longcite-pn-item"         : "ding",
     "longcite-pn-key"          : "schlüssel",
     "longcite-pn-note"         : "bemerkung",
@@ -195,5 +197,6 @@
     "longcite-pv-true"         : "wahr",
     "longcite-pv-unknown"      : "unbekannt",
     "longcite-pv-yes"          : "ja",
+    "longcite-suf-edition"     : " Edition.",
     "longcite-timestamp"       : "[ZEITSTEMPEL=$1]"
 }

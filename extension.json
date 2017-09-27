@@ -23,6 +23,7 @@
         "LongCiteParamAuthor"     : "includes/LongCiteParamAuthor.php",
         "LongCiteParamBoolean"    : "includes/LongCiteParamBoolean.php",
         "LongCiteParamDate"       : "includes/LongCiteParamDate.php",
+        "LongCiteParamEdition"    : "includes/LongCiteParamEdition.php",
         "LongCiteParamGeoLoc"     : "includes/LongCiteParamGeoLoc.php",
         "LongCiteParamItem"       : "includes/LongCiteParamItem.php",
         "LongCiteParamKey"        : "includes/LongCiteParamKey.php",

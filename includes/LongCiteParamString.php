@@ -12,5 +12,26 @@ class LongCiteParamString extends LongCiteParam {
         parent::__construct($paramNameKey, $isMulti, $tag);
     }
 
+    public function renderParamValues() {
+        $tag = $this->getTag();
+        $delim  = htmlspecialchars($this->getOutputDelim());
+        $frLang = $this->getInputLangCode();
+        $toLang = $this->getOutputLangCode();
+        $annValues = $this->getAnnotatedValues();
+        $htmlValues = array();
+        $idx = -1;
+        foreach($annValues as $annValue) {
+            $idx++;
+            if(!$annValue[LongCiteParam::AnnValIsValid]) {
+                continue;
+            }
+            $basicVal = $annValue[LongCiteParam::AnnValBasic];
+            $htmlVal = htmlspecialchars($basicVal);
+            $htmlValues[] = $htmlVal;
+        }
+        $stuff = implode($delim,$htmlValues);
+        $tag->renderedOutputAdd($stuff,true);
+    }
+
 }
 ?>

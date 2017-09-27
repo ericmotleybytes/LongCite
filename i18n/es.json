@@ -134,6 +134,7 @@
     "longcite-nst-vp"          : "V.P.;Presidente/Presidenta",
     "longcite-pd-alwayslang"   : "Selecciona el idioma para otros nombres de parámetros.",
     "longcite-pd-author"       : "Especifica quién lo escribió.",
+    "longcite-pd-edition"      : "Especifica la edición.",
     "longcite-pd-item"         : "Especifica lo que se está describiendo, por ejemplo, 'Libro'.",
     "longcite-pd-key"          : "Especifica la clave de referencia de cita.",
     "longcite-pd-note"         : "Notas adicionales.",
@@ -153,6 +154,7 @@
     "longcite-pd-title"        : "Especifica el título de la ítem.",
     "longcite-pn-alwayslang"   : "lang",
     "longcite-pn-author"       : "autor;autora;autores;autoras",
+    "longcite-pn-edition"      : "edición",
     "longcite-pn-item"         : "ítem",
     "longcite-pn-key"          : "llave",
     "longcite-pn-note"         : "nota",
@@ -195,5 +197,6 @@
     "longcite-pv-true"         : "verdadero",
     "longcite-pv-unknown"      : "ignoto",
     "longcite-pv-yes"          : "si",
+    "longcite-suf-edition"     : " edición.",
     "longcite-timestamp"       : "[FECHAHORA=$1]"
 }

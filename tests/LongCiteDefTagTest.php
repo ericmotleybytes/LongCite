@@ -42,6 +42,7 @@ class LongCiteDefTagTest extends TestCase {
         $inputArr[6]   = "untertitel=Productive Projects and Teams\n";
         $inputArr[7]   = "verlag=Addison-Wesley\n";
         $inputArr[8]   = "verlagsort=Upper Saddle River, New Jersey, USA\n";
+        $inputArr[9]   = "edition=Anniversary\n";
         $input         = implode("",$inputArr);
         $expMess  = "";
         $expOutArr     = array();
@@ -60,11 +61,13 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[11] = 'Timothy Lister.';
         $expOutArr[12] = ' Datum der Veröffentlichung ';
         $expOutArr[13] = '1987; 2013.';
-        $expOutArr[14] = ' Veröffentlicht von ';
-        $expOutArr[15] = 'Addison-Wesley.';
-        $expOutArr[16] = ' Veröffentlicht am ';
-        $expOutArr[17] = 'Upper Saddle River, New Jersey, USA.';
-        $expOutArr[18] = '</p>';
+        $expOutArr[14] = ' Anniversary';
+        $expOutArr[15] = ' Edition.';
+        $expOutArr[16] = ' Veröffentlicht von ';
+        $expOutArr[17] = 'Addison-Wesley.';
+        $expOutArr[18] = ' Veröffentlicht am ';
+        $expOutArr[19] = 'Upper Saddle River, New Jersey, USA.';
+        $expOutArr[20] = '</p>';
         $expOut = implode("",$expOutArr);
         #
         $setup = array();
@@ -83,8 +86,9 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[6]   = ' Subtitled ';
         $expOutArr[8]   = ' Written by ';
         $expOutArr[12]  = ' Publication date ';
-        $expOutArr[14]  = ' Published by ';
-        $expOutArr[16]  = ' Publisher location ';
+        $expOutArr[15] = ' edition.';
+        $expOutArr[16]  = ' Published by ';
+        $expOutArr[18]  = ' Publisher location ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"] = $expOut;
         $this->helpRender($setup);
@@ -97,8 +101,9 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[6]   = ' Subtitulado ';
         $expOutArr[8]   = ' Escrito por ';
         $expOutArr[12]  = ' Fecha de publicación ';
-        $expOutArr[14]  = ' Publicado por ';
-        $expOutArr[16]  = ' Publicado en ';
+        $expOutArr[15] = ' edición.';
+        $expOutArr[16]  = ' Publicado por ';
+        $expOutArr[18]  = ' Publicado en ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
         $this->helpRender($setup);
