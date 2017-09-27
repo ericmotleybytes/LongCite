@@ -30,6 +30,7 @@ class LongCiteParam {
         "longcite-pn-key"        => array("Key",false,self::CatCore),
         "longcite-pn-note"       => array("Note",true,self::CatVerb),
         "longcite-pn-pubdate"    => array("PubDate",true,self::CatDesc),
+        "longcite-pn-publisher"  => array("Publisher",true,self::CatDesc),
         "longcite-pn-render"     => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renlong"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renlang"    => array("LangCode",false,self::CatCtrl),

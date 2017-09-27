@@ -40,6 +40,7 @@ class LongCiteDefTagTest extends TestCase {
         $inputArr[4]   = "titel=Peopleware\n";
         $inputArr[5]   = "veröffdatum=1987;2013\n";
         $inputArr[6]   = "untertitel=Productive Projects and Teams\n";
+        $inputArr[7]   = "verlag=Addison-Wesley\n";
         $input         = implode("",$inputArr);
         $expMess  = "";
         $expOutArr     = array();
@@ -56,9 +57,11 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[9]  = 'Tom DeMarco';
         $expOutArr[10] = '; ';
         $expOutArr[11] = 'Timothy Lister.';
-        $expOutArr[12] = ' Veröffentlichungsdatum ';
+        $expOutArr[12] = ' Datum der Veröffentlichung ';
         $expOutArr[13] = '1987; 2013.';
-        $expOutArr[14] = '</p>';
+        $expOutArr[14] = ' Veröffentlicht von ';
+        $expOutArr[15] = 'Addison-Wesley.';
+        $expOutArr[16] = '</p>';
         $expOut = implode("",$expOutArr);
         #
         $setup = array();
@@ -77,6 +80,7 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[6]   = ' Subtitled ';
         $expOutArr[8]   = ' Written by ';
         $expOutArr[12]  = ' Publication date ';
+        $expOutArr[14]  = ' Published by ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"] = $expOut;
         $this->helpRender($setup);
@@ -89,6 +93,7 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[6]   = ' Subtitulado ';
         $expOutArr[8]   = ' Escrito por ';
         $expOutArr[12]  = ' Fecha de publicación ';
+        $expOutArr[14]  = ' Publicado por ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
         $this->helpRender($setup);
