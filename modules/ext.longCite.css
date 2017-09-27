@@ -14,8 +14,8 @@
     color:teal;
 }
 .mw-longcite-pv-recogitem {
-    font-family: "Comic Sans MS",Impact;
+    font-style: normal;
 }
 .mw-longcite-pv-unrecogitem {
-    font-style: normal;
+    font-family: "Comic Sans MS","Impact","sans-serif";
 }

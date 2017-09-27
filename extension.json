@@ -29,6 +29,7 @@
         "LongCiteParamPersonName" : "includes/LongCiteParamPersonName.php",
         "LongCiteParamPubDate"    : "includes/LongCiteParamPubDate.php",
         "LongCiteParamString"     : "includes/LongCiteParamString.php",
+        "LongCiteParamSubtitle"   : "includes/LongCiteParamSubtitle.php",
         "LongCiteParamTitle"      : "includes/LongCiteParamTitle.php",
         "LongCiteException"       : "includes/LongCiteException.php",
         "LongCiteUtil"            : "includes/LongCiteUtil.php",

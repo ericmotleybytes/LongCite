@@ -39,6 +39,7 @@ class LongCiteDefTagTest extends TestCase {
         $inputArr[3]   = "autoren=Tom DeMarco;Timothy Lister\n";
         $inputArr[4]   = "titel=Peopleware\n";
         $inputArr[5]   = "veröffdatum=1987;2013\n";
+        $inputArr[6]   = "untertitel=Productive Projects and Teams\n";
         $input         = implode("",$inputArr);
         $expMess  = "";
         $expOutArr     = array();
@@ -48,12 +49,14 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[3]  = '</span>.';
         $expOutArr[4]  = ' Mit dem Titel ';
         $expOutArr[5]  = '<i>&quot;Peopleware&quot;</i>.';
-        $expOutArr[6]  = ' Geschrieben von ';
-        $expOutArr[7]  = 'Tom _DeMarco_';
-        $expOutArr[8]  = '; ';
-        $expOutArr[9]  = 'Timothy _Lister_.';
-        $expOutArr[10] = ' Veröffentlichungsdatum ';
-        $expOutArr[11] = '1987; 2013.';
+        $expOutArr[6]  = ' Mit dem Untertitel ';
+        $expOutArr[7]  = '<i>&quot;Productive Projects and Teams&quot;</i>.';
+        $expOutArr[8]  = ' Geschrieben von ';
+        $expOutArr[9]  = 'Tom _DeMarco_';
+        $expOutArr[10] = '; ';
+        $expOutArr[11] = 'Timothy _Lister_.';
+        $expOutArr[12] = ' Veröffentlichungsdatum ';
+        $expOutArr[13] = '1987; 2013.';
         $expOut = implode("",$expOutArr);
         #
         $setup = array();
@@ -68,10 +71,10 @@ class LongCiteDefTagTest extends TestCase {
         $input          = implode("",$inputArr);
         $setup["input"] = $input;
         $expOutArr[2]   = 'A book';
-        $expOutArr[4] = ' Entitled ';
-        $expOutArr[6]   = ' Written by ';
-        $expOutArr[8]   = '; ';
-        $expOutArr[10] = ' Publication date ';
+        $expOutArr[4]   = ' Entitled ';
+        $expOutArr[6]   = ' Subtitled ';
+        $expOutArr[8]   = ' Written by ';
+        $expOutArr[12]  = ' Publication date ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"] = $expOut;
         $this->helpRender($setup);
@@ -80,10 +83,10 @@ class LongCiteDefTagTest extends TestCase {
         $input          = implode("",$inputArr);
         $setup["input"] = $input;
         $expOutArr[2]   = 'Un libro';
-        $expOutArr[4] = ' Titulado ';
-        $expOutArr[6]   = ' Escrito por ';
-        $expOutArr[8]   = '; ';
-        $expOutArr[10] = ' Fecha de publicación ';
+        $expOutArr[4]   = ' Titulado ';
+        $expOutArr[6]   = ' Subtitulado ';
+        $expOutArr[8]   = ' Escrito por ';
+        $expOutArr[12]  = ' Fecha de publicación ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
         $this->helpRender($setup);

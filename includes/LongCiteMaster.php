@@ -5,6 +5,14 @@
 ### Note: This file uses Uses doxygen style annotation comments.
 ### Note: This file possibly includes some PHPUnit comment directives.
 
+// MediaWiki check
+// Protects against register_globals vulnerabilities.
+// This line must be present before any global variable is referenced.
+if (!defined('MEDIAWIKI')) {
+    echo "ERROR: This code must run via MediaWiki." . PHP_EOL;
+    exit(1);
+}
+
 /// Master control class for the LongCite MediaWiki extension.
 /// Defines utility routines and data structures.
 class LongCiteMaster {
@@ -45,6 +53,7 @@ class LongCiteMaster {
 
     /// Class instance constructor.
     function __construct() {
+
         global $wgLang;
         $status = mb_internal_encoding(self::DefaultCharacterEncoding);
         if($status===false) {

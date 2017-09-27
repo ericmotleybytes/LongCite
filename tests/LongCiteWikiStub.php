@@ -7,6 +7,8 @@
 ### Note: This file uses Uses doxygen style annotation comments.
 ### Note: This file possibly includes some PHPUnit comment directives.
 
+const MEDIAWIKI = "stub";
+
 require_once __DIR__ . "/LongCiteWikiUpdaterStub.php";
 require_once __DIR__ . "/LongCiteWikiParserStub.php";
 require_once __DIR__ . "/LongCiteWikiOutputPageStub.php";
