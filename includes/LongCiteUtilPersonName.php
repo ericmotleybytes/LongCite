@@ -29,12 +29,12 @@ class LongCiteUtilPersonName {
     protected $langCode    = "";       /// e.g., "en" or "de".
     protected $langCodeParsed = "";    /// langCode when parsed.
     protected $rawName     = "";       /// e.g., 'Robert "Bob" K. von_Jones, Jr.'.
-    protected $givenName   = "";       /// e.g., "Robert".
-    protected $middleNames = array();  /// e.g., ["K."].
-    protected $surname     = "";       /// e.g., "Jones".
-    protected $disambigs   = array();  /// e.g., "of Elea","of Citium".
-    protected $nicknames   = array();  /// e.g., ["Bob"].
-    protected $salutation  = array();  /// e.g., ["Mr."].
+    #protected $givenName   = "";       /// e.g., "Robert".
+    #protected $middleNames = array();  /// e.g., ["K."].
+    #protected $surname     = "";       /// e.g., "Jones".
+    #protected $disambigs   = array();  /// e.g., "of Elea","of Citium".
+    #protected $nicknames   = array();  /// e.g., ["Bob"].
+    #protected $salutation  = array();  /// e.g., ["Mr."].
     protected $titles      = array();  /// e.g., ["Dr.", ].
     protected $qualifiers  = array();  /// e.g., ["Jr."].
     protected $credentials = array();  /// e.g., ["M.D.","CPA"].
@@ -53,8 +53,8 @@ class LongCiteUtilPersonName {
     protected $rawTitles   = array();  /// scratch space for titles.
     protected $rawPositions  = array(); /// temporary.
     protected $rawCredentials = array(); /// temporary.
-    protected $rawNicknames = array();   /// temporary.
-    protected $rawDisambigs = array();   /// temporary.
+    #protected $rawNicknames = array();   /// temporary.
+    #protected $rawDisambigs = array();   /// temporary.
     protected $annNameParts = array();   /// Annotated results.
 
     /// Class constructor.
@@ -307,8 +307,8 @@ class LongCiteUtilPersonName {
     public function getRawTitles() { return $this->rawTitles; }
     public function getRawPositions() { return $this->rawPositions; }
     public function getRawCredentials() { return $this->rawCredentials; }
-    public function getRawNicknames() { return $this->rawNicknames; }
-    public function getRawDisambiguators() { return $this->rawDisambigs; }
+    #public function getRawNicknames() { return $this->rawNicknames; }
+    #public function getRawDisambiguators() { return $this->rawDisambigs; }
     public function getAnnNameParts($langCode=null) {
         if($langCode===null) {
             return $this->annNameParts;

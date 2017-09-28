@@ -30,6 +30,7 @@ class LongCiteTag {
         $this->inputLangCode  = $master->getInputLangCode();
         $this->outputLangCode = $master->getOutputLangCode();
         $this->messenger = new LongCiteMessenger($this->inputLangCode);
+        $this->messenger->setEnableDebug(true);  # DBG DEBUG TBD!
         $this->argsToSkip = array();
         # set up param msg keys.
         $this->clearParamMsgKeys();

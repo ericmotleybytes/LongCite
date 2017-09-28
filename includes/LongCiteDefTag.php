@@ -115,6 +115,9 @@ class LongCiteDefTag extends LongCiteTag {
         $this->renderedOutputAppend('</p>'."\n",true);
         // Render possible registered warning/error messages.
         $mess = $this->getMessenger();
+        $masterGuid = $this->getMaster()->getGuid();
+        #$mess->setEnableDebug(true);
+        $mess->registerMessageDebug("Master GUID=$masterGuid."); # DBG
         $html = $mess->renderMessagesHtml(true);
         $this->renderedOutputAdd($html,true);
         $result = LongCiteUtil::eregTrim($this->renderedOutputGet());

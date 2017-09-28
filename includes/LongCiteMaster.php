@@ -51,6 +51,7 @@ class LongCiteMaster {
     protected $parser = null;            ///< Gets parser object as setup hook.
     protected $tagObjects = array();         ///< Gets tag objects the parser finds.
     protected $existingCitationKeys = array(); ///< Citation keys already used.
+    protected $guid = "";
 
     /// Class instance constructor.
     function __construct() {
@@ -85,6 +86,8 @@ class LongCiteMaster {
         #$this->setupParser($GLOBALS['wgParser']);
         // reset existing citation keys
         $this->existingCitationKeysReset();
+        // set internal guid
+        $this->guid = LongCiteUtil::generateOpensslGuid();
     }
 
     public function addTagObject($tag) {
@@ -139,6 +142,10 @@ class LongCiteMaster {
         fclose($sqlHdl);
         $result = file_get_contents($sqlFile);
         return $result;
+    }
+
+    public function getGuid() {
+        return $this->guid;
     }
 
     public function getInputLangCode() {
