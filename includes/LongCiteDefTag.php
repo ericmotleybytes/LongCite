@@ -120,12 +120,12 @@ class LongCiteDefTag extends LongCiteTag {
         }
         // Render possible registered warning/error messages.
         $mess = $this->getMessenger();
-        $master = $this->getMaster();
-        $masterGuid = $master->getGuid();
-        $mess->registerMessageDebug("Master GUID=$masterGuid."); # DBG
-        $exKeys = $master->existingCitationKeysGet();
-        $exKeysStr = print_r($exKeys,true);
-        $mess->registerMessageDebug("existingKeys=$exKeysStr."); # DBG
+        #$master = $this->getMaster();
+        #$masterGuid = $master->getGuid();
+        #$mess->registerMessageDebug("Master GUID=$masterGuid."); # DBG
+        #$exKeys = $master->existingCitationKeysGet();
+        #$exKeysStr = print_r($exKeys,true);
+        #$mess->registerMessageDebug("existingKeys=$exKeysStr."); # DBG
         $html = $mess->renderMessagesHtml(true);
         $this->renderedOutputAdd($html,true);
         $result = LongCiteUtil::eregTrim($this->renderedOutputGet());

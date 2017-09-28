@@ -78,6 +78,7 @@ class LongCiteDefTagTest extends TestCase {
         $setup["expOut"]  = $expOut;
         $this->helpRender($setup);
         # de to en
+        $master->existingCitationKeysReset();
         $inputArr[2]    = "rensprache=en\n";
         $input          = implode("",$inputArr);
         $setup["input"] = $input;
@@ -93,6 +94,7 @@ class LongCiteDefTagTest extends TestCase {
         $setup["expOut"] = $expOut;
         $this->helpRender($setup);
         # de to es
+        $master->existingCitationKeysReset();
         $inputArr[2]    = "rensprache=es\n";
         $input          = implode("",$inputArr);
         $setup["input"] = $input;
