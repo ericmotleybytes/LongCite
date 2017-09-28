@@ -50,6 +50,7 @@ class LongCiteMaster {
     protected $outputLangCode = "en";    ///< Can be changed to another supported code.
     protected $parser = null;            ///< Gets parser object as setup hook.
     protected $tagObjects = array();         ///< Gets tag objects the parser finds.
+    protected $existingCitationKeys = array(); ///< Citation keys already used.
 
     /// Class instance constructor.
     function __construct() {
@@ -82,10 +83,30 @@ class LongCiteMaster {
         $this->register();
         #// Set up the extension tags.
         #$this->setupParser($GLOBALS['wgParser']);
+        // reset existing citation keys
+        $this->existingCitationKeysReset();
     }
 
     public function addTagObject($tag) {
         $this->tagObjects[] = $tag;
+    }
+
+    public function existingCitationKeysAdd($citationKeys) {
+        if(!is_array($citationKeys)) { $citationKeys = array($citationKeys); }
+        foreach($citationKeys as $citationKey) {
+            if(!in_array($citationKey,$this->existingCitationKeys)) {
+                $this->existingCitationKeys[] = $citationKey;
+            }
+        }
+        return $this->existingCitationKeys;
+    }
+
+    public function existingCitationKeysGet() {
+        return $this->existingCitationKeys;
+    }
+
+    public function existingCitationKeysReset() {
+        $this->existingCitationKeys = array();
     }
 
     /// Get the default tag parsing input language. This default cannot

@@ -10,10 +10,11 @@ require_once __DIR__.'/LongCiteParamAlphaId.php';
 /// Parent Class for other LongCite tag classes.
 class LongCiteParamKey extends LongCiteParamAlphaId {
 
-    public static function autoKey($nameObjs,$dateObjs,$exKeys=array()) {
+    public static function autoKey($nameObjs,$dateObjs) {
         if(!is_array($nameObjs)) { $nameObjs = array($nameObjs); }
         if(!is_array($dateObjs)) { $dateObjs = array($dateObjs); }
-        if(!is_array($exKeys))   { $exKeys   = array($exKeys); }
+        $master = LongCiteMaster::getActiveMaster();
+        $exKeys = $master->existingCitationKeysGet();
         // figure out the year part
         $years = array();
         foreach($dateObjs as $dateObj) {
@@ -30,8 +31,6 @@ class LongCiteParamKey extends LongCiteParamAlphaId {
             $year2 = array_pop($years);
             $yearPart = "($year1/$year2)";
         }
-        $callable = array("LongCiteUtilDate","compareDateObjects");
-        usort($dateObjs,$callable);
         // figure out the name part
         $names = array();
         foreach($nameObjs as $nameObj) {
@@ -60,6 +59,15 @@ class LongCiteParamKey extends LongCiteParamAlphaId {
 
     public function __construct($paramNameKey, $isMulti, $tag) {
         parent::__construct($paramNameKey, $isMulti, $tag);
+    }
+
+    public function rememberKey() {
+        $master = $this->getMaster();
+        $valuesArr = $this->getBasicValues();
+        foreach($valuesArr as $val) {
+            $master->existingCitationKeysAdd($val);
+        }
+        return true;
     }
 
     public function renderParamValues() {

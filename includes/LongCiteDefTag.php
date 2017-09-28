@@ -118,6 +118,11 @@ class LongCiteDefTag extends LongCiteTag {
         $html = $mess->renderMessagesHtml(true);
         $this->renderedOutputAdd($html,true);
         $result = LongCiteUtil::eregTrim($this->renderedOutputGet());
+        // remember citation key used, if any
+        if(!array_key_exists("longcite-pn-key",$paramObjHash)) {
+            $keyObj = $paramObjHash["longcite-pn-key"];
+            $keyObj->rememberKey();
+        }
         return $result;
     }
 
