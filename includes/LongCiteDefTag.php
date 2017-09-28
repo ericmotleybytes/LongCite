@@ -113,6 +113,11 @@ class LongCiteDefTag extends LongCiteTag {
         $this->renderedOutputTrim();
         $this->renderedOutputPrepend('<p class="mw-longcite-refdef-hang">',true);
         $this->renderedOutputAppend('</p>'."\n",true);
+        // remember citation key used, if any
+        if(array_key_exists("longcite-pn-key",$paramObjHash)) {
+            $keyObj = $paramObjHash["longcite-pn-key"];
+            $keyObj->rememberKey();
+        }
         // Render possible registered warning/error messages.
         $mess = $this->getMessenger();
         $master = $this->getMaster();
@@ -124,11 +129,6 @@ class LongCiteDefTag extends LongCiteTag {
         $html = $mess->renderMessagesHtml(true);
         $this->renderedOutputAdd($html,true);
         $result = LongCiteUtil::eregTrim($this->renderedOutputGet());
-        // remember citation key used, if any
-        if(!array_key_exists("longcite-pn-key",$paramObjHash)) {
-            $keyObj = $paramObjHash["longcite-pn-key"];
-            $keyObj->rememberKey();
-        }
         return $result;
     }
 
