@@ -44,7 +44,7 @@ class LongCiteParamKey extends LongCiteParamAlphaId {
             $names = array_slice($names,0,$maxNames);
             array_push($names,"...");
         }
-        $namePart = implode(";",$names);
+        $namePart = implode("; ",$names);
         $key = "$namePart $yearPart";
         $key = LongCiteUtil::eregTrim($key);
         // check if key is unique

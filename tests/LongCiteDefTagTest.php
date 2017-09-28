@@ -47,7 +47,7 @@ class LongCiteDefTagTest extends TestCase {
         $expMess  = "";
         $expOutArr     = array();
         $expOutArr[0]  = '<p class="mw-longcite-refdef-hang">';
-        $expOutArr[0] .= '<b>DeMarco_T;Lister_T (1987/2013)</b>. ';
+        $expOutArr[0] .= '<b>DeMarco_T; Lister_T (1987/2013)</b>. ';
         $expOutArr[1]  = '<span class="mw-longcite-pv-recogitem">';
         $expOutArr[2]  = 'Ein Buch';
         $expOutArr[3]  = '</span>.';
