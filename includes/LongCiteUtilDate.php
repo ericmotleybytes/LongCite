@@ -17,6 +17,50 @@ class LongCiteUtilDate {
     const AbbrMonthFormat = 20;
     const FullMonthFormat = 30;
 
+    public static function compareDateObjects($dateObj1,$dateObj2) {
+        // look at adjusted years
+        $year1 = $dateObj1->getYear(true);
+        $year2 = $dateObj2->getYear(true);
+        if($year1<$year2) { return -1; }
+        if($year1>$year2) { return  1; }
+        // years are the same, look at months
+        $month1 = $dateObj1->getMonth();
+        $month2 = $dateObj2->getMonth();
+        if(!is_int($month1)) {
+            if(!is_int($month2)) {
+                return 0;  // both months not ints
+            } else {
+                return 1;  // not int month1 > int month2
+            }
+        } else {  // month1 is an int
+            if(!is_int($month2)) {
+                return -1;  // int month1 < not int month2
+            } elseif($month1<$month2) {
+                return -1;  // both months ints
+            } elseif($month1>$month2) {
+                return 1;   // both months ints
+            }
+        }
+        $day1 = $dateObj1->getDay();
+        $day2 = $dateObj2->getDay();
+        if(!is_int($day1)) {
+            if(!is_int($day2)) {
+                return 0;  // both days not ints
+            } else {
+                return 1;  // not int day1 > int day2
+            }
+        } else {  // day1 is an int
+            if(!is_int($day2)) {
+                return -1;  // int day1 < not int day2
+            } elseif($day1<$day2) {
+                return -1;  // both days ints
+            } elseif($date1>$day2) {
+                return 1;  // both days ints
+            }
+        }
+        return 0; // both dates equal
+    }
+
     protected $langCode    = "";     // e.g., "en" or "de".
     protected $locale      = "";     // e.g., "en-US" or "de-DE".
     protected $rawDateStr  = "";
@@ -314,8 +358,13 @@ class LongCiteUtilDate {
         return $this->isBCE;
     }
 
-    public function getYear() {
-        return $this->year;
+    // Get adjusted year, BCE years are negative.
+    public function getYear($adjust=false) {
+        $year = $this->year;
+        if(!$adjust) { return $year; }
+        if(!is_int($year)) { return $year; }
+        if($this->getIsBCE()) { $year = -$year; }
+        return $year;
     }
 
     public function getMonth() {

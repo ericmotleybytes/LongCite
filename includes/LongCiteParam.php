@@ -237,6 +237,17 @@ class LongCiteParam {
         return $results;
     }
 
+    public function getValueObjects() {
+        $results = array();
+        foreach($this->annValues as $annValue) {
+            $obj = $annValue[self::AnnValAsObj];
+            if(is_object($obj)) {
+                $results[] = $obj;
+            }
+        }
+        return $results;
+    }
+
     public function getCategory() {
         return $this->category;
     }

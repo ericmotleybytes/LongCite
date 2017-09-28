@@ -33,7 +33,7 @@ class LongCiteDefTagTest extends TestCase {
         #
         $args["lang"] = "de";
         $inputArr = array();
-        $inputArr[0]   = "schlüssel=DeMarco & Lister (1987/2013)\n";
+        $inputArr[0]   = "#schlüssel=DeMarco & Lister (1987/2013)\n";
         $inputArr[1]   = "ding = Buch\n";
         $inputArr[2]   = "rensprache=de\n";
         $inputArr[3]   = "autoren=Tom DeMarco;Timothy Lister\n";
@@ -47,7 +47,7 @@ class LongCiteDefTagTest extends TestCase {
         $expMess  = "";
         $expOutArr     = array();
         $expOutArr[0]  = '<p class="mw-longcite-refdef-hang">';
-        $expOutArr[0] .= '<b>DeMarco &amp; Lister (1987/2013)</b>. ';
+        $expOutArr[0] .= '<b>DeMarco_T;Lister_T (1987/2013)</b>. ';
         $expOutArr[1]  = '<span class="mw-longcite-pv-recogitem">';
         $expOutArr[2]  = 'Ein Buch';
         $expOutArr[3]  = '</span>.';

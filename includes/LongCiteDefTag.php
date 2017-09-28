@@ -67,7 +67,31 @@ class LongCiteDefTag extends LongCiteTag {
                 $tag->setOutputLangCode($outLangCode);
             }
         }
-        // Render objects to display
+        // Render params to display.
+        // Generate a key param if a key is not already given.
+        if(!array_key_exists("longcite-pn-key",$paramObjHash)) {
+            $dateObjs = array();
+            $nameObjs = array();
+            // get dates
+            if(array_key_exists("longcite-pn-pubdate",$paramObjHash)) {
+                $pubdateObj = $paramObjHash["longcite-pn-pubdate"];
+                $dateObjs = array_merge($dateObjs,$pubdateObj->getValueObjects());
+            }
+            // get names
+            if(array_key_exists("longcite-pn-author",$paramObjHash)) {
+                $authorObj = $paramObjHash["longcite-pn-author"];
+                $nameObjs = array_merge($nameObjs,$authorObj->getValueObjects());
+            }
+            // get key
+            $dateCnt = count($dateObjs);
+            $nameCnt = count($nameObjs);
+            $previousKeys = array();
+            $key = LongCiteParamKey::autoKey($nameObjs,$dateObjs,$previousKeys);
+            // instantiate a key object
+            $keyParam = $this->getParamByMsgKey("longcite-pn-key");
+            $keyParam->addValues("$key");
+            $paramObjHash["longcite-pn-key"] = $keyParam;
+        }
         // render core params, if any.
         foreach($paramObjHash as $paramMsgKey => $paramObj) {
             if($paramObj->getCategory()!=LongCiteParam::CatCore) { continue; }

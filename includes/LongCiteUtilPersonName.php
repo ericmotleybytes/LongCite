@@ -391,6 +391,25 @@ class LongCiteUtilPersonName {
         }
         return $results;
     }
+    public function getShortName() {
+        $annParts = $this->getAnnNameParts();
+        $surname  = "";
+        $initials = "";
+        foreach($annParts as $annPart) {
+            $val = $annPart[0];
+            $typ = $annPart[1];
+            if($typ==self::NamePartSurname) {
+                $surname = $val;
+            } elseif($typ==self::NamePartName) {
+                $initials .= mb_substr($val,0,1);
+            }
+        }
+        $shortName = "$surname $initials";
+        $shortName = LongCiteUtil::eregTrim($shortName);
+        $shortName = mb_ereg_replace('\ ',"_",$shortName);
+        return $shortName;
+    }
+
     public function getRenderedNameAll($langCode=null) {
         if($langCode===null) {
             $langCode = $this->langCodeParsed;
