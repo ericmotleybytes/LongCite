@@ -44,6 +44,17 @@ class LongCiteWikiParserStubTest extends TestCase {
         $this->assertNotFalse($results);
         $this->assertTrue(array_key_exists($callableName,$results));
         $this->assertEquals($something,$results[$callableName]);
+        // test function and target language functions
+        $enLang = new LongCiteWikiLanguageStub();
+        $enLang->setCode("en");
+        $deLang = new LongCiteWikiLanguageStub();
+        $deLang->setCode("de");
+        $esLang = new LongCiteWikiLanguageStub();
+        $esLang->setCode("es");
+        $parser->stubSetFunctionLang($deLang);
+        $parser->stubSetTargetLanguage($esLang);
+        $this->assertEquals("de",$parser->getFunctionLang()->getCode());
+        $this->assertEquals("es",$parser->getTargetLanguage()->getCode());
     }
 
     public function sampleHookRoutine($input,$args,$parser,$frame) {

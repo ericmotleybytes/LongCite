@@ -41,7 +41,8 @@ class LongCiteTagTest extends TestCase {
         $tag->setOutputLangCode("en");
         $this->assertEquals("en",$tag->getOutputLangCode());
         // test render
-        $this->assertTrue($master->isCssLoaded());
+        $tag->doPreprocessing();
+        $this->assertTrue($master->isCssLoaded(),"isCssLoaded");
         $html = $tag->render();
         $this->assertTrue($master->isCssLoaded());
         $this->assertEquals("",$html);

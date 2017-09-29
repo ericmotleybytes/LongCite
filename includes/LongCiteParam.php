@@ -24,7 +24,6 @@ class LongCiteParam {
     const AnnValAsObj   = "asObject";
 
     protected static $paramClassMap = array(
-        "longcite-pn-alwayslang" => array("LangCode",false,self::CatLang),
         "longcite-pn-author"     => array("Author",true,self::CatDesc),
         "longcite-pn-edition"    => array("Edition",true,self::CatDesc),
         "longcite-pn-item"       => array("Item",false,self::CatDesc),
@@ -35,7 +34,6 @@ class LongCiteParam {
         "longcite-pn-publoc"     => array("PubLoc",true,self::CatDesc),
         "longcite-pn-render"     => array("Boolean",false,self::CatCtrl),
         "longcite-pn-renlong"    => array("Boolean",false,self::CatCtrl),
-        "longcite-pn-renlang"    => array("LangCode",false,self::CatCtrl),
         "longcite-pn-renctrl"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-rencore"    => array("Boolean",false,self::CatCtrl),
         "longcite-pn-rendesc"    => array("Boolean",false,self::CatCtrl),

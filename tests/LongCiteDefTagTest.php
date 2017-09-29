@@ -31,11 +31,12 @@ class LongCiteDefTagTest extends TestCase {
         LongCiteWikiStub::initialize();
         $master = LongCiteMaster::getActiveMaster();
         #
-        $args["lang"] = "de";
+        $args["inputlang"]  = "de";
+        $args["outputlang"] = "de";
         $inputArr = array();
         $inputArr[0]   = "#schlüssel=DeMarco & Lister (1987/2013)\n";
         $inputArr[1]   = "ding = Buch\n";
-        $inputArr[2]   = "rensprache=de\n";
+        $inputArr[2]   = "#rensprache=de\n";
         $inputArr[3]   = "autoren=Tom DeMarco;Timothy Lister\n";
         $inputArr[4]   = "titel=Peopleware\n";
         $inputArr[5]   = "veröffdatum=1987;2013\n";
@@ -79,7 +80,8 @@ class LongCiteDefTagTest extends TestCase {
         $this->helpRender($setup);
         # de to en
         $master->existingCitationKeysReset();
-        $inputArr[2]    = "rensprache=en\n";
+        $args["outputlang"] = "en";
+        $inputArr[2]    = "#rensprache=en\n";
         $input          = implode("",$inputArr);
         $setup["input"] = $input;
         $expOutArr[2]   = 'A book';
@@ -92,10 +94,12 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[18]  = ' Publisher location ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"] = $expOut;
+        $setup["args"]    = $args;
         $this->helpRender($setup);
         # de to es
         $master->existingCitationKeysReset();
-        $inputArr[2]    = "rensprache=es\n";
+        $args["outputlang"] = "es";
+        $inputArr[2]    = "#rensprache=es\n";
         $input          = implode("",$inputArr);
         $setup["input"] = $input;
         $expOutArr[2]   = 'Un libro';
@@ -108,6 +112,7 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[18]  = ' Publicado en ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
+        $setup["args"]    = $args;
         $this->helpRender($setup);
     }
 

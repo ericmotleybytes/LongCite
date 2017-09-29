@@ -82,8 +82,6 @@ class LongCiteMaster {
         $this->tagObjects = array();
         // Register the LongCite extension.
         $this->register();
-        #// Set up the extension tags.
-        #$this->setupParser($GLOBALS['wgParser']);
         // reset existing citation keys
         $this->existingCitationKeysReset();
         // set internal guid
@@ -112,9 +110,6 @@ class LongCiteMaster {
         $this->existingCitationKeys = array();
     }
 
-    /// Get the default tag parsing input language. This default cannot
-    /// be globally changed, but it can be changed within a tag using the
-    /// 'lang={code}' syntax (e.g., 'lang="de"').
     public function generateSqlTableFile($sqlFile) {
         global $wgDBprefix;
         // Create the create table sql command on the fly so that
@@ -283,13 +278,6 @@ class LongCiteMaster {
     public function register() {
         global $wgHooks;
         // register the extension
-        #$wgExtensionFunctions[] = array(&$this,"setup");
-        #$wgExtensionCredits['parserhook'][] = array( 
-        #    'name' => 'LongCite',
-        #    'author' => 'Eric Alan Christiansen',
-        #    'description' => 'Adds tags for reference citation management.',
-        #    'url' => 'http://www.mediawiki.org/wiki/Extension:LongCite'
-        #);
         // set setup parser hook
         $wgHooks = array();  // reinit
         $wgHooks['ParserFirstCallInit'][] = array(
@@ -326,14 +314,7 @@ class LongCiteMaster {
     /// @param $parser - Parser object being initialized.
     public function setupParser(&$parser) {
         $this->parser = $parser;
-        #if(is_null($parser)) {
-        #    $parser = $GLOBALS['wgParser'];
-        #}
         // set hooks for parser functions
-        #$wgParser->setHook('longcitedef',array($this,"tagLongCiteDef"));
-        #$wgParser->setHook('longciteref',array($this,"tagLongCiteRef"));
-        #$wgParser->setHook('longciteren',array($this,"tagLongCiteRen"));
-        #$wgParser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
         $parser->setHook('longcite'   ,array($this,"tagLongCite"));
         $parser->setHook('longcitedef',array($this,"tagLongCiteDef"));
         $parser->setHook('longciteref',array($this,"tagLongCiteRef"));
@@ -362,6 +343,7 @@ class LongCiteMaster {
     public function tagLongCite($input, $args, $parser, $frame) {
         $tagObj = new LongCiteTag($this, $input, $args, $parser, $frame);
         $this->addTagObject($tagObj);
+        $result = $tagObj->doPreprocessing();
         $result = $tagObj->render();
         return $result;
     }
@@ -374,6 +356,7 @@ class LongCiteMaster {
     public function tagLongCiteDef($input, $args, $parser, $frame) {
         $tagObj = new LongCiteDefTag($this, $input, $args, $parser, $frame);
         $this->addTagObject($tagObj);
+        $result = $tagObj->doPreprocessing();
         $result = $tagObj->render();
         return $result;
     }
@@ -393,6 +376,7 @@ class LongCiteMaster {
     public function tagLongCiteHlp($input, $args, $parser, $frame) {
         $tagObj = new LongCiteHlpTag($this, $input, $args, $parser, $frame);
         $this->addTagObject($tagObj);
+        $result = $tagObj->doPreprocessing();
         $result = $tagObj->render();
         return $result;
     }
@@ -406,6 +390,7 @@ class LongCiteMaster {
     public function tagLongCiteOpt($input, $args, $parser, $frame) {
         $tagObj = new LongCiteOptTag($this, $input, $args, $parser, $frame);
         $this->addTagObject($tagObj);
+        $result = $tagObj->doPreprocessing();
         $result = $tagObj->render();
         return $result;
     }
@@ -413,6 +398,7 @@ class LongCiteMaster {
     public function tagLongCiteRef($input, $args, $parser, $frame) {
         $tagObj = new LongCiteRefTag($this, $input, $args, $parser, $frame);
         $this->addTagObject($tagObj);
+        $result = $tagObj->doPreprocessing();
         $result = $tagObj->render();
         return $result;
     }
@@ -426,6 +412,7 @@ class LongCiteMaster {
     public function tagLongCiteRen($input, $args, $parser, $frame) {
         $tagObj = new LongCiteRenTag($this, $input, $args, $parser, $frame);
         $this->addTagObject($tagObj);
+        $result = $tagObj->doPreprocessing();
         $result = $tagObj->render();
         return $result;
     }

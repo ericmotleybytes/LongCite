@@ -15,10 +15,6 @@
 /// rendered later via <longciteren>).
 class LongCiteDefTag extends LongCiteTag {
 
-    ##protected $validDefParamNames = array(
-    ##    "id", "author"
-    ##);
-
     /// Class constructor.
     /// @param $master - The LongCiteMaster instance doing the instantiation.
     /// @param $input - Content between <longcitedef> and </longcitedef>.
@@ -32,10 +28,8 @@ class LongCiteDefTag extends LongCiteTag {
         #$mess->setDoTrigger(true);    // DBG true just for debugging
         // clear all param msg keys
         $this->clearParamMsgKeys();
-        // lang msgkey
-        $this->addParamMsgKeys("alwayslang");
         // ctrl msg keys
-        $this->addParamMsgKeys("render","renlang","renctrl","rencore","rendesc","renverb");
+        $this->addParamMsgKeys("render","renctrl","rencore","rendesc","renverb");
         $this->addParamMsgKeys("renlong","renskip","renonly");
         // core msg keys
         $this->addParamMsgKeys("key");
@@ -59,13 +53,6 @@ class LongCiteDefTag extends LongCiteTag {
             $paramNameMsgKey = $paramObj->getNameKey();
             if($paramObj->getCategory()!=LongCiteParam::CatCtrl) { continue; }
             $paramNameMsgKey = $paramObj->getNameKey();
-            if($paramNameMsgKey=="longcite-pn-renlang") {
-                $paramClass = LongCiteParam::getParamClass($paramNameMsgKey);
-                $values = $paramObj->getBasicValues();
-                $outLangCode = $values[0];
-                $tag = $paramObj->getTag();
-                $tag->setOutputLangCode($outLangCode);
-            }
         }
         // Render params to display.
         // Generate a key param if a key is not already given.

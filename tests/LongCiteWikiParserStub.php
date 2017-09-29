@@ -12,16 +12,30 @@ class LongCiteWikiParserStub {
 
     protected $parserHooks = array();  ///< Saved parser hook callables.
     protected $parserOutput = null;    ///< Set to a ParserOutput object.
+    protected $functionLangObj = null; ///< Function language object.
+    protected $targetLangObj   = null; ///< Target language object.
 
     /// Class constructor.
     public function __construct() {
         $this->parserHooks = array();
         $this->parserOutput = new LongCiteWikiParserOutputStub();
+        $this->functionLangObj = $GLOBALS["wgLang"];  // language obj for parser functions such as {{FORMATNUM:}}
+        $this->targetLangObj   = $GLOBALS["wgLang"];  // language obj for content being parsed.
+    }
+
+    /// Get the Function language object.
+    public function getFunctionLang() {
+        return $this->functionLangObj;
     }
 
     /// Get the associated ParserOutput object.
     public function getOutput() {
         return $this->parserOutput;
+    }
+
+    /// Get the target language object.
+    public function getTargetLanguage() {
+        return $this->targetLangObj;
     }
 
     /// Half-parse wikitext to half-parsed HTML.
@@ -111,6 +125,16 @@ class LongCiteWikiParserStub {
             $results[$callableName] = $result;
         }
         return $results;
+    }
+
+    /// A stub routine to set function language object.
+    public function stubSetFunctionLang($langObj) {
+        $this->functionLangObj = $langObj;
+    }
+
+    /// A stub routine to set target language object.
+    public function stubSetTargetLanguage($langObj) {
+        $this->targetLangObj = $langObj;
     }
 
 }

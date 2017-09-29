@@ -8,6 +8,16 @@
 
 /// Parent Class for other LongCite tag classes.
 class LongCiteTag {
+    const InputLangArgNames =
+        "lang;" .
+        "inlang;inputlang;inlanguage;inputlanguage;" .
+        "insprache;einsprache;eingabesprache;" .
+        "enlengua;entradalengua";
+    const OutputLangArgNames =
+        "outlang;outputlang;outlanguage;outputlanguage;" .
+        "aussprache;ausgabesprache;" .
+        "fueralengua;salidalengua";
+
     protected $master   = null;  ///< LongCiteMaster instance.
     protected $input    = null;  ///< Stuff between open and close tags.
     protected $args     = null;  ///< Settings within opening tag.
@@ -19,7 +29,6 @@ class LongCiteTag {
     protected $paramMsgKeys = array();  ///< Hash cat->arr of msg keys.
     protected $paramObjHash = array();  ///< Hash of paramNameMsgKey to param object.
     protected $renderedOutput = "";     ///< Copy of rendered output html.
-    protected $argsToSkip = array();    ///< Gets 'lang' after language selection.
 
     public function __construct($master, $input, $args, $parser, $frame=false) {
         $this->master = $master;
@@ -31,15 +40,8 @@ class LongCiteTag {
         $this->outputLangCode = $master->getOutputLangCode();
         $this->messenger = new LongCiteMessenger($this->inputLangCode);
         $this->messenger->setEnableDebug(true);  # DBG DEBUG TBD!
-        $this->argsToSkip = array();
         # set up param msg keys.
         $this->clearParamMsgKeys();
-        $this->addParamMsgKeys(
-            "alwayslang","key","author","note"
-        );
-        # Add css module if not already added.
-        $parserOutput = $this->parser->getOutput();
-        $this->master->loadCssModule($parserOutput);
     }
 
     public function addParamMsgKeys(...$msgKeys) {
@@ -59,6 +61,59 @@ class LongCiteTag {
         return true;
     }
 
+    /// Do tag preproessing before rendering.
+    public function doPreprocessing() {
+        # Add css module if not already added.
+        $parserOutput = $this->parser->getOutput();
+        $this->master->loadCssModule($parserOutput);
+        # process the in tag arguments
+        $this->doArgProcessing();
+    }
+
+    /// Process arguments withing the source tag.
+    public function doArgProcessing() {
+        $iLangNameArr = mb_split('\;',self::InputLangArgNames);
+        $oLangNameArr = mb_split('\;',self::OutputLangArgNames);
+        $supportedLangCodes = $this->getMaster()->getSupportedLangCodes();
+        $result = true;
+        foreach($this->args as $argName => $argVal) {
+            $argName = mb_ereg_replace('[\_\ ]',"",$argName);
+            $argName = mb_strtolower($argName);
+            if(in_array($argName,$iLangNameArr)) {
+                // found inlang arg
+                $argVal = LongCiteUtil::eregTrim($argVal);
+                $argVal = mb_strtolower($argVal);
+                $stat = $this->setInputLangCode($argVal);
+                if($stat===false) { $result = false; }
+            } elseif(in_array($argName,$oLangNameArr)) {
+                // found outlang arg
+                $argVal = LongCiteUtil::eregTrim($argVal);
+                $argVal = mb_strtolower($argVal);
+                if($argVal=='*') {
+                    $tgtLangCode = $this->parser->getTargetLanguage()->getCode();
+                    if(in_array($tgtLangCode,$supportedLangCodes)) {
+                        $stat = $this->setOutputLangCode($tgtLangCode);
+                        if($stat===false) { $result = false; }
+                    } else {
+                        $result = false;
+                    }
+                } else {
+                    $stat = $this->setOutputLangCode($argVal);
+                    if($stat===false) { $result = false; }
+                }
+            } else {
+                // unrecognized argument
+                $mess = $this->messenger;
+                $tagName = $this->getTagName();
+                $msgObj = $this->wikiMessageIn("longcite-err-badtagarg",$argVal,$tagName);
+                $msg = $msgObj->plain();
+                $mess->registerMessageWarning($msg);
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
     public function clearParamMsgKeys() {
         $this->paramMsgKeys = array(
             LongCiteParam::CatLang => array(),
@@ -67,46 +122,6 @@ class LongCiteTag {
             LongCiteParam::CatDesc => array(),
             LongCiteParam::CatVerb => array()
         );
-    }
-
-    public function determineInputLanguage() {
-        $this->argsToSkip = array();
-        $parser   = $this->getParser();
-        $frame    = $this->getFrame();
-        $master   = $this->getMaster();
-        $defLangCode = $master->getInputLangCode();
-        $newLangCode = $defLangCode;
-        $supportedLangCodes = $master->getSupportedLangCodes();
-        // get list of msg keys for lang code param name, but there
-        // should only be one entry on the list.
-        $langMsgKeys = $this->getParamMsgKeys(LongCiteParam::CatLang);
-        if(count($langMsgKeys)>1) {
-            trigger_error("Too many language message keys.",E_USER_WARNING);
-            return false;
-        } elseif(count($langMsgKeys)<1) {
-            trigger_error("Missing language message key.",E_USER_WARNING);
-            return false;
-        }
-        $langMsgKey = $langMsgKeys[0];
-        $langParamName = $this->wikiMessageIn($langMsgKey)->plain();
-        if(array_key_exists($langParamName,$this->args)) {
-            $langCode = LongCiteUtil::eregTrim($this->args[$langParamName]);
-            $langCode = $parser->recursiveTagParse($langCode,$frame);
-            $langCode = strtolower($langCode);
-            if(!in_array($langCode,$supportedLangCodes)) {
-                $mess = $this->getMessenger();
-                $msg = $this->wikiMessageIn("longcite-err-badlang",$langCode);
-                $mess->registerMessageWarning($msg);
-            } else {
-                $newLangCode = $langCode;
-            }
-            //unset($this->args[$langParamName]);
-            $this->argsToSkip[] = "$langParamName";
-        }
-        $langParamObj = $this->getParamByMsgKey($langMsgKey);
-        $langParamObj->addValues($newLangCode);
-        $this->setInputLangCode($newLangCode);
-        return $newLangCode;
     }
 
     public function getArgs() {
@@ -360,8 +375,7 @@ class LongCiteTag {
     }
 
     public function renderPreperation() {
-        // Determine the input language from the in tag always "lang" parameter.
-        $inLangCode = $this->determineInputLanguage();
+        // define param categories of interest
         $cats = array(
             LongCiteParam::CatCtrl,
             LongCiteParam::CatCore,
@@ -372,9 +386,6 @@ class LongCiteTag {
         $mess = $this->getMessenger();
         $inLangCode = $this->getInputLangCode();
         $tagMarkupName = $this->getTagMarkupName();
-        // Set the default output language to be the input language (can be
-        // changed with the renlang param).
-        $this->setOutputLangCode($inLangCode);
         // build map from lang-specific param name to param name msg key.
         $paramMap = array();
         foreach($validParamMsgKeys as $paramMsgKey) {
@@ -384,21 +395,6 @@ class LongCiteTag {
             foreach($paramNames as $paramName) {
                 $paramMap[$paramName] = $paramMsgKey;
             }
-        }
-        // save inputs from args from within opening tag
-        foreach($this->args as $paramName => $paramVal) {
-            if(in_array($paramName,$this->argsToSkip)) {
-                continue;  // Skip the 'lang' key already processed.
-            }
-            if(!array_key_exists($paramName,$paramMap)) {
-                $errKey = "longcite-err-badtagpar";
-                $msg = $this->wikiMessageIn($errKey,$paramName,$tagMarkupName)->plain();
-                $mess->registerMessageWarning($msg);
-                continue;
-            }
-            $paramNameKey = $paramMap[$paramName];
-            $paramObj = $this->getParamByMsgKey($paramNameKey);
-            $paramObj->addValues($paramVal);
         }
         // process parameters set on lines between opening and closing tags.
         $semiParsedLines = $this->preprocessInput($this->input);
@@ -424,11 +420,11 @@ class LongCiteTag {
             $messenger = $this->messenger;
             $msg = $this->wikiMessageIn("longcite-err-badlang",$code)->plain();
             $messenger->registerMessage(LongCiteMessenger::WarningType,$msg);
-            return $this->getInputLangCode();
+            return false;
         }
         $this->messenger->setLangCode($code);
         $this->inputLangCode = $code;
-        return $code;
+        return true;
     }
 
     public function setOutputLangCode($code) {
@@ -437,10 +433,10 @@ class LongCiteTag {
             $messenger = $this->messenger;
             $msg = $this->wikiMessageIn("longcite-err-badlang",$code)->plain();
             $messenger->registerMessage(LongCiteMessenger::WarningType,$msg);
-            return $this->getOutputLangCode();
+            return false;
         }
         $this->outputLangCode = $code;
-        return $code;
+        return true;
     }
 
     public function setRenderedOutput($html) {
