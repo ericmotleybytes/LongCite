@@ -80,9 +80,11 @@ class LongCiteParamURL extends LongCiteParam {
                     $htmlVal = "$badAddr $cleanDisp";
                 }
             } else {
-                $goodAddr  = '<a href="' . $cleanAddr . '">';
-                $goodAddr .= $cleanDisp . '</a>';
-                #$goodAddr = '[' . $cleanAddr . ' ' . $cleanDisp . ']';
+                #$goodAddr  = '<a href="' . $cleanAddr . '">';
+                #$goodAddr .= $cleanDisp . '</a>';
+                $goodAddr = '[' . $cleanAddr . ' ' . $cleanDisp . ']';
+                $parser = $tag->getParser();
+                $goodAddr = $parser->recursiveTagParseFully($goodAddr);
                 $htmlVal = $goodAddr;
             }
             if(mb_substr($cleanDesc,-1,1)=='.') {
