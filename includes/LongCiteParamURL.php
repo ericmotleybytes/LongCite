@@ -80,8 +80,9 @@ class LongCiteParamURL extends LongCiteParam {
                     $htmlVal = "$badAddr $cleanDisp";
                 }
             } else {
-                $goodAddr  = '<nowiki><a href="' . $cleanAddr . '">';
-                $goodAddr .= $cleanDisp . '</a></nowiki>';
+                #$goodAddr  = '<nowiki><a href="' . $cleanAddr . '">';
+                #$goodAddr .= $cleanDisp . '</a></nowiki>';
+                $goodAddr = '[' . $cleanAddr . ' ' . $cleanDisp . ']';
                 $htmlVal = $goodAddr;
             }
             if(mb_substr($cleanDesc,-1,1)=='.') {
