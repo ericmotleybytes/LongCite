@@ -420,10 +420,10 @@ class LongCiteTag {
         // expand macros, weed out comments, merge continuation lines, etc.
         $semiParsedLines = $this->preprocessInput($this->input);
         $this->adjustedInputSet($semiParsedLines);
-        ##// debug message...
-        ##$dbgMsg  = "adjIn=";
-        ##$dbgMsg .= implode("\n",$semiParsedLines);
-        ##$mess->registerMessageDebug($dbgMsg);
+        // debug message...
+        $dbgMsg  = "adjIn=";
+        $dbgMsg .= implode("\n",$semiParsedLines);
+        $mess->registerMessageDebug($dbgMsg);
         // break up into arrary of array of name and values string.
         $parsedArrOfArr  = $this->preprocessSemiParsedLines($semiParsedLines);
         // process each parameter, creating parameter objects and setting basic values.
