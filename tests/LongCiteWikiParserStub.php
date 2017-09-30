@@ -14,11 +14,13 @@ class LongCiteWikiParserStub {
     protected $parserOutput = null;    ///< Set to a ParserOutput object.
     protected $functionLangObj = null; ///< Function language object.
     protected $targetLangObj   = null; ///< Target language object.
+    protected $optionsObj      = null;
 
     /// Class constructor.
     public function __construct() {
         $this->parserHooks = array();
         $this->parserOutput = new LongCiteWikiParserOutputStub();
+        $this->optionsObj   = new LongCiteWikiParserOptionsStub();
         $this->functionLangObj = $GLOBALS["wgLang"];  // language obj for parser functions such as {{FORMATNUM:}}
         $this->targetLangObj   = $GLOBALS["wgLang"];  // language obj for content being parsed.
     }
@@ -36,6 +38,10 @@ class LongCiteWikiParserStub {
     /// Get the target language object.
     public function getTargetLanguage() {
         return $this->targetLangObj;
+    }
+
+    public function getOptions() {
+        return $this->optionsObj;
     }
 
     /// Half-parse wikitext to half-parsed HTML.

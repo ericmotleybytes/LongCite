@@ -262,6 +262,8 @@ class LongCiteTag {
 
     public function preprocessInput($input) {
         $contchar = "\\";  # if at end of line it marks a continuation.
+        $savePreSaveTran = $this->parser->getOptions()->getPreSaveTransform();
+        $this->parser->getOptions()->setPreSaveTransform(false);
         // remove html comments from content
         $input = preg_replace( '/<!--(.|\s)*?-->/u' , '' , $input);
         // convert /r/n to /n (if any)

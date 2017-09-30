@@ -12,6 +12,7 @@ const MEDIAWIKI = "stub";
 require_once __DIR__ . "/LongCiteWikiUpdaterStub.php";
 require_once __DIR__ . "/LongCiteWikiParserStub.php";
 require_once __DIR__ . "/LongCiteWikiOutputPageStub.php";
+require_once __DIR__ . "/LongCiteWikiParserOptionsStub.php";
 require_once __DIR__ . "/LongCiteWikiParserOutputStub.php";
 require_once __DIR__ . "/LongCiteWikiPPFrameStub.php";
 require_once __DIR__ . "/LongCiteWikiMessageStub.php";
