@@ -41,7 +41,8 @@ class LongCiteParam {
         "longcite-pn-renskip"    => array("AlphaId",true,self::CatCtrl),
         "longcite-pn-renonly"    => array("AlphaId",true,self::CatCtrl),
         "longcite-pn-subtitle"   => array("Subtitle",false,self::CatDesc),
-        "longcite-pn-title"      => array("Title",false,self::CatDesc)
+        "longcite-pn-title"      => array("Title",false,self::CatDesc),
+        "longcite-pn-url"        => array("URL",true,self::CatDesc)
     );
 
     public static function getAllCategories() {
@@ -131,7 +132,9 @@ class LongCiteParam {
             $result = new $paramClass($paramNameKey,$isMulti,$tag);
             $result->setCategory($category);
         } catch (Exception $e) {
-            $result = false();
+            $msg = $e->getMessage();
+            trigger_error($msg,E_USER_WARNING);
+            $result = false;
         }
         return $result;
     }

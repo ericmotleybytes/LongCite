@@ -44,6 +44,7 @@ class LongCiteDefTagTest extends TestCase {
         $inputArr[7]   = "verlag=Addison-Wesley\n";
         $inputArr[8]   = "verlagsort=Upper Saddle River, New Jersey, USA\n";
         $inputArr[9]   = "edition=Anniversary\n";
+        $inputArr[10]  = "url=http://www.google.com/|google.com|Search engine.|2017\n";
         $input         = implode("",$inputArr);
         $expMess  = "";
         $expOutArr     = array();
@@ -68,7 +69,11 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[17] = 'Addison-Wesley.';
         $expOutArr[18] = ' Veröffentlicht am ';
         $expOutArr[19] = 'Upper Saddle River, New Jersey, USA.';
-        $expOutArr[20] = '</p>';
+        $expOutArr[20] = ' Online bei ';
+        $expOutArr[21] = '<a href="http://www.google.com/">google.com</a> (Search engine.';
+        $expOutArr[22] = ' Abgerufen ';
+        $expOutArr[23] = '2017.).';
+        $expOutArr[24] = '</p>';
         $expOut = implode("",$expOutArr);
         #
         $setup = array();
@@ -92,6 +97,8 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[15] = ' edition.';
         $expOutArr[16]  = ' Published by ';
         $expOutArr[18]  = ' Publisher location ';
+        $expOutArr[20]  = ' Online at ';
+        $expOutArr[22] = ' Retrieved ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"] = $expOut;
         $setup["args"]    = $args;
@@ -110,6 +117,8 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[15] = ' edición.';
         $expOutArr[16]  = ' Publicado por ';
         $expOutArr[18]  = ' Publicado en ';
+        $expOutArr[20]  = ' En línea en ';
+        $expOutArr[22] = ' Descargado en ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
         $setup["args"]    = $args;

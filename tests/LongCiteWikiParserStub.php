@@ -132,7 +132,9 @@ class LongCiteWikiParserStub {
         $this->functionLangObj = $langObj;
     }
 
-    /// A stub routine to set target language object.
+    /// A stub routine to set target language object. On a real wiki this could be
+    /// set with the "&uselang=<iso2char>" such as "&uselang=de". Also "&uselang=qqx"
+    /// will display all i18n system messages.
     public function stubSetTargetLanguage($langObj) {
         $this->targetLangObj = $langObj;
     }

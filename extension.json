@@ -36,6 +36,7 @@
         "LongCiteParamString"     : "includes/LongCiteParamString.php",
         "LongCiteParamSubtitle"   : "includes/LongCiteParamSubtitle.php",
         "LongCiteParamTitle"      : "includes/LongCiteParamTitle.php",
+        "LongCiteParamURL"        : "includes/LongCiteParamURL.php",
         "LongCiteException"       : "includes/LongCiteException.php",
         "LongCiteUtil"            : "includes/LongCiteUtil.php",
         "LongCiteUtilDate"        : "includes/LongCiteUtilDate.php",

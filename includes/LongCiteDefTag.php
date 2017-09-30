@@ -35,7 +35,7 @@ class LongCiteDefTag extends LongCiteTag {
         $this->addParamMsgKeys("key");
         // desc msg keys
         $this->addParamMsgKeys("item","title","subtitle","author",
-            "pubdate","edition","publisher","publoc");
+            "pubdate","edition","publisher","publoc","url");
         // verbose msg keys
         $this->addParamMsgKeys("note");
     }
@@ -88,7 +88,7 @@ class LongCiteDefTag extends LongCiteTag {
         $orderArr = array(
             "longcite-pn-item","longcite-pn-title","longcite-pn-subtitle",
             "longcite-pn-author","longcite-pn-pubdate","longcite-pn-edition",
-            "longcite-pn-publisher","longcite-pn-publoc"
+            "longcite-pn-publisher","longcite-pn-publoc","longcite-pn-url"
         );
         foreach($orderArr as $paramNameMsgKey) {
             if(array_key_exists($paramNameMsgKey,$paramObjHash)) {

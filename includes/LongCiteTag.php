@@ -168,6 +168,11 @@ class LongCiteTag {
             return false;
         }
         $param = LongCiteParam::newParam($paramNameKey,$this);
+        if(!is_object($param)) {
+            $msg = "Could not instantiate param object for $paramNameKey.";
+            trigger_error($msg,E_USER_WARNING);
+            return false;
+        }
         $phpClass = get_class($param);
         $this->paramObjHash[$paramNameKey] = $param;
         $param->setParamOrder(count($this->paramObjHash));
