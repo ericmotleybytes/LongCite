@@ -182,7 +182,7 @@ class LongCiteMessenger {
                 trigger_error($tmp,E_USER_WARNING);
             } elseif($msgType==self::ErrorType) {
                 trigger_error($tmp,E_USER_ERROR);
-            } else {
+            } elseif($msgType==self::NoteType) {
                 trigger_error($tmp,E_USER_NOTICE);
             }
         }
@@ -199,6 +199,7 @@ class LongCiteMessenger {
             $cssClass = $message["css-class"];
             $prefix   = $message["prefix"];
             $text     = htmlspecialchars($message["text"]);
+            $text     = mb_ereg_replace('\n','<br/>',$text);
             $result  .= "<p class=$dq$cssClass$dq>";
             $result  .= "$prefix: $text";
             $result  .= "</p>\n";

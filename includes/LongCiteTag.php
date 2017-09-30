@@ -20,6 +20,7 @@ class LongCiteTag {
 
     protected $master   = null;  ///< LongCiteMaster instance.
     protected $input    = null;  ///< Stuff between open and close tags.
+    protected $adjInput = null;  ///< Adjusted and partially recursively parsed input lines.
     protected $args     = null;  ///< Settings within opening tag.
     protected $parser   = null;  ///< Mediawiki parser object.
     protected $frame    = null;  ///< MediaWiki template/recursive parsing structure.
@@ -59,6 +60,16 @@ class LongCiteTag {
             }
         }
         return true;
+    }
+
+    /// Get adjusted input.
+    public function adjustedInputGet() {
+        return $this->adjInput;
+    }
+
+    /// Save adjusted input.
+    public function adjustedInputSet($adjInput) {
+        $this->adjInput = $adjInput;
     }
 
     /// Do tag preproessing before rendering.
@@ -297,6 +308,10 @@ class LongCiteTag {
     }
 
     public function preprocessSemiParsedLines($parLines) {
+        // $arrOfArr is an array of arrays. There is one top level array entry for each
+        // unfiltered input line. Each of these entries is an array where the [0] entry
+        // is what is before the "=" character (the param name alias) and the [1] entry is
+        // the values string (the stuff after the "=" character).
         $arrOfArr = array(); // an array of arrays
         foreach($parLines as $parLine) {
             $parts = mb_split('\=',$parLine,2);
@@ -402,8 +417,16 @@ class LongCiteTag {
             }
         }
         // process parameters set on lines between opening and closing tags.
+        // expand macros, weed out comments, merge continuation lines, etc.
         $semiParsedLines = $this->preprocessInput($this->input);
+        $this->adjustedInputSet($semiParsedLines);
+        ##// debug message...
+        ##$dbgMsg  = "adjIn=";
+        ##$dbgMsg .= implode("\n",$semiParsedLines);
+        ##$mess->registerMessageDebug($dbgMsg);
+        // break up into arrary of array of name and values string.
         $parsedArrOfArr  = $this->preprocessSemiParsedLines($semiParsedLines);
+        // process each parameter, creating parameter objects and setting basic values.
         foreach($parsedArrOfArr as $parts) {
             $paramName = strtolower(LongCiteUtil::eregTrim($parts[0]));
             $paramVal  = LongCiteUtil::eregTrim($parts[1]);

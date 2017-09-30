@@ -23,9 +23,9 @@ class LongCiteDefTag extends LongCiteTag {
     /// @param $frame - Recursive parsing frame.
     public function __construct($master, $input, $args, $parser, $frame=false) {
         parent::__construct($master, $input, $args, $parser, $frame);
-        #$mess = $this->getMessenger();
-        #$mess->setEnableDebug(true);  // DBG true just for debugging
-        #$mess->setDoTrigger(true);    // DBG true just for debugging
+        $mess = $this->getMessenger();
+        $mess->setEnableDebug(true);  // DBG true just for debugging
+        $mess->setDoTrigger(true);    // DBG true just for debugging
         // clear all param msg keys
         $this->clearParamMsgKeys();
         // ctrl msg keys
