@@ -14,6 +14,7 @@ class LongCiteWikiParserOptionsStub {
     protected $userLang    = null;      // language object
     protected $extLinkTgt  = "_blank";  // external link target
     protected $preSaveTran = true;      // presave transform
+    protected $allowUnsafeHtml = true;  // allow unsafe raw html
 
     public function __construct($user=null, $lang=null) {
         $this->user     = $user;
@@ -22,6 +23,14 @@ class LongCiteWikiParserOptionsStub {
 
     public function getUser() {
         return $this->user;
+    }
+
+    public function getAllowUnsafeRawHtml() {
+        return $this->allowUnsafeHtml;
+    }
+
+    public function setAllowUnsafeRawHtml($flag) {
+        $this->allowUnsafeHtml = $flag;
     }
 
     public function getUserLangObj() {

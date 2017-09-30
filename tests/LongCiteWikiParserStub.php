@@ -44,6 +44,16 @@ class LongCiteWikiParserStub {
         return $this->optionsObj;
     }
 
+    public function recursivePreprocess($text,$frame=false) {
+        if($frame!==false) {
+            // do frame substitutions, (but non recursively)
+            foreach($frame->getArguments() as $key => $val) {
+                $text = str_replace('{{{'.$key.'}}}',$val,$text);
+            }
+        }
+        return $text;
+    }
+
     /// Half-parse wikitext to half-parsed HTML.
     /// This recursive parser entry point can be called from an extension tag hook.
     /// The output of this function IS NOT SAFE PARSED HTML; it is "half-parsed"
@@ -59,13 +69,11 @@ class LongCiteWikiParserStub {
     /// @param $frame - The associated PPFrame object, or false.
     /// @return Half-parsed HTML (still unsafe).
     public function recursiveTagParse($text,$frame=false) {
-        if($frame!==false) {
-            // do frame substitutions, (but non recursively)
-            foreach($frame->getArguments() as $key => $val) {
-                $text = str_replace('{{{'.$key.'}}}',$val,$text);
-            }
-        }
-        return $text;
+        return $this->recursivePreprocess($text,$frame);
+    }
+
+    public function recursiveTagParseFully($text,$frame=false) {
+        return $this->recursivePreprocess($text,$frame);
     }
 
     /// Set a particular parser callable hook.

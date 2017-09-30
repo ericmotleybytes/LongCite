@@ -275,7 +275,8 @@ class LongCiteTag {
         $parser = $this->getParser();
         $frame = $this->getFrame();
         foreach($rawLines as $rawLine) {
-            $tempLine = $parser->recursiveTagParse($rawLine,$frame);
+            #$tempLine = $parser->recursiveTagParse($rawLine,$frame);
+            $tempLine = $parser->recursivePreprocess($rawLine,$frame);
             $tempLines[] = $tempLine;
         }
         // merge into parsable lines
@@ -423,6 +424,12 @@ class LongCiteTag {
         $semiParsedLines = $this->preprocessInput($this->input);
         $this->adjustedInputSet($semiParsedLines);
         // debug messages...
+        $raw = $GLOBALS["wgRawHtml"];
+        if($raw===true) { $rawStr="t"; }
+        elseif($raw===false) { $rawStr="f"; }
+        else { $rawStr = "$raw"; }
+        $dbgMsg  = "wgRawHtml=$rawStr.";
+        $mess->registerMessageDebug($dbgMsg);
         $dbgMsg  = "input=";
         $dbgMsg .= $this->input;
         $mess->registerMessageDebug($dbgMsg);

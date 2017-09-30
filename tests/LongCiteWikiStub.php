@@ -64,6 +64,7 @@ class LongCiteWikiStub {
         $GLOBALS["wgLanguageCode"]  = "en";
         $GLOBALS["wgContLang"]      = LongCiteWikiLanguageStub::stubNew("en");
         $GLOBALS["wgExternalLinkTarget"] = '_blank';
+        $GLOBALS["wgRawHtml"]       = true;
     }
     /// Initialize some typically user preference stuff.
     public static function initUserPrefs() {
