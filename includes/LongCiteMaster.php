@@ -61,6 +61,7 @@ class LongCiteMaster {
     protected $existingCitationKeys = array(); ///< Citation keys already used.
     protected $guid = "";
     protected $alreadyRegistered = false;
+    protected $alreadySetupParsers = array();
 
     /// Class instance constructor.
     function __construct() {
@@ -327,17 +328,24 @@ class LongCiteMaster {
     /// @param $parser - Parser object being initialized.
     public function setupParser(&$parser) {
         $lcm = "LongCiteMessenger";
-        $lcm::debugMessage("LCM: In setupParser.");
         $this->parser = $parser;
-        // set hooks for parser functions
-        $parser->setHook('longcite'   ,array($this,"tagLongCite"));
-        $parser->setHook('longcitedef',array($this,"tagLongCiteDef"));
-        $parser->setHook('longciteref',array($this,"tagLongCiteRef"));
-        $parser->setHook('longciteren',array($this,"tagLongCiteRen"));
-        $parser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
-        $parser->setHook('longciteopt',array($this,"tagLongCiteOpt"));
+        $parserId = spl_object_hash($parser);
+        if(in_array($parserId,$this->alreadySetupParsers)) {
+            // parser has already been setup
+            $lcm::debugMessage("LCM:SP: Parser $parserId setup already.");
+        } else {
+            // setup parser hooks.
+            $lcm::debugMessage("LCM:SP: Parser $parserId setup running.");
+            $parser->setHook('longcite'   ,array($this,"tagLongCite"));
+            $parser->setHook('longcitedef',array($this,"tagLongCiteDef"));
+            $parser->setHook('longciteref',array($this,"tagLongCiteRef"));
+            $parser->setHook('longciteren',array($this,"tagLongCiteRen"));
+            $parser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
+            $parser->setHook('longciteopt',array($this,"tagLongCiteOpt"));
+            $this->alreadySetupParsers[] = $parserId;
+        }
         $tags = implode(";",$parser->getTags());
-        $lcm::debugVariable($tags,"LCM: ..tags");
+        $lcm::debugVariable($tags,"LCM:SP: ..tags");
     }
 
     /// Called when maintenance/update.php is run to allow extensions

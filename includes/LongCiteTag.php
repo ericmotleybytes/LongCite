@@ -24,6 +24,7 @@ class LongCiteTag {
     protected $args     = null;  ///< Settings within opening tag.
     protected $parser   = null;  ///< Mediawiki parser object.
     protected $frame    = null;  ///< MediaWiki template/recursive parsing structure.
+    protected $parserHashId = "";
     protected $inputLangCode  = "en";  ///< Language for understanding input source text.
     protected $outputLangCode = "en";  ///< Language for producing output text.
     protected $messenger = null;       ///< LongCiteMessenger object.
@@ -38,6 +39,7 @@ class LongCiteTag {
         $this->args    = $args;
         $this->parser  = $parser;
         $this->frame   = $frame;
+        $this->parserHashId = spl_object_hash($this->parser);
         // set internal guid
         $this->guid = LongCiteUtil::generateOpensslGuid();
         // more
@@ -250,6 +252,16 @@ class LongCiteTag {
 
     public function getParser() {
         return $this->parser;
+    }
+
+    public function getParserHashId() {
+        return $this->parserHashId;
+    }
+
+    public function saveParserHashId() {
+        $oldHashId = $this->parserHashId;
+        $this->parserHashId = spl_object_hash($this->parser);
+        return $oldHashId;
     }
 
     public function getTagMarkupName() {
