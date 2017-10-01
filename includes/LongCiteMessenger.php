@@ -15,6 +15,39 @@ class LongCiteMessenger {
     const NoteType    = "NOTE";      ///< Constant id for note messages.
     const DebugType   = "DEBUG";     ///< Constant id for debug messages.
     const TraceType   = "TRACE";     ///< Constant id for trace messages.
+
+    protected static $debugFile = __DIR__.'/../debug.log';
+
+    public static function debugMessage($text) {
+        if($GLOBALS["wgShowDebug"]===false) { return null; }
+        $fh = fopen(self::$debugFile,"a");
+        if($fh===false) { return false; }
+        $timestamp = gmdate('Ymd His') . ': ';
+        $text = mb_ereg_replace('\n',"",$text) . "\n";
+        $bytes = fwrite($fh,$timestamp . $text);
+        if($bytes===false) { fclose($fh); return false; }
+        return fclose($fh);
+    }
+
+    public static function debugVariable($var,$varName="unknown") {
+        if($GLOBALS["wgShowDebug"]===false) { return null; }
+        $fh = fopen(self::$debugFile,"a");
+        if($fh===false) { return false; }
+        $timestamp = gmdate('Ymd His') . ': ';
+        $varVal = print_r($var,true);
+        $text = "$varName='$varVal'.\n";
+        $bytes = fwrite($fh,$timestamp . $text);
+        if($bytes===false) { fclose($fh); return false; }
+        return fclose($fh);
+    }
+
+    public static function debugClear() {
+        if($GLOBALS["wgShowDebug"]===false) { return null; }
+        $fh = fopen(self::$debugFile,"w");
+        if($fh===false) { return false; }
+        return fclose($fh);
+    }
+
     protected $messages     = array();  ///< Array of messages, each msg a hash array.
     protected $prefixMsgIds = array();  ///< Hash array of i18n ids, by msg type.
     protected $cssClasses   = array();  ///< Hash array of css classes, by msg type.
