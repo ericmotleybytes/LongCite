@@ -20,32 +20,43 @@ class LongCiteMessenger {
 
     public static function debugMessage($text) {
         if($GLOBALS["wgShowDebug"]===false) { return null; }
-        $fh = fopen(self::$debugFile,"a");
+        $fh = fopen(self::$debugFile,"r+");
         if($fh===false) { return false; }
+        $stat = flock($fh,LOCK_EX);
+        if($stat===false) { fclose($fh); return false; }
         $timestamp = gmdate('Ymd His') . ': ';
         $text = mb_ereg_replace('\n',"",$text) . "\n";
         $bytes = fwrite($fh,$timestamp . $text);
-        if($bytes===false) { fclose($fh); return false; }
-        return fclose($fh);
+        if($bytes===false) { flock($fh,LOCK_UN); fclose($fh); return false; }
+        $stat = fflush($fh);
+        if($stat===false)  { flock($fh,LOCK_UN); fclose($fh); return false; }
+        $stat = flock($fh,LOCK_UN);
+        if($stat===false)  { fclose($fh); return false; }
+        $stat = fclose($fh);
+        return $stat;
     }
 
     public static function debugVariable($var,$varName="unknown") {
         if($GLOBALS["wgShowDebug"]===false) { return null; }
-        $fh = fopen(self::$debugFile,"a");
-        if($fh===false) { return false; }
-        $timestamp = gmdate('Ymd His') . ': ';
         $varVal = print_r($var,true);
         $text = "$varName='$varVal'.\n";
-        $bytes = fwrite($fh,$timestamp . $text);
-        if($bytes===false) { fclose($fh); return false; }
-        return fclose($fh);
+        return self::debugMessage($text);
     }
 
     public static function debugClear() {
         if($GLOBALS["wgShowDebug"]===false) { return null; }
-        $fh = fopen(self::$debugFile,"w");
-        if($fh===false) { return false; }
-        return fclose($fh);
+        $fh = fopen(self::$debugFile,"r+");
+        if($fh===false)    { return false; }
+        $stat = flock($fh,LOCK_EX);
+        if($stat===false)  { fclose($fh); return false; }
+        $stat = ftruncate($fh);
+        if($stat===false)  { flock($fh,LOCK_UN); fclose($fh); return false; }
+        $stat = fflush($fh);
+        if($stat===false)  { flock($fh,LOCK_UN); fclose($fh); return false; }
+        $stat = flock($fh,LOCK_UN);
+        if($stat===false)  { fclose($fh); return false; }
+        $stat = fclose($fh);
+        return $stat;
     }
 
     protected $messages     = array();  ///< Array of messages, each msg a hash array.

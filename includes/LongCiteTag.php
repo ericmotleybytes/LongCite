@@ -424,7 +424,7 @@ class LongCiteTag {
         $semiParsedLines = $this->preprocessInput($this->input);
         $this->adjustedInputSet($semiParsedLines);
         // debug messages...
-        trigger_error("try trigger error",E_USER_NOTICE);
+        ##trigger_error("try trigger error",E_USER_NOTICE);
         ##$raw = $GLOBALS["wgRawHtml"];
         ##if($raw===true) { $rawStr="t"; }
         ##elseif($raw===false) { $rawStr="f"; }
