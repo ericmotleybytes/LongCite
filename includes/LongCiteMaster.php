@@ -60,6 +60,7 @@ class LongCiteMaster {
     protected $tagObjects = array();         ///< Gets tag objects the parser finds.
     protected $existingCitationKeys = array(); ///< Citation keys already used.
     protected $guid = "";
+    protected $alreadyRegistered = false;
 
     /// Class instance constructor.
     function __construct() {
@@ -285,6 +286,8 @@ class LongCiteMaster {
 
     public function register() {
         global $wgHooks;
+        // check if already registered.
+        if($this->alreadyRegistered) { return; }
         // register the extension
         // set setup parser hook
         $wgHooks = array();  // reinit
@@ -305,6 +308,8 @@ class LongCiteMaster {
         $wgHooks['LoadExtensionSchemaUpdates'][] = array(
             &$this,"setupSchema"
         );
+        // remember that we registered
+        $this->alreadyRegistered = true;
     }
 
     /// Set the default tag render output language.

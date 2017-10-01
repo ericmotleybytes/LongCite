@@ -24,7 +24,8 @@ class LongCiteMessenger {
         if($fh===false) { return false; }
         $stat = flock($fh,LOCK_EX);
         if($stat===false) { fclose($fh); return false; }
-        $timestamp = gmdate('Ymd His') . ': ';
+        $pid = getmypid();
+        $timestamp = gmdate('Ymd His') . ":$pid: ";
         $text = mb_ereg_replace('\n',"",$text) . "\n";
         $bytes = fwrite($fh,$timestamp . $text);
         if($bytes===false) { flock($fh,LOCK_UN); fclose($fh); return false; }
