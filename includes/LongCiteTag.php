@@ -423,19 +423,19 @@ class LongCiteTag {
         // expand macros, weed out comments, merge continuation lines, etc.
         $semiParsedLines = $this->preprocessInput($this->input);
         $this->adjustedInputSet($semiParsedLines);
-        // debug messages...
-        $raw = $GLOBALS["wgRawHtml"];
-        if($raw===true) { $rawStr="t"; }
-        elseif($raw===false) { $rawStr="f"; }
-        else { $rawStr = "$raw"; }
-        $dbgMsg  = "wgRawHtml=$rawStr.";
-        $mess->registerMessageDebug($dbgMsg);
-        $dbgMsg  = "input=";
-        $dbgMsg .= $this->input;
-        $mess->registerMessageDebug($dbgMsg);
-        $dbgMsg  = "adjIn=";
-        $dbgMsg .= implode("\n",$semiParsedLines);
-        $mess->registerMessageDebug($dbgMsg);
+        ##// debug messages...
+        ##$raw = $GLOBALS["wgRawHtml"];
+        ##if($raw===true) { $rawStr="t"; }
+        ##elseif($raw===false) { $rawStr="f"; }
+        ##else { $rawStr = "$raw"; }
+        ##$dbgMsg  = "wgRawHtml=$rawStr.";
+        ##$mess->registerMessageDebug($dbgMsg);
+        ##$dbgMsg  = "input=";
+        ##$dbgMsg .= $this->input;
+        ##$mess->registerMessageDebug($dbgMsg);
+        ##$dbgMsg  = "adjIn=";
+        ##$dbgMsg .= implode("\n",$semiParsedLines);
+        ##$mess->registerMessageDebug($dbgMsg);
         // break up into arrary of array of name and values string.
         $parsedArrOfArr  = $this->preprocessSemiParsedLines($semiParsedLines);
         // process each parameter, creating parameter objects and setting basic values.

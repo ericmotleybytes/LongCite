@@ -70,7 +70,8 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[18] = ' Veröffentlicht am ';
         $expOutArr[19] = 'Upper Saddle River, New Jersey, USA.';
         $expOutArr[20] = ' Online bei ';
-        $expOutArr[21] = '<a href="http://www.google.com/">google.com</a> (Search engine.';
+        $expOutArr[21] = '<a href="http://www.google.com/" target="_blank" ' .
+            'rel="nofollow noreferrer noopener">google.com</a> (Search engine.';
         $expOutArr[22] = ' Abgerufen ';
         $expOutArr[23] = '2017.).';
         $expOutArr[24] = '</p>';
