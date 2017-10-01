@@ -33,14 +33,14 @@ class LongCiteMaster {
         $lcm = "LongCiteMessenger";
         $lcm::debugMessage("LCM: In LongCiteMaster::initialize function.");
         if(is_null(self::getActiveMaster())) {
-            $lcm::debugMessage("LCM: Instantiating new master object.");
+            $lcm::debugMessage("LCM: ..Instantiating new master object.");
             self::newActiveMaster();
         } else {
-            $lcm::debugMessage("LCM: Instantiating new master object.");            
+            $lcm::debugMessage("LCM: ..Reusing existing master object.");
         }
         $master = self::getActiveMaster();
         $masterGuid = $master->getGuid();
-        $lcm::debugVariable($masterGuid,"masterGuid");            
+        $lcm::debugVariable($masterGuid,"....masterGuid");
     }
 
     public static function newActiveMaster() {
