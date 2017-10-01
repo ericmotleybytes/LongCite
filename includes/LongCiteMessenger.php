@@ -37,28 +37,34 @@ class LongCiteMessenger {
         return $stat;
     }
 
-    public static function debugVariable($var,$varName="unknown") {
+    public static function debugVariable($var,$varName="unknown",$maxLen=100) {
         if($GLOBALS["wgShowDebug"]===false) { return null; }
-        $varType = gettype($var);
-        if(is_null($var)) {
-            $varVal = "null";
-        } elseif(is_string($var)) {
-            $varVal  = $var;
-        } elseif(is_bool($var)) {
-            if($var) { $varVal="true"; } else { $varVal="false"; }
-        } elseif(is_array($var)) {
-            $varVal = "(" . count($var) . " elements)";
-        } elseif(is_numeric($var)) {
-            $varVal = $var;
-        } elseif(is_resource($var)) {
-            $varVal = "(resource)";
-        } elseif(is_object($var)) {
-            $varVal = get_class($var) . " (classname)";
-        } else {
-            $varVal = print_r($var,true);
-        }
-        $text = "$varName($varType)='$varVal'.\n";
+        $varStr = LongCiteUtil::debugVariableToString($var,$maxLen);
+        $text = "$varName=$varStr.\n";
         return self::debugMessage($text);
+    }
+
+    public static function debugTrace($prefix="") {
+        $backTrace = debug_backtrace();
+        $util = "LongCiteUtil";
+        $stuff = $prefix;
+        $idx = 0;
+        foreach($backTrace as $info) {
+            $idx++;
+            $function = $util::lookupArrayEntry($info,"function","");
+            $class    = $util::lookupArrayEntry($info,"class","");
+            $file     = $util::lookupArrayEntry($info,"file","");
+            $line     = $util::lookupArrayEntry($info,"line","");
+            $object   = $util::lookupArrayEntry($info,"object",null);
+            $type     = $util::lookupArrayEntry($info,"type","");
+            $args     = $util::lookupArrayEntry($info,"args","");
+            #$filebase = basename($file,".php");
+            $stuff .= "\n";
+            $stuff .= "$idx:L$line:$class$type$function(";
+            $stuff .= LongCiteUtil::debugVariableToString($args);
+        }
+        $stat = self::debugMessage($stuff);
+        return $stat;
     }
 
     public static function debugClear() {

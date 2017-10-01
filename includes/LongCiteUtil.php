@@ -468,6 +468,165 @@ class LongCiteUtil {
         return $results;
     }
 
+    /// Test if a variable in an associative array.
+    /// @param $var - The variable to test.
+    /// @return TRUE if $var is an associative array, else false.
+    public static function isArrayAssociative($var) {
+        if (!is_array($var)) {
+            return false;
+        }
+        $compare = array_diff_key($var,array_keys(array_keys($var)));
+        if (count($compare)==0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
+    /// Test if an array is infinitely recursive.
+    public static function isArrayInfinite(&$var) {
+        $testStr = "__been_here_before__";
+        if (!is_array($var)) {
+            return false;
+        }
+        // if this key is present, it means you already walked this array
+        if(isset($var[$testStr])){
+            return true; // we have been here before
+        }
+        $var[$testStr] = true;
+        $infFound = false;
+        foreach($var as $key => &$value) {
+            if($key !== $testStr) {
+                if(is_array($value)) {
+                    $flag = self::isArrayInfinite($value);  // recurse
+                    if($flag) {
+                        $infFound = true;
+                        break;
+                    }
+                }
+            }
+        }
+        // unset when done because working with a reference...
+        unset($var[$testStr]);
+        return $infFound;
+    }
+
+    /// Get array depth, or -1 in infinitely recursive.
+    public static function getArrayDepth(&$var) {
+        $testStr = "__been_here_before__";
+        $depth = 0;
+        if (!is_array($var)) {
+            return $depth;  // not an array
+        }
+        $depth++;
+        // if this key is present, it means you already walked this array
+        if(isset($var[$testStr])){
+            return -1; // we have been here before
+        }
+        $var[$testStr] = true;
+        $infFound = false;
+        $maxSubDepth = 0;
+        foreach($var as $key => &$value) {
+            if($key !== $testStr) {
+                if(is_array($value)) {
+                    $subDepth = self::getArrayDepth($value);  // recurse
+                    if($subDepth<0) {
+                        $infFound = true;
+                        break;
+                    }
+                    $maxSubDepth = max($maxSubDepth,$subDepth);
+                }
+            }
+        }
+        // unset when done because working with a reference...
+        unset($var[$testStr]);
+        if($infFound) {
+            return -1;
+        } else {
+            $finalDepth = $depth + $maxSubDepth;
+            return $finalDepth;
+        }
+    }
+
+        public static function debugVariableToString($var,$maxLen=100) {
+        $varType = gettype($var);
+        if(is_null($var)) {
+            $varVal = "null";
+        } elseif(is_string($var)) {
+            $varVal  = $var;
+        } elseif(is_bool($var)) {
+            if($var) { $varVal="true"; } else { $varVal="false"; }
+        } elseif(is_array($var)) {
+            $varCnt = count($var);
+            $isAssoc = LongCiteUtil::isArrayAssociative($var);
+            if($isAssoc) {
+                $varType .= "/assoc/$varCnt";
+            } else {
+                $varType .= "/plain/$varCnt";
+            }
+            $isInfinite = LongCiteUtil::isArrayInfinite($var);
+            if($isInfinite) {
+                $varType .= "/infinite";
+                $varVal = "?";
+            } elseif($isAssoc) {
+                $idx = -1;
+                $varVal='[';
+                foreach($var as $key => $val) {
+                    $idx++;
+                    if($idx>1) { $varVal .= ',...'; break; }
+                    if($idx>0) { $varVal .= ','; }
+                    $varVal .= $key . '=>';
+                    if(is_array($val)) {
+                        if(LongCiteUtil::isArrayAssociative($val)) {
+                            $varVal .= '(array/assoc)';
+                        } else {
+                            $varVal .= '(array/plain)';
+                        }
+                    } else {
+                        $varVal .= self::debugVariableToString($val,10);
+                    }
+                }
+                $varVal.=']';
+            } else {
+                $idx = -1;
+                $varVal='[';
+                foreach($var as $val) {
+                    $idx++;
+                    if($idx>1) { $varVal .= ',...'; break; }
+                    if($idx>0) { $varVal .= ','; }
+                    if(is_array($val)) {
+                        if(LongCiteUtil::isArrayAssociative($val)) {
+                            $varVal .= '(array/assoc)';
+                        } else {
+                            $varVal .= '(array/plain)';
+                        }
+                    } else {
+                        $varVal .= self::debugVariableToString($val,10);
+                    }
+                }
+                $varVal.=']';
+            }
+        } elseif(is_numeric($var)) {
+            $varVal = $var;
+        } elseif(is_resource($var)) {
+            $varVal = "(resource)";
+        } elseif(is_object($var)) {
+            $varVal = get_class($var) . "(classname)";
+            if(method_exists($var,"__toString")) {
+                $varVal .= '=' . $var->__toString();
+            }
+        } else {
+            $varVal = print_r($var,true);
+        }
+        if(mb_strlen($varVal)>$maxLen) {
+            $varVal = mb_substr($varVal,0,$maxLen) . "...";
+        }
+        return "($varType)'$varVal'";
+    }
+
+    public static function lookupArrayEntry($arr,$key,$default=null) {
+        if(!array_key_exists($key,$arr)) { return $default; }
+        return $arr[$key];
+    }
 }
 ?>

@@ -155,5 +155,84 @@ class LongCiteUtilTest extends TestCase {
         $this->assertEquals($expItem,$actItem);
     }
 
+    public function testIsAssoc() {
+        $util = "LongCiteUtil";
+        $this->assertFalse($util::isArrayAssociative(42),"int");
+        $this->assertFalse($util::isArrayAssociative("xxx"),"string");
+        $this->assertFalse($util::isArrayAssociative(array()),"empty array");
+        $this->assertFalse($util::isArrayAssociative(array("a","b")),"plain array");
+        $this->assertTrue($util::isArrayAssociative(array("a"=>42)),"assoc array");
+    }
+
+    public function testIsInf() {
+        $util = "LongCiteUtil";
+        $var = 42;
+        $this->assertFalse($util::isArrayInfinite($var),"int");
+        $var = "xxx";
+        $this->assertFalse($util::isArrayInfinite($var),"string");
+        $var = array();
+        $this->assertFalse($util::isArrayInfinite($var),"empty array");
+        $var = array("a","b");
+        $this->assertFalse($util::isArrayInfinite($var),"plain array");
+        $var = array("a"=>42);
+        $this->assertFalse($util::isArrayInfinite($var),"assoc array");
+        $arr = array(array("a","b"),array("A","B"));
+        $this->assertFalse($util::isArrayInfinite($arr),"plain arr of arr");
+        $arr = array("abc",array(&$arr));
+        $this->assertTrue($util::isArrayInfinite($arr),"infinite arr");
+        array_pop($arr);
+        $this->assertEquals(1,count($arr),"arr count");
+        $this->assertEquals("abc",$arr[0],"arr value");
+    }
+
+    public function testGetDepth() {
+        $util = "LongCiteUtil";
+        $var = 42;
+        $this->assertEquals(0,$util::getArrayDepth($var),"int");
+        $var = "xxx";
+        $this->assertEquals(0,$util::getArrayDepth($var),"string");
+        $var = array();
+        $this->assertEquals(1,$util::getArrayDepth($var),"empty array");
+        $var = array("a","b");
+        $this->assertEquals(1,$util::getArrayDepth($var),"plain array");
+        $var = array("a"=>42);
+        $this->assertEquals(1,$util::getArrayDepth($var),"assoc array");
+        $arr = array(array("a","b"),array("A","B"));
+        $this->assertEquals(2,$util::getArrayDepth($arr),"plain arr of arr");
+        $arr = array("abc",array(&$arr));
+        $this->assertEquals(-1,$util::getArrayDepth($arr),"infinite arr");
+        array_pop($arr);
+        $this->assertEquals(1,count($arr),"arr count");
+        $this->assertEquals("abc",$arr[0],"arr value");
+    }
+
+    public function testVarToString() {
+        $util = "LongCiteUtil";
+        $this->helpVarToString(42,"integer","42");
+        $this->helpVarToString("xyz","string","xyz");
+        $this->helpVarToString(true,"boolean","true");
+        $this->helpVarToString(false,"boolean","false");
+        $this->helpVarToString(null,"NULL","null");
+        $this->helpVarToString(array(),"array","plain",'\[\]');
+        $this->helpVarToString(array("a","b","c"),"array","plain","/3\)");
+        $this->helpVarToString(array("a"=>"A","b"=>"B","c"=>"C"),"array","assoc","/3\)");
+        $this->helpVarToString(array(array("a")),"array","plain");
+        $this->helpVarToString(array(array("a"=>"A")),"array","assoc");
+        $this->helpVarToString(array("abc"=>array("a"=>"A")),"array","assoc");
+        $dt = new DateTime();
+        $this->helpVarToString($dt,"object","classname","DateTime");
+    }
+
+    public function helpVarToString($var,...$patterns) {
+        $str = LongCiteUtil::debugVariableToString($var);
+        LongCiteUtil::writeToTty("$str\n");
+        foreach($patterns as $pat) {
+            if($pat=="") { $pat = '.*'; }
+            #LongCiteUtil::writeToTty("pattern '$pat'?\n");
+            $test = mb_ereg($pat,$str);
+            $this->assertNotFalse($test,"pattern '$pat'");
+        }
+        return;
+    }
 }
 ?>
