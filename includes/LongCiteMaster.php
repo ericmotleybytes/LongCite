@@ -31,16 +31,16 @@ class LongCiteMaster {
 
     public static function initialize() {
         $lcm = "LongCiteMessenger";
-        $lcm::debugMessage("LCM: In LongCiteMaster::initialize function.");
         if(is_null(self::getActiveMaster())) {
-            $lcm::debugMessage("LCM: ..Instantiating new master object.");
             self::newActiveMaster();
+            $master = self::getActiveMaster();
+            $masterGuid = $master->getGuid();
+            $lcm::debugMessage("LCM: Instantiated new master object ($masterGuid).");
         } else {
-            $lcm::debugMessage("LCM: ..Reusing existing master object.");
+            $master = self::getActiveMaster();
+            $masterGuid = $master->getGuid();
+            $lcm::debugMessage("LCM: Reusing old master object ($masterGuid).");
         }
-        $master = self::getActiveMaster();
-        $masterGuid = $master->getGuid();
-        $lcm::debugVariable($masterGuid,"....masterGuid");
     }
 
     public static function newActiveMaster() {
@@ -326,6 +326,8 @@ class LongCiteMaster {
     /// See https://www.mediawiki.org/wiki/Manual:Parser.php.
     /// @param $parser - Parser object being initialized.
     public function setupParser(&$parser) {
+        $lcm = "LongCiteMessenger";
+        $lcm::debugMessage("LCM: In setupParser.");
         $this->parser = $parser;
         // set hooks for parser functions
         $parser->setHook('longcite'   ,array($this,"tagLongCite"));
@@ -334,6 +336,8 @@ class LongCiteMaster {
         $parser->setHook('longciteren',array($this,"tagLongCiteRen"));
         $parser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
         $parser->setHook('longciteopt',array($this,"tagLongCiteOpt"));
+        $tags = $parser->getTags();
+        $lcm::debugVariable($tags,"LCM: ..tags");
     }
 
     /// Called when maintenance/update.php is run to allow extensions

@@ -86,6 +86,14 @@ class LongCiteWikiParserStub {
         $this->parserHooks[$hookName][] = $callable;
     }
 
+    public function getTags() {
+        return array_keys($this->parserHooks);
+    }
+
+    public function clearTagHooks() {
+        $this->parserHooks = array();
+    }
+
     public function stubGetHooks() {
         $result = "";
         foreach($this->parserHooks as $hookName => $callables) {
