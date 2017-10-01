@@ -30,6 +30,7 @@ class LongCiteTag {
     protected $paramMsgKeys = array();  ///< Hash cat->arr of msg keys.
     protected $paramObjHash = array();  ///< Hash of paramNameMsgKey to param object.
     protected $renderedOutput = "";     ///< Copy of rendered output html.
+    protected $guid;
 
     public function __construct($master, $input, $args, $parser, $frame=false) {
         $this->master = $master;
@@ -37,6 +38,9 @@ class LongCiteTag {
         $this->args    = $args;
         $this->parser  = $parser;
         $this->frame   = $frame;
+        // set internal guid
+        $this->guid = LongCiteUtil::generateOpensslGuid();
+        // more
         $this->inputLangCode  = $master->getInputLangCode();
         $this->outputLangCode = $master->getOutputLangCode();
         $this->messenger = new LongCiteMessenger($this->inputLangCode);
@@ -141,6 +145,10 @@ class LongCiteTag {
 
     public function getFrame() {
         return $this->frame;
+    }
+
+    public function getGuid() {
+        return $this->guid;
     }
 
     public function getInput() {

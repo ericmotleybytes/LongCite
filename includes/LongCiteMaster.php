@@ -336,7 +336,7 @@ class LongCiteMaster {
         $parser->setHook('longciteren',array($this,"tagLongCiteRen"));
         $parser->setHook('longcitehlp',array($this,"tagLongCiteHlp"));
         $parser->setHook('longciteopt',array($this,"tagLongCiteOpt"));
-        $tags = $parser->getTags();
+        $tags = implode(";",$parser->getTags());
         $lcm::debugVariable($tags,"LCM: ..tags");
     }
 
@@ -371,7 +371,20 @@ class LongCiteMaster {
     /// @param $frame - Recursive parsing frame.
     /// @return A string with rendered HTML.
     public function tagLongCiteDef($input, $args, $parser, $frame) {
+        $lcm = "LongCiteMessenger";
+        $lcm::debugMessage("LCM:TLCD: In tagLongCiteDef.");
         $tagObj = new LongCiteDefTag($this, $input, $args, $parser, $frame);
+        $tagGuid = $tagObj->getGuid();
+        $lcm::debugVariable($tagGuid,"LCM:TLCD:..tagGuid");
+        $argsStr = print_r($args,true);
+        $lcm::debugVariable($argsStr,"LCM:TLCD:..args");
+        $inStr = mb_substr($input,0,40) . "...";
+        $inStr = mb_ereg_replace('\n','<nl>',$inStr);
+        $lcm::debugVariable($inStr,"LCM:TLCD:..input");
+        $parHash = spl_object_hash($parser);
+        $lcm::debugVariable($parHash,"LCM:TLCD:..parserHash");
+        $lcm::debugVariable($frame,"LCM:TLCD:..frame");
+        # do stuff
         $this->addTagObject($tagObj);
         $result = $tagObj->doPreprocessing();
         $result = $tagObj->render();

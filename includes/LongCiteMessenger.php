@@ -39,8 +39,23 @@ class LongCiteMessenger {
 
     public static function debugVariable($var,$varName="unknown") {
         if($GLOBALS["wgShowDebug"]===false) { return null; }
-        $varVal = print_r($var,true);
-        $text = "$varName='$varVal'.\n";
+        $varType = gettype($var);
+        if(is_null($var)) {
+            $varVal = "null";
+        } elseif(is_string($var)) {
+            $varVal  = $var;
+        } elseif(is_bool($var)) {
+            if($var) { $varVal="true"; } else { $varVal="false"; }
+        } elseif(is_array($var)) {
+            $varVal = "(" . count($var) . " elements)";
+        } elseif(is_numeric($var)) {
+            $varVal = $var;
+        } elseif(is_resource($var)) {
+            $varVal = "(resource)";
+        } else {
+            $varVal = print_r($var,true);
+        }
+        $text = "$varName($varType)='$varVal'.\n";
         return self::debugMessage($text);
     }
 
