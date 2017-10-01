@@ -26,7 +26,7 @@ class LongCiteMessenger {
         if($stat===false) { fclose($fh); return false; }
         $pid = getmypid();
         $timestamp = gmdate('Ymd His') . ":$pid: ";
-        $text = mb_ereg_replace('\n',"",$text) . "\n";
+        $text = mb_ereg_replace('\n$',"",$text) . "\n";
         $bytes = fwrite($fh,$timestamp . $text);
         if($bytes===false) { flock($fh,LOCK_UN); fclose($fh); return false; }
         $stat = fflush($fh);
@@ -62,6 +62,7 @@ class LongCiteMessenger {
             $stuff .= "\n";
             $stuff .= "$idx:L$line:$class$type$function(";
             $stuff .= LongCiteUtil::debugVariableToString($args);
+            $stuff .= ')';
         }
         $stat = self::debugMessage($stuff);
         return $stat;
