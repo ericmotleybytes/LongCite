@@ -35,8 +35,8 @@ class LongCiteParamURL extends LongCiteParam {
                 continue;
             }
             $basicVal = $annValue[LongCiteParam::AnnValBasic];
+            // parts=url|displaytext|description|retrievedate
             $parts = mb_split($intDelimPat,$basicVal,4);
-            $partCnt = count($parts);
             $addr = LongCiteUtil::eregTrim($parts[0]);
             $cleanAddr = filter_var($addr,FILTER_VALIDATE_URL,FILTER_FLAG_SCHEME_REQUIRED);
             if(array_key_exists(1,$parts)) {

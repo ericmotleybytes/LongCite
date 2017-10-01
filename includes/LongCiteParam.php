@@ -26,6 +26,7 @@ class LongCiteParam {
     protected static $paramClassMap = array(
         "longcite-pn-author"     => array("Author",true,self::CatDesc),
         "longcite-pn-edition"    => array("Edition",true,self::CatDesc),
+        "longcite-pn-isbn"       => array("ISBN",true,self::CatDesc),
         "longcite-pn-item"       => array("Item",false,self::CatDesc),
         "longcite-pn-key"        => array("Key",false,self::CatCore),
         "longcite-pn-note"       => array("Note",true,self::CatVerb),

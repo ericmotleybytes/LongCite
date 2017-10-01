@@ -25,6 +25,7 @@
         "LongCiteParamDate"       : "includes/LongCiteParamDate.php",
         "LongCiteParamEdition"    : "includes/LongCiteParamEdition.php",
         "LongCiteParamGeoLoc"     : "includes/LongCiteParamGeoLoc.php",
+        "LongCiteParamISBN"       : "includes/LongCiteParamISBN.php",
         "LongCiteParamItem"       : "includes/LongCiteParamItem.php",
         "LongCiteParamKey"        : "includes/LongCiteParamKey.php",
         "LongCiteParamNote"       : "includes/LongCiteParamNote.php",

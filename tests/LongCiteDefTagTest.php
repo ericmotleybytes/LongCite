@@ -45,6 +45,7 @@ class LongCiteDefTagTest extends TestCase {
         $inputArr[8]   = "verlagsort=Upper Saddle River, New Jersey, USA\n";
         $inputArr[9]   = "edition=Anniversary\n";
         $inputArr[10]  = "url=http://www.google.com/|google.com|Search engine.|2017\n";
+        $inputArr[11]  = "isbn=9780321934116";
         $input         = implode("",$inputArr);
         $expMess  = "";
         $expOutArr     = array();
