@@ -20,7 +20,7 @@ class LongCiteMessenger {
 
     public static function debugMessage($text) {
         if($GLOBALS["wgShowDebug"]===false) { return null; }
-        $fh = fopen(self::$debugFile,"r+");
+        $fh = fopen(self::$debugFile,"a+");
         if($fh===false) { return false; }
         $stat = flock($fh,LOCK_EX);
         if($stat===false) { fclose($fh); return false; }
@@ -45,7 +45,7 @@ class LongCiteMessenger {
 
     public static function debugClear() {
         if($GLOBALS["wgShowDebug"]===false) { return null; }
-        $fh = fopen(self::$debugFile,"r+");
+        $fh = fopen(self::$debugFile,"a+");
         if($fh===false)    { return false; }
         $stat = flock($fh,LOCK_EX);
         if($stat===false)  { fclose($fh); return false; }
