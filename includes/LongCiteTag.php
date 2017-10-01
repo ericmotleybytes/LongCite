@@ -423,7 +423,8 @@ class LongCiteTag {
         // expand macros, weed out comments, merge continuation lines, etc.
         $semiParsedLines = $this->preprocessInput($this->input);
         $this->adjustedInputSet($semiParsedLines);
-        ##// debug messages...
+        // debug messages...
+        trigger_error("try trigger error",E_USER_NOTICE);
         ##$raw = $GLOBALS["wgRawHtml"];
         ##if($raw===true) { $rawStr="t"; }
         ##elseif($raw===false) { $rawStr="f"; }
