@@ -52,6 +52,8 @@ class LongCiteMessenger {
             $varVal = $var;
         } elseif(is_resource($var)) {
             $varVal = "(resource)";
+        } elseif(is_object($var)) {
+            $varVal = get_class($var) . " (classname)";
         } else {
             $varVal = print_r($var,true);
         }
