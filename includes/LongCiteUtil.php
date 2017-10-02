@@ -553,7 +553,7 @@ class LongCiteUtil {
         if(is_null($var)) {
             $varVal = "null";
         } elseif(is_string($var)) {
-            $varVal  = $var;
+            $varVal  = mb_ereg_replace('\n','<nl>',$var);
         } elseif(is_bool($var)) {
             if($var) { $varVal="true"; } else { $varVal="false"; }
         } elseif(is_array($var)) {

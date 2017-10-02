@@ -69,7 +69,6 @@ class LongCiteMessenger {
                 $stuff .= "      " . LongCiteUtil::debugVariableToString($arg);
                 if($cnt<$argsCnt) { $stuff .= ",\n";} else { $stuff .= ")\n"; }
             }
-            $stuff .= ')';
         }
         $stat = self::debugMessage($stuff);
         return $stat;
