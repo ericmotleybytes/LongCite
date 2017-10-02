@@ -385,8 +385,7 @@ class LongCiteMaster {
         $tagObj = new LongCiteDefTag($this, $input, $args, $parser, $frame);
         $tagGuid = $tagObj->getGuid();
         $lcm::debugVariable($tagGuid,"LCM:TLCD: ..tagGuid");
-        $argsStr = print_r($args,true);
-        $lcm::debugVariable($argsStr,"LCM:TLCD: ..args");
+        $lcm::debugVariable($args,"LCM:TLCD: ..args");
         $inStr = mb_substr($input,0,40) . "...";
         $inStr = mb_ereg_replace('\n','<nl>',$inStr);
         $lcm::debugVariable($inStr,"LCM:TLCD: ..input");

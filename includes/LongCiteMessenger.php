@@ -47,7 +47,7 @@ class LongCiteMessenger {
     public static function debugTrace($prefix="") {
         $backTrace = debug_backtrace();
         $util = "LongCiteUtil";
-        $stuff = $prefix;
+        $stuff = "$prefix traceback:";
         $idx = 0;
         foreach($backTrace as $info) {
             $idx++;
@@ -57,11 +57,18 @@ class LongCiteMessenger {
             $line     = $util::lookupArrayEntry($info,"line","");
             $object   = $util::lookupArrayEntry($info,"object",null);
             $type     = $util::lookupArrayEntry($info,"type","");
-            $args     = $util::lookupArrayEntry($info,"args","");
-            #$filebase = basename($file,".php");
+            $args     = $util::lookupArrayEntry($info,"args",array());
+            $filebase = basename($file,".php");
             $stuff .= "\n";
-            $stuff .= "$idx:L$line:$class$type$function(";
-            $stuff .= LongCiteUtil::debugVariableToString($args);
+            $stuff .= "  $idx:F=${filebase}L$line:\n";
+            $stuff .= "    $class$type$function(\n";
+            $argsCnt=count($args);
+            $cnt = 0;
+            foreach($args as $arg) {
+                $cnt++;
+                $stuff .= "      " . LongCiteUtil::debugVariableToString($arg);
+                if($cnt<$argsCnt) { $stuff .= ",\n";} else { $stuff .= ")\n"; }
+            }
             $stuff .= ')';
         }
         $stat = self::debugMessage($stuff);
