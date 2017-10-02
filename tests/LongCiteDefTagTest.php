@@ -70,12 +70,15 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[17] = 'Addison-Wesley.';
         $expOutArr[18] = ' Veröffentlicht am ';
         $expOutArr[19] = 'Upper Saddle River, New Jersey, USA.';
-        $expOutArr[20] = ' Online bei ';
-        $expOutArr[21] = '<a href="http://www.google.com/" target="_blank" ' .
+        $expOutArr[20] = ' ISBN <a href="http://www.worldcat.org/search' .
+            '?qt=worldcat_org_all&q=isbn%3A9780321934116" ' .
+            'target="_blank" rel="nofollow noreferrer noopener">9780321934116</a>.';
+        $expOutArr[21] = ' Online bei ';
+        $expOutArr[22] = '<a href="http://www.google.com/" target="_blank" ' .
             'rel="nofollow noreferrer noopener">google.com</a> (Search engine.';
-        $expOutArr[22] = ' Abgerufen ';
-        $expOutArr[23] = '2017.).';
-        $expOutArr[24] = '</p>';
+        $expOutArr[23] = ' Abgerufen ';
+        $expOutArr[24] = '2017.).';
+        $expOutArr[25] = '</p>';
         $expOut = implode("",$expOutArr);
         #
         $setup = array();
@@ -99,8 +102,8 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[15] = ' edition.';
         $expOutArr[16]  = ' Published by ';
         $expOutArr[18]  = ' Publisher location ';
-        $expOutArr[20]  = ' Online at ';
-        $expOutArr[22] = ' Retrieved ';
+        $expOutArr[21]  = ' Online at ';
+        $expOutArr[23] = ' Retrieved ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"] = $expOut;
         $setup["args"]    = $args;
@@ -119,8 +122,8 @@ class LongCiteDefTagTest extends TestCase {
         $expOutArr[15] = ' edición.';
         $expOutArr[16]  = ' Publicado por ';
         $expOutArr[18]  = ' Publicado en ';
-        $expOutArr[20]  = ' En línea en ';
-        $expOutArr[22] = ' Descargado en ';
+        $expOutArr[21]  = ' En línea en ';
+        $expOutArr[23] = ' Descargado en ';
         $expOut = implode("",$expOutArr);
         $setup["expOut"]  = $expOut;
         $setup["args"]    = $args;
