@@ -583,7 +583,7 @@ class LongCiteUtil {
                             $varVal .= '(array/plain)';
                         }
                     } else {
-                        $varVal .= self::debugVariableToString($val,10);
+                        $varVal .= self::debugVariableToString($val,20);
                     }
                 }
                 $varVal.=']';
@@ -601,7 +601,7 @@ class LongCiteUtil {
                             $varVal .= '(array/plain)';
                         }
                     } else {
-                        $varVal .= self::debugVariableToString($val,10);
+                        $varVal .= self::debugVariableToString($val,20);
                     }
                 }
                 $varVal.=']';

@@ -225,7 +225,7 @@ class LongCiteUtilTest extends TestCase {
 
     public function helpVarToString($var,...$patterns) {
         $str = LongCiteUtil::debugVariableToString($var);
-        LongCiteUtil::writeToTty("$str\n");
+        #LongCiteUtil::writeToTty("$str\n");
         foreach($patterns as $pat) {
             if($pat=="") { $pat = '.*'; }
             #LongCiteUtil::writeToTty("pattern '$pat'?\n");

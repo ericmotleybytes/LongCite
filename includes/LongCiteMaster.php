@@ -295,13 +295,13 @@ class LongCiteMaster {
         $wgHooks['ParserFirstCallInit'][] = array(
             &$this,"setupParser"
         );
-        // set top level runtime hooks
-        $wgHooks['ArticleDeleteComplete'][] = array(
-            &$this,"onArticleDeleteComplete"
-        );
-        $wgHooks['PageContentSaveComplete'][] = array(
-            &$this,"onPageContentSaveComplete"
-        );
+        ###// set top level runtime hooks
+        ###$wgHooks['ArticleDeleteComplete'][] = array(
+        ###    &$this,"onArticleDeleteComplete"
+        ###);
+        ###$wgHooks['PageContentSaveComplete'][] = array(
+        ###    &$this,"onPageContentSaveComplete"
+        ###);
         #$wgHooks['OutputPageParserOutput'][] = array(
         #    &$this,"onOutputPageParserOutput"
         #);
