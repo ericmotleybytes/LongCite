@@ -613,7 +613,7 @@ class LongCiteUtil {
         } elseif(is_object($var)) {
             $varVal = get_class($var) . "(classname)";
             if(method_exists($var,"__toString")) {
-                $varVal .= '=' . $var->__toString();
+                $varVal .= '=' . mb_ereg_replace('\n','<nl>',$var->__toString());
             }
         } else {
             $varVal = print_r($var,true);

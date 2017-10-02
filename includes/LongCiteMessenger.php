@@ -61,14 +61,16 @@ class LongCiteMessenger {
             $filebase = basename($file,".php");
             $stuff .= "\n";
             $stuff .= "  $idx:${filebase}@${line}:\n";
-            $stuff .= "    $class$type$function(\n";
+            $stuff .= "    $class$type$function(";
             $argsCnt=count($args);
+            if($argsCnt>0) { $stuff .= "\n"; }
             $cnt = 0;
             foreach($args as $arg) {
                 $cnt++;
                 $stuff .= "      " . LongCiteUtil::debugVariableToString($arg);
-                if($cnt<$argsCnt) { $stuff .= ",\n";} else { $stuff .= ")"; }
+                if($cnt<$argsCnt) { $stuff .= ",\n"; } 
             }
+            $stuff .= ")";
         }
         $stat = self::debugMessage($stuff);
         return $stat;
