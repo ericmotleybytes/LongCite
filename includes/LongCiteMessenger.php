@@ -60,14 +60,14 @@ class LongCiteMessenger {
             $args     = $util::lookupArrayEntry($info,"args",array());
             $filebase = basename($file,".php");
             $stuff .= "\n";
-            $stuff .= "  $idx:F=${filebase}L$line:\n";
+            $stuff .= "  $idx:${filebase}@${line}:\n";
             $stuff .= "    $class$type$function(\n";
             $argsCnt=count($args);
             $cnt = 0;
             foreach($args as $arg) {
                 $cnt++;
                 $stuff .= "      " . LongCiteUtil::debugVariableToString($arg);
-                if($cnt<$argsCnt) { $stuff .= ",\n";} else { $stuff .= ")\n"; }
+                if($cnt<$argsCnt) { $stuff .= ",";} else { $stuff .= ")"; }
             }
         }
         $stat = self::debugMessage($stuff);
